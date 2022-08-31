@@ -9,8 +9,8 @@ export default function SignIn({ csrfToken }) {
 					<div className="grid grid-col-6 ml-10 place-content-center  w-screen">
 						<div className="col-start-2 col-end-4 ">
 							<div className="flex flex-col border-2 bg-slate-200 p-10 rounded-xl">
-								<div className="text-slate-800  hover:text-yellow-500 h-24 font-raleway text-6xl pl-16 ml-3 mt-3">
-									<a href="#">LOGO</a>
+								<div className="text-slate-800  hover:text-yellow-500 h-24 font-raleway text-6xl pl-7 mt-3">
+									<a href="#">simpl:api</a>
 								</div>
 								<div>
 									<label htmlFor="email" class="form-label inline-block mb-2 text-gray-700 text-xl">
