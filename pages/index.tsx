@@ -12,8 +12,8 @@ export default function Index() {
       <div className="grid grid-flow-col auto-cols-max h-screen w-screen">
         <div className="grid grid-col-6 place-content-center  w-screen">
           <div className="col-start-1 col-end-6">
-            <h1 className="text-9xl text-slate-800  hover:text-yellow-500 h-24 font-raleway mb-5">
-              LOGO
+            <h1 className="text-9xl text-slate-800  hover:text-yellow-500 h-24 font-raleway mb-7">
+              simpl:api
             </h1>
           </div>
           {session ? (
