@@ -1,5 +1,5 @@
 import { NextApiResponse, NextApiRequest } from "next"
-import { connectDB } from "../lib/mongodb.ts"
+import { connectDB } from "../lib/mongodb"
 import { ObjectId } from "mongodb"
 
 //Interface
@@ -7,6 +7,8 @@ import { ApiKey } from "../interfaces"
 //===============================================
 
 export class apiKeyController {
+	apiKey: ApiKey
+
 	constructor(apiKey: ApiKey) {
 		this.apiKey = apiKey
 	}
@@ -25,7 +27,7 @@ export class apiKeyController {
 		if (isConnected) {
 			let findResult
 			try {
-				dbCollection = client.db(process.env.DB_NAME).collection<ApiKey>("api_keys")
+				dbCollection = client.db(process.env.DB_NAME).collection("api_keys")
 				findResult = await dbCollection.find({ key: `${this.apiKey.key}` }).toArray()
 			} catch (e) {
 				console.log(e)
@@ -50,7 +52,7 @@ export class apiKeyController {
 		if (isConnected) {
 			let insertResult
 			try {
-				dbCollection = client.db(process.env.DB_NAME).collection<ApiKey>("api_keys")
+				dbCollection = client.db(process.env.DB_NAME).collection("api_keys")
 				insertResult = await dbCollection.insertOne(this.apiKey)
 			} catch (e) {
 				console.log(e)
@@ -81,7 +83,7 @@ export class apiKeyController {
 			let deleteResult
 			try {
 				dbCollection = client.db(process.env.DB_NAME).collection("api_keys")
-				deleteResult = await dbCollection.deleteOne({ _id: ObjectId(id) })
+				deleteResult = await dbCollection.deleteOne({ _id: new ObjectId(id) })
 			} catch (e) {
 				console.log(e)
 			}

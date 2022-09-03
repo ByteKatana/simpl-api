@@ -1,4 +1,4 @@
-import { connectDB } from "../lib/mongodb.ts"
+import { connectDB } from "../lib/mongodb"
 import { ObjectId } from "mongodb"
 import bcrypt from "bcryptjs"
 
@@ -6,6 +6,8 @@ import bcrypt from "bcryptjs"
 import { User } from "../interfaces"
 
 export class UserController {
+	user: User
+
 	constructor(userData: User) {
 		this.user = userData
 	}
@@ -27,7 +29,7 @@ export class UserController {
 			try {
 				const plainPw = this.user.password
 				let hashPw = bcrypt.hashSync(plainPw, 8)
-				dbCollection = client.db(process.env.DB_NAME).collection<User>("users")
+				dbCollection = client.db(process.env.DB_NAME).collection("users")
 				insertResult = await dbCollection.insertOne({ ...this.user, password: hashPw })
 			} catch (e) {
 				console.log(e)
@@ -61,9 +63,9 @@ export class UserController {
 				if (this.user.pwchanged) {
 					lastPw = bcrypt.hashSync(lastPw, 8)
 				}
-				dbCollection = client.db(process.env.DB_NAME).collection<User>("users")
+				dbCollection = client.db(process.env.DB_NAME).collection("users")
 				updateResult = await dbCollection.updateOne(
-					{ _id: ObjectId(id) },
+					{ _id: new ObjectId(id) },
 					{
 						$set: {
 							username: this.user.username,
@@ -104,7 +106,7 @@ export class UserController {
 			let deleteResult
 			try {
 				dbCollection = client.db(process.env.DB_NAME).collection("users")
-				deleteResult = await dbCollection.deleteOne({ _id: ObjectId(id) })
+				deleteResult = await dbCollection.deleteOne({ _id: new ObjectId(id) })
 			} catch (e) {
 				console.log(e)
 			}

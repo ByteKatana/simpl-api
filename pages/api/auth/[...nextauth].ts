@@ -1,6 +1,6 @@
 import NextAuth from "next-auth"
 import CredentialProvider from "next-auth/providers/credentials"
-import { connectDB } from "../../../lib/mongodb.ts"
+import { connectDB } from "../../../lib/mongodb"
 import bcrypt from "bcryptjs"
 
 export default NextAuth({
@@ -12,7 +12,7 @@ export default NextAuth({
 				password: { label: "Password", type: "password" }
 			},
 			authorize: async (credentials) => {
-				let dbCollection: Array
+				let dbCollection: Array<any>
 				let isConnected: boolean = false
 				let client
 
@@ -59,15 +59,10 @@ export default NextAuth({
 		session: ({ session, token }) => {
 			if (token) {
 				session.id = token.id
-				session.user = token.user
+				session.user = token.user as any
 			}
 			return session
 		}
-	},
-	secret: process.env.NEXTAUTH_SECRET,
-	jwt: {
-		secret: process.env.NEXTAUTH_SECRET,
-		encryption: true
 	}
 	/*pages: {
 		signIn: "/login",

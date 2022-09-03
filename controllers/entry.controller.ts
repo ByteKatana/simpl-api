@@ -1,11 +1,13 @@
 //Database
-import { connectDB } from "../lib/mongodb.ts"
+import { connectDB } from "../lib/mongodb"
 import { ObjectId } from "mongodb"
 
 //Interface
 import { Entry } from "../interfaces"
 
 export class EntryController {
+	entry: Entry
+
 	constructor(entryData: Entry) {
 		this.entry = entryData
 	}
@@ -24,7 +26,7 @@ export class EntryController {
 		if (isConnected) {
 			let insertResult
 			try {
-				dbCollection = client.db(process.env.DB_NAME).collection<Entry>("entries")
+				dbCollection = client.db(process.env.DB_NAME).collection("entries")
 				insertResult = await dbCollection.insertOne(this.entry)
 			} catch (e) {
 				console.log(e)
@@ -51,9 +53,9 @@ export class EntryController {
 		if (isConnected) {
 			let updateResult
 			try {
-				dbCollection = client.db(process.env.DB_NAME).collection<Entry>("entries")
+				dbCollection = client.db(process.env.DB_NAME).collection("entries")
 				updateResult = await dbCollection.updateOne(
-					{ _id: ObjectId(id) },
+					{ _id: new ObjectId(id) },
 					{ $set: this.entry },
 					{ upsert: false }
 				)
@@ -87,7 +89,7 @@ export class EntryController {
 			let deleteResult
 			try {
 				dbCollection = client.db(process.env.DB_NAME).collection("entries")
-				deleteResult = await dbCollection.deleteOne({ _id: ObjectId(id) })
+				deleteResult = await dbCollection.deleteOne({ _id: new ObjectId(id) })
 			} catch (e) {
 				console.log(e)
 			}

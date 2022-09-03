@@ -1,9 +1,14 @@
 import { NextApiResponse, NextApiRequest } from "next"
-import { connectDB } from "../lib/mongodb.ts"
+import { connectDB } from "../lib/mongodb"
 import { ObjectId } from "mongodb"
-import { findType } from "../interfaces"
+import { FindType } from "../interfaces"
 
 export class apiBuilderController {
+  routeType: string
+  collectionName: string
+  findWhere?: string
+  routeData?: any
+
   constructor(routeType: string, collectionName: string, findWhere?: string, routeData?: any) {
     this.routeType = routeType
     this.collectionName = collectionName
@@ -11,8 +16,8 @@ export class apiBuilderController {
     this.routeData = routeData || undefined
   }
 
-  async fetchData(findType: findType) {
-    let dataCollection: Array
+  async fetchData(findType: FindType) {
+    let dataCollection: Array<object>
     let isConnected: boolean = false
     let client
 

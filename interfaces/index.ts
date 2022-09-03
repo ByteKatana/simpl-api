@@ -5,23 +5,12 @@ enum FindLike {
   Equals
 }
 
-export type Person = {
-  id: string
-  name: string
-  height: string
-  mass: string
-  hair_color: string
-  skin_color: string
-  eye_color: string
-  gender: string
-}
-
 export type FindType = keyof typeof FindLike
 
 export type EntryType = {
   name: string
   namespace: string
-  fields: array
+  fields: Array<any>
 }
 
 export type Entry = {
@@ -35,12 +24,13 @@ export type User = {
   password: string
   email: string
   permission_group: string
+  pwchanged?: boolean
 }
 
 export type PermissionGroup = {
   name: string
   slug: string
-  privileges: array
+  privileges: Array<any>
 }
 
 export type ApiKey = {

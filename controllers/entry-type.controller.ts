@@ -1,5 +1,5 @@
 //Database
-import { connectDB } from "../lib/mongodb.ts"
+import { connectDB } from "../lib/mongodb"
 import { ObjectId } from "mongodb"
 
 //Interface
@@ -7,6 +7,8 @@ import { EntryType } from "../interfaces"
 //===============================================
 
 export class EntryTypeController {
+	entryType: EntryType
+
 	constructor(entryTypeData: EntryType) {
 		this.entryType = entryTypeData
 	}
@@ -26,7 +28,7 @@ export class EntryTypeController {
 		if (isConnected) {
 			let insertResult
 			try {
-				dbCollection = client.db(process.env.DB_NAME).collection<EntryType>("entry_types")
+				dbCollection = client.db(process.env.DB_NAME).collection("entry_types")
 				insertResult = await dbCollection.insertOne(this.entryType)
 			} catch (e) {
 				console.log(e)
@@ -55,9 +57,9 @@ export class EntryTypeController {
 		if (isConnected) {
 			let updateResult
 			try {
-				dbCollection = client.db(process.env.DB_NAME).collection<EntryType>("entry_types")
+				dbCollection = client.db(process.env.DB_NAME).collection("entry_types")
 				updateResult = await dbCollection.updateOne(
-					{ _id: ObjectId(id) },
+					{ _id: new ObjectId(id) },
 					{ $set: this.entryType },
 					{ upsert: false }
 				)
@@ -91,7 +93,7 @@ export class EntryTypeController {
 			let deleteResult
 			try {
 				dbCollection = client.db(process.env.DB_NAME).collection("entry_types")
-				deleteResult = await dbCollection.deleteOne({ _id: ObjectId(id) })
+				deleteResult = await dbCollection.deleteOne({ _id: new ObjectId(id) })
 			} catch (e) {
 				console.log(e)
 			}
