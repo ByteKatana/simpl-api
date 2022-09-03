@@ -9,21 +9,22 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
 	const {
 		query: { slug, apikey }
 	} = _req
-	let apiKey = new apiKeyController({ key: apikey })
+	let apiKey = new apiKeyController({ key: apikey as string })
 	let apiKeyData = await apiKey.findKey()
+	let _slug = slug as string
 	if (apiKeyData[0] !== undefined && apiKeyData[0].key === apikey) {
 		let user = new apiBuilderController("single-param", "users", "permission_group", slug)
-		let userData = await user.fetchData("Equals")
+		let userData: Array<any> = await user.fetchData("Equals")
 		userData.forEach((user) => {
 			delete user.password
 		})
-		if (slug.startsWith("first_") || slug.startsWith("last_") || slug.startsWith("random_")) {
+		if (_slug.startsWith("first_") || _slug.startsWith("last_") || _slug.startsWith("random_")) {
 			let userWithLimit = new apiBuilderController("index", "users")
-			let userDataWithLimit = await userWithLimit.fetchData("Equals")
+			let userDataWithLimit: Array<any> = await userWithLimit.fetchData("Equals")
 			userDataWithLimit.forEach((user) => {
 				delete user.password
 			})
-			return res.status(200).json(getByLimit(slug, userDataWithLimit))
+			return res.status(200).json(getByLimit(_slug, userDataWithLimit))
 		}
 		return res.status(200).json(userData)
 	}

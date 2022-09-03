@@ -10,7 +10,7 @@ import { ApiKey } from "../../../../../interfaces/"
 
 export default async function handler(_req: NextApiRequest, res: NextApiResponse) {
 	const { slug, apikey, secretkey } = _req.query
-	let apiKey = new apiKeyController({ key: apikey })
+	let apiKey = new apiKeyController({ key: apikey as string })
 	let apiKeyData = await apiKey.findKey()
 	if (
 		apiKeyData[0] !== undefined &&
@@ -22,7 +22,7 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
 				key: ""
 			}
 			let apiKeyData = new apiKeyController(dummyObj)
-			let result = await apiKeyData.delete(slug)
+			let result = await apiKeyData.delete(slug as string)
 			return res.status(200).json(result)
 		} else {
 			return res.status(200).json({ message: "You can only do DELETE request for this endpoint!" })

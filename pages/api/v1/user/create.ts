@@ -9,7 +9,7 @@ import { apiKeyController } from "../../../../controllers/api-key.controller"
 
 export default async function handler(_req: NextApiRequest, res: NextApiResponse) {
 	const { apikey, secretkey } = _req.query
-	let apiKey = new apiKeyController({ key: apikey })
+	let apiKey = new apiKeyController({ key: apikey as string })
 	let apiKeyData = await apiKey.findKey()
 	if (
 		apiKeyData[0] !== undefined &&

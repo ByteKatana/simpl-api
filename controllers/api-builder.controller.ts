@@ -16,7 +16,7 @@ export class apiBuilderController {
     this.routeData = routeData || undefined
   }
 
-  async fetchData(findType: FindType) {
+  async fetchData(findType?: FindType) {
     let dataCollection: Array<object>
     let isConnected: boolean = false
     let client

@@ -2,7 +2,7 @@
 import { NextApiResponse, NextApiRequest } from "next"
 
 //DB
-import { connectDB } from "../../../../lib/mongodb.ts"
+import { connectDB } from "../../../../lib/mongodb"
 
 //Controller
 import { UserController } from "../../../../controllers/user.controller"

@@ -3,7 +3,6 @@ import axios from "axios"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
 import Router from "next/router"
-import { NextResponse } from "next"
 import { FiLoader } from "react-icons/fi"
 import { useSession } from "next-auth/react"
 
@@ -18,7 +17,7 @@ import { Entry, EntryType } from "../../../../interfaces"
 
 //===============================================
 
-export async function getServerSideProps(req: NextResponse) {
+export async function getServerSideProps(req) {
 	const { slug } = req.query
 
 	const res = await axios.get(
