@@ -31,7 +31,7 @@ export async function getServerSideProps(req: NextResponse) {
 	let permissionGroups: PermissionGroup = await resPermissionGroups.data
 
 	const resUser = await axios.get(
-		`${process.env.BASE_URL}/api/v1/users/_id/${slug}?apikey=${process.env.API_KEY}`
+		`${process.env.BASE_URL}/api/v1/users/_id/${slug}?apikey=${process.env.API_KEY}&secretkey=${process.env.SECRET_KEY}`
 	)
 	let user: User = await resUser.data
 
