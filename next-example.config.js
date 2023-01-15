@@ -5,6 +5,6 @@ module.exports = {
     secretKey: ""
   },
   typescript: {
-    ignoreBuildErrors: true
+    ignoreBuildErrors: false
   }
 }

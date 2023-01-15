@@ -109,11 +109,11 @@ export default function Entries({ fetchedEntries, fetchedPermGroups }) {
 					</div>
 					<div className="col-start-4 col-end-6 ">{/*Button placeholder*/}</div>
 					<div className="col-start-4 col-end-6 my-7">
-						<div class="flex justify-start">
-							<div class="">
+						<div className="flex justify-start">
+							<div className="">
 								<input
 									type="text"
-									class="form-control block w-full px-3 py-1.5 text-basefont-normaltext-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none"
+									className="form-control block w-full px-3 py-1.5 text-basefont-normaltext-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none"
 									id="search"
 									placeholder="Search"
 									onChange={(e) => searchEntries(e)}
@@ -122,19 +122,19 @@ export default function Entries({ fetchedEntries, fetchedPermGroups }) {
 						</div>
 					</div>
 					<div className="col-start-1 col-end-6 w-10/12">
-						<table class="min-w-full">
-							<thead class="bg-white border-b">
+						<table className="min-w-full">
+							<thead className="bg-white border-b">
 								<tr>
-									<th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4 text-left">
+									<th scope="col" className="text-sm font-medium text-gray-900 px-6 py-4 text-left">
 										#
 									</th>
-									<th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4 text-left">
+									<th scope="col" className="text-sm font-medium text-gray-900 px-6 py-4 text-left">
 										Name
 									</th>
-									<th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4 text-left">
+									<th scope="col" className="text-sm font-medium text-gray-900 px-6 py-4 text-left">
 										Namespace
 									</th>
-									<th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4 text-left">
+									<th scope="col" className="text-sm font-medium text-gray-900 px-6 py-4 text-left">
 										Action
 									</th>
 								</tr>
@@ -150,17 +150,17 @@ export default function Entries({ fetchedEntries, fetchedPermGroups }) {
 										return (
 											<tr
 												key={index}
-												class="bg-white border-b transition duration-300 ease-in-out hover:bg-gray-100">
-												<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+												className="bg-white border-b transition duration-300 ease-in-out hover:bg-gray-100">
+												<td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
 													{paginationState.min + index + 1}
 												</td>
-												<td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+												<td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
 													{entry.name}
 												</td>
-												<td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+												<td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
 													{entry.namespace}
 												</td>
-												<td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+												<td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
 													<div className="flex flex-row text-2xl">
 														<div>
 															{checkPermission("update", entry.namespace) ? (
@@ -214,9 +214,9 @@ export default function Entries({ fetchedEntries, fetchedPermGroups }) {
 						</table>
 					</div>
 					<div className="col-start-1 col-end-6 w-9/12 mt-10 justify-items-center">
-						<div class="flex justify-center">
+						<div className="flex justify-center">
 							<nav aria-label="Page navigation example">
-								<ul class="flex list-style-none">
+								<ul className="flex list-style-none">
 									{paginationState.pages.map((page) => {
 										return (
 											<li
@@ -224,7 +224,7 @@ export default function Entries({ fetchedEntries, fetchedPermGroups }) {
 													paginationState.currentPage === page ? "active" : null
 												}  `}>
 												<a
-													class={`page-link relative block py-1.5 px-3 rounded border-0 ${
+													className={`page-link relative block py-1.5 px-3 rounded border-0 ${
 														paginationState.currentPage === page
 															? "bg-slate-900 text-white outline-none transition-all duration-300 rounded  hover:text-white hover:bg-slate-600"
 															: "bg-transparent text-gray-800  outline-none transition-all duration-300 hover:text-gray-800 hover:bg-gray-200 focus:shadow-none"
