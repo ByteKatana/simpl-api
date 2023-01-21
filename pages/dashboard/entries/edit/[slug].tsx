@@ -116,14 +116,6 @@ export default function EditEntry({ fetchedEntry, fetchedEntryType, fetchedPermG
       newRule = { [`${event.target.name}_rule`]: "boolean-field" }
       setFormErrors({ ...formErrors, ...newRule })
       setShowError({ [`${event.target.name}_rule`]: true })
-    } else if (valueType === "array" && !(JSON.parse(event.target.value) instanceof Array)) {
-      newRule = { [`${event.target.name}_rule`]: "array-field" }
-      setFormErrors({ ...formErrors, ...newRule })
-      setShowError({ [`${event.target.name}_rule`]: true })
-    } else if (valueType === "object" && !(JSON.parse(event.target.value) instanceof Object)) {
-      newRule = { [`${event.target.name}_rule`]: "object-field" }
-      setFormErrors({ ...formErrors, ...newRule })
-      setShowError({ [`${event.target.name}_rule`]: true })
     } else {
       if (`${event.target.name}_rule` in formErrors) {
         let copyErrors = { ...formErrors }
@@ -373,7 +365,7 @@ export default function EditEntry({ fetchedEntry, fetchedEntryType, fetchedPermG
                           <span className="mt-1 ml-3">Processing</span>
                         </span>
                       ) : (
-                        "Create"
+                        "Update"
                       )}
                     </button>
                   </div>

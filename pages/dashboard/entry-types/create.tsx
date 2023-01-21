@@ -411,8 +411,6 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                             <option value="integer">Integer</option>
                             <option value="double">Double</option>
                             <option value="boolean">Boolean</option>
-                            <option value="array">Array</option>
-                            <option value="object">Object/JSON</option>
                           </select>
                           {(showErrors || showError[`field_value_type_${index}`]) &&
                             formErrors[`field_value_type_${index}`] &&
