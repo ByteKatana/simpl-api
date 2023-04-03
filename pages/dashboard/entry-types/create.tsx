@@ -65,7 +65,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
     }
 
     if (Object.keys(entryType).length === 0) {
-      setFormErrors({ name: "", slug: "", namespace: "itself" })
+      setEntryType({ name: "", slug: "", namespace: "itself" })
     }
   }, [])
 
