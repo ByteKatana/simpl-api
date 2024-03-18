@@ -12,3 +12,6 @@ Simpl:api is a simple API builder with GUI Dashboard
 - [Next.js](https://nextjs.org/)
 - [Node.js](https://nodejs.org/en/)
 - [MongoDB](https://www.mongodb.com/)
+
+ ## License
+  This is an open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
