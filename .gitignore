@@ -20,6 +20,7 @@ next.config.js
 .DS_Store
 *.pem
 api-routes
+.idea
 
 # debug
 npm-debug.log*
