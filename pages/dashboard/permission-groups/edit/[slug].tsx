@@ -8,7 +8,7 @@ import { FiLoader } from "react-icons/fi"
 import { useSession } from "next-auth/react"
 
 //React
-import { useState, useEffect, useRef } from "react"
+import { useState, useRef } from "react"
 
 //Components
 import Menu from "../../../../components/dashboard/menu"
@@ -38,7 +38,6 @@ export async function getServerSideProps(req) {
 
 export default function EditPermissionGroup({ fetchedPermissionGroup }) {
   const [formValues, setFormValues] = useState(fetchedPermissionGroup)
-  const [anyValueChanged, setAnyValueChanged] = useState(false)
   const [formErrors, setFormErrors] = useState({})
   const [showErrors, setShowErrors] = useState(false)
   const [showError, setShowError] = useState({})

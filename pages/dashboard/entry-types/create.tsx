@@ -183,7 +183,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
         }
       }
 
-      let formatedFields = formFields.map((field, index) => {
+      let formatedFields = formFields.map((field) => {
         if ("field_accepted_types" in field) {
           return {
             [field.field_name]: {

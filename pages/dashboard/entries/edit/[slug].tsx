@@ -8,7 +8,7 @@ import { FiLoader } from "react-icons/fi"
 import { useSession } from "next-auth/react"
 
 //React
-import { useState, useEffect, useRef } from "react"
+import { useState, useRef } from "react"
 
 //Components
 import Menu from "../../../../components/dashboard/menu"

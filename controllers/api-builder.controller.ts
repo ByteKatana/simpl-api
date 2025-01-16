@@ -1,4 +1,3 @@
-import { NextApiResponse, NextApiRequest } from "next"
 import { connectDB } from "../lib/mongodb"
 import { ObjectId } from "mongodb"
 import { FindType } from "../interfaces"
@@ -67,11 +66,7 @@ export class apiBuilderController {
           .toArray()
       }
     } else if (this.routeType === "index") {
-      dataCollection = await client
-        .db(process.env.DB_NAME)
-        .collection(`${this.collectionName}`)
-        .find()
-        .toArray()
+      dataCollection = await client.db(process.env.DB_NAME).collection(`${this.collectionName}`).find().toArray()
     } else if (this.routeType === "single-param") {
       if (this.findWhere === "_id") {
         dataCollection = await client

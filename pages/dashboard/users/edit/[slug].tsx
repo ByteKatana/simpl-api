@@ -8,7 +8,7 @@ import { FiLoader } from "react-icons/fi"
 import { useSession } from "next-auth/react"
 
 //React
-import { useState, useEffect, useRef } from "react"
+import { useState, useRef } from "react"
 
 //Components
 import Menu from "../../../../components/dashboard/menu"
@@ -45,7 +45,6 @@ export async function getServerSideProps(req) {
 export default function EditUser({ fetchedPermissionGroups, fetchedUser }) {
   const [formValues, setFormValues] = useState(fetchedUser)
   const [currentPw] = useState(fetchedUser[0].password)
-  const [anyValueChanged, setAnyValueChanged] = useState(false)
   const [formErrors, setFormErrors] = useState({})
   const [showErrors, setShowErrors] = useState(false)
   const [showError, setShowError] = useState({})
@@ -79,7 +78,7 @@ export default function EditUser({ fetchedPermissionGroups, fetchedUser }) {
     } else {
       if (`${event.target.name}` in formErrors) {
         let copyErrors = { ...formErrors }
-        const { [event.target.name]: undefined, ...restOfErrors }: { [key: string]: string } = copyErrors
+        const { [event.target.name]: string, ...restOfErrors }: { [key: string]: string } = copyErrors
         setFormErrors(restOfErrors)
         setShowError({ [event.target.name]: false })
       }

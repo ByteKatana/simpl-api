@@ -183,7 +183,7 @@ export default function CreateUser({ fetchedPermissionGroups }) {
             denyButtonText: "No",
             confirmButtonColor: "#10B981"
           })
-          .then((result) => {
+          .then(() => {
             setIsCreateBtnClicked(false)
           })
       }

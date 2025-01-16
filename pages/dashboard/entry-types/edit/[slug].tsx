@@ -37,7 +37,7 @@ export async function getServerSideProps(req) {
   let entryType = await resEntryType.data
   let fields = []
 
-  entryType[0].fields.map((field, index) => {
+  entryType[0].fields.map((field) => {
     let fieldKey: any = Object.keys(field)
     if ("accepted_types" in field) {
       fields.push({

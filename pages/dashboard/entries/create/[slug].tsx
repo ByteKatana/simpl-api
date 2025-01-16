@@ -13,7 +13,7 @@ import { useState, useEffect, useRef } from "react"
 import Menu from "../../../../components/dashboard/menu"
 
 //Interfaces
-import { Entry, EntryType } from "../../../../interfaces"
+import { EntryType } from "../../../../interfaces"
 
 //===============================================
 
@@ -55,7 +55,7 @@ export default function CreateEntry({ fetchedEntryType, fetchedPermGroups }) {
   useEffect(() => {
     let newFields = {}
     let newErrorFields = {}
-    fetchedEntryType[0].fields.forEach((field, index) => {
+    fetchedEntryType[0].fields.forEach((field) => {
       let fieldName = Object.keys(field).toString()
       newFields[fieldName] = ""
       newErrorFields[fieldName] = "empty-field"
