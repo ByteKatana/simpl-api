@@ -1,5 +1,5 @@
 import { connectDB } from "../lib/mongodb"
-import { ObjectId } from "mongodb"
+import { ObjectId, MongoClient } from "mongodb"
 import { FindType } from "../interfaces"
 
 export class apiBuilderController {
@@ -18,7 +18,7 @@ export class apiBuilderController {
   async fetchData(findType?: FindType) {
     let dataCollection: Array<object>
     let isConnected: boolean = false
-    let client
+    let client: MongoClient
 
     try {
       client = await connectDB()
@@ -27,7 +27,7 @@ export class apiBuilderController {
       console.error(e)
     }
 
-    //If there is more than one paramater in uri then convert into "param[0].param[1].param[i]" format to match with namespace field in the DB
+    //If there is more than one parameter in uri then convert into "param[0].param[1].param[i]" format to match with namespace field in the DB
     if (this.routeType === "multi-param" && Array.isArray(this.routeData)) {
       let namespace: string = ""
 

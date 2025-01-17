@@ -1,5 +1,5 @@
 import { connectDB } from "../lib/mongodb"
-import { ObjectId } from "mongodb"
+import { ObjectId, MongoClient, Collection } from "mongodb"
 
 //Interface
 import { ApiKey } from "../interfaces"
@@ -13,9 +13,9 @@ export class apiKeyController {
   }
 
   async findKey() {
-    let dbCollection
+    let dbCollection: Collection
     let isConnected: boolean = false
-    let client
+    let client: MongoClient
 
     try {
       client = await connectDB()
@@ -38,9 +38,9 @@ export class apiKeyController {
   }
 
   async create() {
-    let dbCollection
+    let dbCollection: Collection
     let isConnected: boolean = false
-    let client
+    let client: MongoClient
 
     try {
       client = await connectDB()
@@ -68,8 +68,8 @@ export class apiKeyController {
   }
 
   async delete(id: string) {
-    let client
-    let dbCollection
+    let client: MongoClient
+    let dbCollection: Collection
     let isConnected: boolean = false
 
     try {

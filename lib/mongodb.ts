@@ -7,11 +7,11 @@ if (!dbUri) throw new Error("Please define the MongoDB Connection String inside 
 //if(!dbName) throw new Error('Please define the MongoDB database name inside .env file')
 
 export async function connectDB() {
-	const client = await MongoClient.connect(dbUri)
+  const client: MongoClient = await MongoClient.connect(dbUri)
 
-	clientPromise = await client.connect()
+  clientPromise = await client.connect()
 
-	return clientPromise
+  return clientPromise
 }
 
 export default clientPromise
