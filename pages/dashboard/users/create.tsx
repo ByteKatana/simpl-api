@@ -84,7 +84,7 @@ export default function CreateUser({ fetchedPermissionGroups }) {
     } else {
       if (`${event.target.name}` in formErrors) {
         let copyErrors = { ...formErrors }
-        const { [event.target.name]: undefined, ...restOfErrors }: Record<string, string> = copyErrors
+        const { [event.target.name]: _, ...restOfErrors }: Record<string, string> = copyErrors
         setFormErrors(restOfErrors)
         setShowError({ [event.target.name]: false })
       }
@@ -150,7 +150,7 @@ export default function CreateUser({ fetchedPermissionGroups }) {
                 setFormValues({ username: "", password: "", email: "", permission_group: "" })
                 setIsCreateBtnClicked(false)
               } else if (result.isDenied) {
-                Router.push("/dashboard/users")
+                void Router.push("/dashboard/users")
               }
             })
         } else if (result.status === "failed") {
@@ -166,7 +166,7 @@ export default function CreateUser({ fetchedPermissionGroups }) {
             })
             .then((result) => {
               if (result.isDenied) {
-                Router.push("/dashboard/users")
+                void Router.push("/dashboard/users")
               }
             })
         }

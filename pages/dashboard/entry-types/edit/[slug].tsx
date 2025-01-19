@@ -9,7 +9,7 @@ import { FiLoader } from "react-icons/fi"
 import { useSession } from "next-auth/react"
 
 //React
-import { useState, useEffect, useRef } from "react"
+import { useState, useRef } from "react"
 
 //Icons
 import { FiPlusSquare, FiX } from "react-icons/fi"
@@ -118,7 +118,7 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
       } else {
         if (`${event.target.name}` in formErrors) {
           let copyErrors = { ...formErrors }
-          const { [event.target.name]: undefined, ...restOfErrors }: Record<string, string> = copyErrors
+          const { [event.target.name]: _, ...restOfErrors }: Record<string, string> = copyErrors
           setFormErrors(restOfErrors)
           setShowError({ [event.target.name]: false })
         }

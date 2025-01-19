@@ -91,7 +91,7 @@ export default function CreateEntry({ fetchedEntryType, fetchedPermGroups }) {
     } else {
       if (`${event.target.name}` in formErrors) {
         let copyErrors = { ...formErrors }
-        const { [event.target.name]: undefined, ...restOfErrors }: Record<string, string> = copyErrors
+        const { [event.target.name]: _, ...restOfErrors }: Record<string, string> = copyErrors
         setFormErrors(restOfErrors)
         setShowError({ [event.target.name]: false })
       }

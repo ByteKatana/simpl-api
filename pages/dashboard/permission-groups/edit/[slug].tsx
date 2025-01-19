@@ -23,10 +23,8 @@ import "tippy.js/dist/tippy.css"
 
 export async function getServerSideProps(req) {
   const { slug } = req.query
-
-  const resPermGroup = await axios.get(
-    `${process.env.BASE_URL}/api/v1/permission-group/${slug}?apikey=${process.env.API_KEY}`
-  )
+  const actionURI: string = `${process.env.BASE_URL!}/api/v1/permission-group/${slug}?apikey=${process.env.API_KEY!}`
+  const resPermGroup = await axios.get(actionURI)
   let permGroup: PermissionGroup = await resPermGroup.data
 
   return {
@@ -71,7 +69,7 @@ export default function EditPermissionGroup({ fetchedPermissionGroup }) {
     } else {
       if (`${event.target.name}` in formErrors) {
         let copyErrors = { ...formErrors }
-        const { [event.target.name]: undefined, ...restOfErrors }: Record<string, string> = copyErrors
+        const { [event.target.name]: _, ...restOfErrors }: Record<string, string> = copyErrors
         setFormErrors(restOfErrors)
         setShowError({ [event.target.name]: false })
       }
@@ -96,15 +94,14 @@ export default function EditPermissionGroup({ fetchedPermissionGroup }) {
       formRef.current[formValuesWithErrors[0]].focus()
     } else {
       let result
+      const actionURI: string = `${process.env.baseUrl!}/api/v1/permission-group/update/${slug}?apikey=${process.env
+        .apiKey!}&secretkey=${process.env.secretKey!}`
       await axios
-        .put(
-          `${process.env.baseUrl}/api/v1/permission-group/update/${slug}?apikey=${process.env.apiKey}&secretkey=${process.env.secretKey}`,
-          {
-            name: formValues[0].name,
-            privileges: formValues[0].privileges,
-            slug: formValues[0].name.split(" ").join("-").toLowerCase()
-          }
-        )
+        .put(actionURI, {
+          name: formValues[0].name,
+          privileges: formValues[0].privileges,
+          slug: formValues[0].name.split(" ").join("-").toLowerCase()
+        })
         .then((res: AxiosResponse) => {
           result = res.data
         })
@@ -122,7 +119,7 @@ export default function EditPermissionGroup({ fetchedPermissionGroup }) {
           })
           .then((result) => {
             if (result.isDenied) {
-              Router.push("/dashboard/permission-groups")
+              void Router.push("/dashboard/permission-groups")
             } else {
               setIsUpdateBtnClicked(false)
             }
@@ -191,7 +188,7 @@ export default function EditPermissionGroup({ fetchedPermissionGroup }) {
                       type="button"
                       onClick={() => {
                         setIsUpdateBtnClicked(true)
-                        submitData()
+                        void submitData()
                       }}
                       className="mb-2 w-full inline-block px-6 py-2.5 bg-slate-700 text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-slate-800 hover:shadow-lg focus:bg-slate-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-slate-800 active:shadow-lg transition duration-150 ease-in-out">
                       {isUpdateBtnClicked ? (

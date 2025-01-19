@@ -23,15 +23,14 @@ import "tippy.js/dist/tippy.css"
 
 export async function getServerSideProps(req) {
   const { slug } = req.query
-
-  let resPermissionGroups = await axios.get(
-    `${process.env.BASE_URL}/api/v1/permission-groups?apikey=${process.env.API_KEY}`
-  )
+  const resPermGroupActionURI: string = `${process.env.BASE_URL!}/api/v1/permission-groups?apikey=${process.env
+    .API_KEY!}`
+  let resPermissionGroups = await axios.get(resPermGroupActionURI)
   let permissionGroups: PermissionGroup = await resPermissionGroups.data
 
-  const resUser = await axios.get(
-    `${process.env.BASE_URL}/api/v1/users/_id/${slug}?apikey=${process.env.API_KEY}&secretkey=${process.env.SECRET_KEY}`
-  )
+  const resUserActionURI: string = `${process.env.BASE_URL!}/api/v1/users/_id/${slug}?apikey=${process.env
+    .API_KEY!}&secretkey=${process.env.SECRET_KEY!}`
+  const resUser = await axios.get(resUserActionURI)
   let user: User = await resUser.data
 
   return {
@@ -78,7 +77,7 @@ export default function EditUser({ fetchedPermissionGroups, fetchedUser }) {
     } else {
       if (`${event.target.name}` in formErrors) {
         let copyErrors = { ...formErrors }
-        const { [event.target.name]: string, ...restOfErrors }: Record<string, string> = copyErrors
+        const { [event.target.name]: _, ...restOfErrors }: Record<string, string> = copyErrors
         setFormErrors(restOfErrors)
         setShowError({ [event.target.name]: false })
       }
@@ -114,17 +113,16 @@ export default function EditUser({ fetchedPermissionGroups, fetchedUser }) {
       }
 
       let result
+      const actionURI: string = `${process.env.baseUrl!}/api/v1/user/update/${slug}?apikey=${process.env
+        .apiKey!}&secretkey=${process.env.secretKey!}`
       await axios
-        .put(
-          `${process.env.baseUrl}/api/v1/user/update/${slug}?apikey=${process.env.apiKey}&secretkey=${process.env.secretKey}`,
-          {
-            username: formValues[0].username,
-            email: formValues[0].email,
-            password: password,
-            pwchanged: pwChanged,
-            permission_group: formValues[0].permission_group
-          }
-        )
+        .put(actionURI, {
+          username: formValues[0].username,
+          email: formValues[0].email,
+          password: password,
+          pwchanged: pwChanged,
+          permission_group: formValues[0].permission_group
+        })
         .then((res) => {
           result = res.data
         })
@@ -142,7 +140,7 @@ export default function EditUser({ fetchedPermissionGroups, fetchedUser }) {
           })
           .then((result) => {
             if (result.isDenied) {
-              Router.push("/dashboard/users")
+              void Router.push("/dashboard/users")
             } else {
               setIsUpdateBtnClicked(false)
             }
@@ -160,7 +158,7 @@ export default function EditUser({ fetchedPermissionGroups, fetchedUser }) {
           })
           .then((result) => {
             if (result.isDenied) {
-              Router.push("/dashboard/users")
+              void Router.push("/dashboard/users")
             } else {
               setIsUpdateBtnClicked(false)
             }

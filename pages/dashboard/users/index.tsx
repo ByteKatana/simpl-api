@@ -204,7 +204,7 @@ export default function Users({ fetchedUsers }) {
                                         })
                                         .then((result) => {
                                           if (result.isConfirmed) {
-                                            deleteUser(user._id)
+                                            void deleteUser(user._id)
                                           }
                                         })
                                     }

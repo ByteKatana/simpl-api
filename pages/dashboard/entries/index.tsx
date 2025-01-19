@@ -180,7 +180,7 @@ export default function Entries({ fetchedEntries, fetchedPermGroups }) {
                                         })
                                         .then((result) => {
                                           if (result.isConfirmed) {
-                                            deleteEntry(entry._id)
+                                            void deleteEntry(entry._id)
                                           }
                                         })
                                     }

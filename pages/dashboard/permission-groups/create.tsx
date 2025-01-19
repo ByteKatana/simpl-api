@@ -63,7 +63,7 @@ export default function CreatePermissionGroup() {
     } else {
       if (`${event.target.name}` in formErrors) {
         let copyErrors = { ...formErrors }
-        const { [event.target.name]: undefined, ...restOfErrors }: Record<string, string> = copyErrors
+        const { [event.target.name]: _, ...restOfErrors }: Record<string, string> = copyErrors
         setFormErrors(restOfErrors)
         setShowError({ [event.target.name]: false })
       }
@@ -119,7 +119,7 @@ export default function CreatePermissionGroup() {
               setFormValues({ name: "" })
               setIsCreateBtnClicked(false)
             } else if (result.isDenied) {
-              Router.push("/dashboard/permission-groups")
+              void Router.push("/dashboard/permission-groups")
             }
           })
       } else if (result.status === "failed") {
@@ -135,7 +135,7 @@ export default function CreatePermissionGroup() {
           })
           .then((result) => {
             if (result.isDenied) {
-              Router.push("/dashboard/permission-groups")
+              void Router.push("/dashboard/permission-groups")
             } else {
               setIsCreateBtnClicked(false)
             }
@@ -186,7 +186,7 @@ export default function CreatePermissionGroup() {
                       type="button"
                       onClick={() => {
                         setIsCreateBtnClicked(true)
-                        submitData()
+                        void submitData()
                       }}
                       className="mb-2 w-full inline-block px-6 py-2.5 bg-slate-700 text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-slate-800 hover:shadow-lg focus:bg-slate-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-slate-800 active:shadow-lg transition duration-150 ease-in-out">
                       {isCreateBtnClicked ? (

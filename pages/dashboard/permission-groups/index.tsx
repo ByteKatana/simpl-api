@@ -181,7 +181,7 @@ export default function PermissionGroups({ fetchedPermissionGroups }) {
                                         })
                                         .then((result) => {
                                           if (result.isConfirmed) {
-                                            deletePermGroup(permGroup._id)
+                                            void deletePermGroup(permGroup._id)
                                           }
                                         })
                                     }

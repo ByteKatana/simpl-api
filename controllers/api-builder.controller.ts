@@ -6,9 +6,9 @@ export class apiBuilderController {
   routeType: string
   collectionName: string
   findWhere?: string
-  routeData?: unknown
+  routeData?: string | string[] | object[]
 
-  constructor(routeType: string, collectionName: string, findWhere?: string, routeData?: unknown) {
+  constructor(routeType: string, collectionName: string, findWhere?: string, routeData?: string | string[] | object[]) {
     this.routeType = routeType
     this.collectionName = collectionName
     this.findWhere = findWhere ?? undefined
