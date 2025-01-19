@@ -1,6 +1,6 @@
 //Database
 import { connectDB } from "../lib/mongodb"
-import { ObjectId, MongoClient, Collection } from "mongodb"
+import { ObjectId, MongoClient, Collection, UpdateResult, DeleteResult, InsertOneResult } from "mongodb"
 
 //Interface
 import { PermissionGroup } from "../interfaces"
@@ -26,7 +26,7 @@ export class PermissionGroupController {
     }
 
     if (isConnected) {
-      let insertResult
+      let insertResult: InsertOneResult
       try {
         dbCollection = client.db(process.env.DB_NAME).collection("permission_groups")
         insertResult = await dbCollection.insertOne(this.permissionGroup)
@@ -55,7 +55,7 @@ export class PermissionGroupController {
       console.log(e)
     }
     if (isConnected) {
-      let updateResult
+      let updateResult: UpdateResult
       try {
         dbCollection = client.db(process.env.DB_NAME).collection("permission_groups")
         updateResult = await dbCollection.updateOne(
@@ -90,7 +90,7 @@ export class PermissionGroupController {
       console.log(e)
     }
     if (isConnected) {
-      let deleteResult
+      let deleteResult: DeleteResult
       try {
         dbCollection = client.db(process.env.DB_NAME).collection("permission_groups")
         deleteResult = await dbCollection.deleteOne({ _id: new ObjectId(id) })

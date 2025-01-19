@@ -1,5 +1,5 @@
 //Utility
-import axios from "axios"
+import axios, { AxiosResponse } from "axios"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
 import { FiPlusCircle, FiTrash2 } from "react-icons/fi"
@@ -100,7 +100,7 @@ export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, f
   }, [fetchedPermissionGroups, fetchedNamespaces, activePermissionGroup, activeNamespace])
 
   const updatePermissions = (permission: string) => {
-    if (activePermissions.includes(permission) !== true) {
+    if (!activePermissions.includes(permission)) {
       setActivePermissions([...activePermissions, permission])
     } else {
       const filteredPermissions = activePermissions.filter((value) => value !== permission)
@@ -143,10 +143,10 @@ export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, f
         `${process.env.baseUrl}/api/v1/permission-group/update/${permissionGroupId}?apikey=${process.env.apiKey}&secretkey=${process.env.secretKey}`,
         payload
       )
-      .then((res) => {
+      .then((res: AxiosResponse) => {
         result = res.data
       })
-      .catch((e) => console.log(e))
+      .catch((e: unknown) => console.log(e))
     if (result.status === "success") {
       resultSwal.fire({
         title: `${result.message}`,

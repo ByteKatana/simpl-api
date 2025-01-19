@@ -84,7 +84,7 @@ export default function CreateUser({ fetchedPermissionGroups }) {
     } else {
       if (`${event.target.name}` in formErrors) {
         let copyErrors = { ...formErrors }
-        const { [event.target.name]: undefined, ...restOfErrors }: { [key: string]: string } = copyErrors
+        const { [event.target.name]: undefined, ...restOfErrors }: Record<string, string> = copyErrors
         setFormErrors(restOfErrors)
         setShowError({ [event.target.name]: false })
       }
@@ -146,7 +146,7 @@ export default function CreateUser({ fetchedPermissionGroups }) {
             .then((result) => {
               if (result.isConfirmed) {
                 //Clear form and set default if user want create another one
-                ;(document.getElementById("new_entry_form") as any).reset()
+                ;(document.getElementById("user_create_form") as HTMLFormElement).reset()
                 setFormValues({ username: "", password: "", email: "", permission_group: "" })
                 setIsCreateBtnClicked(false)
               } else if (result.isDenied) {

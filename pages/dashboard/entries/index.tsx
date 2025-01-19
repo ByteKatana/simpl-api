@@ -1,5 +1,5 @@
 //Utility
-import axios from "axios"
+import axios, { AxiosResponse } from "axios"
 import { FiTrash2, FiEdit } from "react-icons/fi"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
@@ -85,8 +85,8 @@ export default function Entries({ fetchedEntries, fetchedPermGroups }) {
       .delete(
         `${process.env.baseUrl}/api/v1/entry/delete/${id}?apikey=${process.env.apiKey}&secretkey=${process.env.secretKey}`
       )
-      .then((res) => (result = res.data))
-      .catch((e) => console.log(e))
+      .then((res: AxiosResponse) => (result = res.data))
+      .catch((e: unknown) => console.log(e))
 
     if (result.status === "success") Swal.fire("Deleted!", "", "success")
     else if (result.status === "failed") Swal.fire("Failed to delete!", "", "error")

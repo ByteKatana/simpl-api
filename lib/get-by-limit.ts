@@ -11,7 +11,7 @@ export function getByLimit(limit: string, fetchedData: object[]) {
     if (limitData[0] === "first") return fetchedData.slice(0, Number(limitData[1]))
     if (limitData[0] === "last") return fetchedData.slice(-Number(limitData[1]))
     if (limitData[0] === "random") {
-      let selectedData: Array<any> = []
+      let selectedData: any[] = []
       for (let i = 0; i < Number(limitData[1]); i++) {
         selectedData.push(fetchedData[Math.floor(Math.random() * fetchedData.length)])
       }

@@ -3,6 +3,7 @@ import CredentialProvider from "next-auth/providers/credentials"
 import { connectDB } from "../../../lib/mongodb"
 import bcrypt from "bcryptjs"
 import { JWT } from "next-auth/jwt"
+import { MongoClient } from "mongodb"
 
 export default NextAuth({
   providers: [
@@ -13,9 +14,9 @@ export default NextAuth({
         password: { label: "Password", type: "password" }
       },
       authorize: async (credentials) => {
-        let dbCollection: Array<any>
-        let isConnected: boolean = false
-        let client
+        let dbCollection: any[]
+        let isConnected = false
+        let client: MongoClient
 
         try {
           client = await connectDB()

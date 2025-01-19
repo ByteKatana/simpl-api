@@ -7,19 +7,19 @@ enum FindLike {
 
 export type FindType = keyof typeof FindLike
 
-export type EntryType = {
+export interface EntryType {
   name: string
   namespace: string
-  fields: Array<any>
+  fields: any[]
 }
 
-export type Entry = {
+export interface Entry {
   name: string
   namespace: string
   slug: string
 }
 
-export type User = {
+export interface User {
   username: string
   password: string
   email: string
@@ -27,12 +27,12 @@ export type User = {
   pwchanged?: boolean
 }
 
-export type PermissionGroup = {
+export interface PermissionGroup {
   name: string
   slug: string
-  privileges: Array<any>
+  privileges: any[]
 }
 
-export type ApiKey = {
+export interface ApiKey {
   key: string
 }

@@ -1,6 +1,6 @@
 import { MongoClient } from "mongodb"
 
-let dbUri: string = `${process.env.MONGODB_CONNECTION_STRING}`
+let dbUri = `${process.env.MONGODB_CONNECTION_STRING}`
 //let dbName: string = "api_db"
 let clientPromise
 if (!dbUri) throw new Error("Please define the MongoDB Connection String inside .env file")

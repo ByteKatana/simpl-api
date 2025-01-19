@@ -78,7 +78,7 @@ export default function EditUser({ fetchedPermissionGroups, fetchedUser }) {
     } else {
       if (`${event.target.name}` in formErrors) {
         let copyErrors = { ...formErrors }
-        const { [event.target.name]: string, ...restOfErrors }: { [key: string]: string } = copyErrors
+        const { [event.target.name]: string, ...restOfErrors }: Record<string, string> = copyErrors
         setFormErrors(restOfErrors)
         setShowError({ [event.target.name]: false })
       }
@@ -102,7 +102,7 @@ export default function EditUser({ fetchedPermissionGroups, fetchedUser }) {
       setIsUpdateBtnClicked(false)
       formRef.current[formValuesWithErrors[0]].focus()
     } else {
-      let pwChanged: boolean = false
+      let pwChanged = false
       let password = formValues[0].password
       if (password === "") {
         password = currentPw

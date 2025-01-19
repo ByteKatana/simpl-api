@@ -1,5 +1,5 @@
 //Utility
-import axios from "axios"
+import axios, { AxiosResponse } from "axios"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
 import Router from "next/router"
@@ -91,7 +91,7 @@ export default function CreateEntry({ fetchedEntryType, fetchedPermGroups }) {
     } else {
       if (`${event.target.name}` in formErrors) {
         let copyErrors = { ...formErrors }
-        const { [event.target.name]: undefined, ...restOfErrors }: { [key: string]: string } = copyErrors
+        const { [event.target.name]: undefined, ...restOfErrors }: Record<string, string> = copyErrors
         setFormErrors(restOfErrors)
         setShowError({ [event.target.name]: false })
       }
@@ -106,7 +106,7 @@ export default function CreateEntry({ fetchedEntryType, fetchedPermGroups }) {
   }
 
   const checkFormRules = (valueType: string, event) => {
-    let newRule: any
+    let newRule: object
     if (valueType === "string" && typeof event.target.value !== "string") {
       newRule = { [`${event.target.name}_rule`]: "string-field" }
       setFormErrors({ ...formErrors, ...newRule })
@@ -126,7 +126,7 @@ export default function CreateEntry({ fetchedEntryType, fetchedPermGroups }) {
     } else {
       if (`${event.target.name}_rule` in formErrors) {
         let copyErrors = { ...formErrors }
-        const { [`${event.target.name}_rule`]: undefined, ...restOfErrors }: { [key: string]: string } = copyErrors
+        const { [`${event.target.name}_rule`]: undefined, ...restOfErrors }: Record<string, string> = copyErrors
         setFormErrors(restOfErrors)
         setShowError({ [`${event.target.name}_rule`]: false })
       }
@@ -134,7 +134,7 @@ export default function CreateEntry({ fetchedEntryType, fetchedPermGroups }) {
   }
 
   const checkLength = (length: number, event) => {
-    let newRule: any
+    let newRule: object
     if (event.target.value.length > length) {
       newRule = { [`${event.target.name}_length`]: "length-error" }
       setFormErrors({ ...formErrors, ...newRule })
@@ -142,7 +142,7 @@ export default function CreateEntry({ fetchedEntryType, fetchedPermGroups }) {
     } else {
       if (`${event.target.name}_length` in formErrors) {
         let copyErrors = { ...formErrors }
-        const { [`${event.target.name}_length`]: undefined, ...restOfErrors }: { [key: string]: string } = copyErrors
+        const { [`${event.target.name}_length`]: undefined, ...restOfErrors }: Record<string, string> = copyErrors
         setFormErrors(restOfErrors)
         setShowError({ [`${event.target.name}_length`]: false })
       }
@@ -182,10 +182,10 @@ export default function CreateEntry({ fetchedEntryType, fetchedPermGroups }) {
             namespace: fetchedEntryType[0].namespace
           }
         )
-        .then((res) => {
+        .then((res: AxiosResponse) => {
           result = res.data
         })
-        .catch((e) => console.log(e))
+        .catch((e: unknown) => console.log(e))
       if (result.status === "success") {
         resultSwal
           .fire({

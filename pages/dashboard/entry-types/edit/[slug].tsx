@@ -1,5 +1,5 @@
 //Utility
-import axios from "axios"
+import axios, { AxiosResponse } from "axios"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
 import { useRouter } from "next/router"
@@ -118,7 +118,7 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
       } else {
         if (`${event.target.name}` in formErrors) {
           let copyErrors = { ...formErrors }
-          const { [event.target.name]: undefined, ...restOfErrors }: { [key: string]: string } = copyErrors
+          const { [event.target.name]: undefined, ...restOfErrors }: Record<string, string> = copyErrors
           setFormErrors(restOfErrors)
           setShowError({ [event.target.name]: false })
         }
@@ -132,8 +132,7 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
       } else {
         if (`${event.target.name}_${index}` in formErrors) {
           let copyErrors = { ...formErrors }
-          const { [`${event.target.name}_${index}`]: undefined, ...restOfErrors }: { [key: string]: string } =
-            copyErrors
+          const { [`${event.target.name}_${index}`]: undefined, ...restOfErrors }: Record<string, string> = copyErrors
           setFormErrors(restOfErrors)
           setShowError({ [`${event.target.name}_${index}`]: false })
         }
@@ -294,10 +293,10 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
             fields: formatedFields
           }
         )
-        .then((res) => {
+        .then((res: AxiosResponse) => {
           result = res.data
         })
-        .catch((e) => console.log(e))
+        .catch((e: unknown) => console.log(e))
       if (result.status === "success") {
         resultSwal
           .fire({

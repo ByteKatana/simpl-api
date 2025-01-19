@@ -6,18 +6,18 @@ export class apiBuilderController {
   routeType: string
   collectionName: string
   findWhere?: string
-  routeData?: any
+  routeData?: unknown
 
-  constructor(routeType: string, collectionName: string, findWhere?: string, routeData?: any) {
+  constructor(routeType: string, collectionName: string, findWhere?: string, routeData?: unknown) {
     this.routeType = routeType
     this.collectionName = collectionName
-    this.findWhere = findWhere || undefined
-    this.routeData = routeData || undefined
+    this.findWhere = findWhere ?? undefined
+    this.routeData = routeData ?? undefined
   }
 
   async fetchData(findType?: FindType) {
-    let dataCollection: Array<object>
-    let isConnected: boolean = false
+    let dataCollection: object[]
+    let isConnected = false
     let client: MongoClient
 
     try {
@@ -29,7 +29,7 @@ export class apiBuilderController {
 
     //If there is more than one parameter in uri then convert into "param[0].param[1].param[i]" format to match with namespace field in the DB
     if (this.routeType === "multi-param" && Array.isArray(this.routeData)) {
-      let namespace: string = ""
+      let namespace = ""
 
       for (let i = 0; i < this.routeData.length; i++) {
         if (i === 0) namespace += `${this.routeData[i]}`
@@ -39,8 +39,8 @@ export class apiBuilderController {
       if (findType === undefined || findType === "Equals") {
         dataCollection = await client
           .db(`${process.env.DB_NAME}`)
-          .collection(`${this.collectionName}`)
-          .find({ namespace: `${namespace}` })
+          .collection(this.collectionName)
+          .find({ namespace: namespace })
           .toArray()
       } else if (findType === "StartsWith") {
         let regexp = new RegExp(`^${namespace}`)
@@ -58,7 +58,7 @@ export class apiBuilderController {
           .find({ namespace: { $regex: regexp } })
           .toArray()
       } else if (findType === "Contains") {
-        let regexp = new RegExp(`${namespace}`)
+        let regexp = new RegExp(namespace)
         dataCollection = await client
           .db(process.env.DB_NAME)
           .collection(`${this.collectionName}`)
@@ -66,13 +66,13 @@ export class apiBuilderController {
           .toArray()
       }
     } else if (this.routeType === "index") {
-      dataCollection = await client.db(process.env.DB_NAME).collection(`${this.collectionName}`).find().toArray()
+      dataCollection = await client.db(process.env.DB_NAME).collection(this.collectionName).find().toArray()
     } else if (this.routeType === "single-param") {
       if (this.findWhere === "_id") {
         dataCollection = await client
           .db(process.env.DB_NAME)
           .collection(`${this.collectionName}`)
-          .find({ [this.findWhere]: new ObjectId(this.routeData) })
+          .find({ [this.findWhere]: new ObjectId(this.routeData as string) })
           .toArray()
       } else {
         if (findType === undefined || findType === "Equals") {

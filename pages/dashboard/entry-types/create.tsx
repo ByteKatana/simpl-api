@@ -1,5 +1,5 @@
 //Utility
-import axios from "axios"
+import axios, { AxiosResponse } from "axios"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
 import Router from "next/router"
@@ -85,7 +85,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
       } else {
         if (`${event.target.name}` in formErrors) {
           let copyErrors = { ...formErrors }
-          const { [event.target.name]: undefined, ...restOfErrors }: { [key: string]: string } = copyErrors
+          const { [event.target.name]: undefined, ...restOfErrors }: Record<string, string> = copyErrors
           setFormErrors(restOfErrors)
           setShowError({ [event.target.name]: false })
         }
@@ -99,8 +99,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
       } else {
         if (`${event.target.name}_${index}` in formErrors) {
           let copyErrors = { ...formErrors }
-          const { [`${event.target.name}_${index}`]: undefined, ...restOfErrors }: { [key: string]: string } =
-            copyErrors
+          const { [`${event.target.name}_${index}`]: undefined, ...restOfErrors }: Record<string, string> = copyErrors
           setFormErrors(restOfErrors)
           setShowError({ [`${event.target.name}_${index}`]: false })
         }
@@ -214,10 +213,10 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
             fields: formatedFields
           }
         )
-        .then((res) => {
+        .then((res: AxiosResponse) => {
           result = res.data
         })
-        .catch((e) => console.log(e))
+        .catch((e: unknown) => console.log(e))
 
       if (result.status === "success") {
         resultSwal
@@ -233,7 +232,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
           .then((result) => {
             if (result.isConfirmed) {
               //Clear form and set default if user want create another one
-              ;(document.getElementById("new_entry_form") as any).reset()
+              ;(document.getElementById("entry_type_create_form") as HTMLFormElement).reset()
               setEntryType({ name: "", namespace: "itself" })
               setFormFields([{ field_name: "", field_value_type: "", field_form_type: "", field_length: 100 }])
               setIsCreateBtnClicked(false)

@@ -1,5 +1,5 @@
 //Utility
-import axios from "axios"
+import axios, { AxiosResponse } from "axios"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
 import { useRouter } from "next/router"
@@ -119,7 +119,7 @@ export default function EditEntry({ fetchedEntry, fetchedEntryType, fetchedPermG
     } else {
       if (`${event.target.name}_rule` in formErrors) {
         let copyErrors = { ...formErrors }
-        const { [`${event.target.name}_rule`]: undefined, ...restOfErrors }: { [key: string]: string } = copyErrors
+        const { [`${event.target.name}_rule`]: undefined, ...restOfErrors }: Record<string, string> = copyErrors
         setFormErrors(restOfErrors)
         setShowError({ [`${event.target.name}_rule`]: false })
       }
@@ -135,7 +135,7 @@ export default function EditEntry({ fetchedEntry, fetchedEntryType, fetchedPermG
     } else {
       if (`${event.target.name}_length` in formErrors) {
         let copyErrors = { ...formErrors }
-        const { [`${event.target.name}_length`]: undefined, ...restOfErrors }: { [key: string]: string } = copyErrors
+        const { [`${event.target.name}_length`]: undefined, ...restOfErrors }: Record<string, string> = copyErrors
         setFormErrors(restOfErrors)
         setShowError({ [`${event.target.name}_length`]: false })
       }
@@ -177,10 +177,10 @@ export default function EditEntry({ fetchedEntry, fetchedEntryType, fetchedPermG
             namespace: fetchedEntryType[0].namespace
           }
         )
-        .then((res) => {
+        .then((res: AxiosResponse) => {
           result = res.data
         })
-        .catch((e) => console.log(e))
+        .catch((e: unknown) => console.log(e))
       if (result.status === "success") {
         resultSwal
           .fire({

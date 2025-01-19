@@ -14,7 +14,7 @@ export class apiKeyController {
 
   async findKey() {
     let dbCollection: Collection
-    let isConnected: boolean = false
+    let isConnected = false
     let client: MongoClient
 
     try {
@@ -27,7 +27,7 @@ export class apiKeyController {
       let findResult
       try {
         dbCollection = client.db(process.env.DB_NAME).collection("api_keys")
-        findResult = await dbCollection.find({ key: `${this.apiKey.key}` }).toArray()
+        findResult = await dbCollection.find({ key: this.apiKey.key }).toArray()
       } catch (e) {
         console.log(e)
       }
@@ -76,7 +76,7 @@ export class apiKeyController {
       client = await connectDB()
       isConnected = true
     } catch (e) {
-      console.log(e)
+      console.log(e) //TODO: better error logging & displaying
     }
     if (isConnected) {
       let deleteResult
@@ -84,7 +84,7 @@ export class apiKeyController {
         dbCollection = client.db(process.env.DB_NAME).collection("api_keys")
         deleteResult = await dbCollection.deleteOne({ _id: new ObjectId(id) })
       } catch (e) {
-        console.log(e)
+        console.log(e) //TODO: better error logging & displaying
       }
       if (deleteResult.deletedCount === 1) {
         return { status: "success", message: "API Key has been removed." }

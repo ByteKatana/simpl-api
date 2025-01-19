@@ -16,7 +16,7 @@ export class EntryTypeController {
   async create() {
     let client: MongoClient
     let dbCollection: Collection
-    let isConnected: boolean = false
+    let isConnected = false
 
     try {
       client = await connectDB()
@@ -46,7 +46,7 @@ export class EntryTypeController {
   async update(id: string) {
     let client: MongoClient
     let dbCollection: Collection
-    let isConnected: boolean = false
+    let isConnected = false
 
     try {
       client = await connectDB()
@@ -66,9 +66,9 @@ export class EntryTypeController {
       } catch (e) {
         console.log(e)
       }
-      if (updateResult["modifiedCount"] === 1) {
+      if (updateResult.modifiedCount === 1) {
         return { status: "success", message: "Entry Type has been updated." }
-      } else if (updateResult["matchedCount"] === 1 && updateResult["modifiedCount"] === 0) {
+      } else if (updateResult.matchedCount === 1 && updateResult.modifiedCount === 0) {
         return { status: "failed", message: "You didn't make any change." }
       } else {
         return { status: "failed", message: "Failed to update the entry type." }
@@ -81,7 +81,7 @@ export class EntryTypeController {
   async delete(id: string) {
     let client: MongoClient
     let dbCollection: Collection
-    let isConnected: boolean = false
+    let isConnected = false
 
     try {
       client = await connectDB()
