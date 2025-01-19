@@ -5,6 +5,7 @@ import withReactContent from "sweetalert2-react-content"
 import Router from "next/router"
 import { FiLoader } from "react-icons/fi"
 import { useSession } from "next-auth/react"
+import checkLength from "../../../../lib/ui/check-length"
 
 //React
 import { useState, useEffect, useRef } from "react"
@@ -14,6 +15,7 @@ import Menu from "../../../../components/dashboard/menu"
 
 //Interfaces
 import { EntryType } from "../../../../interfaces"
+import EntryField from "../../../../components/dashboard/entry-field"
 
 //===============================================
 
@@ -130,22 +132,6 @@ export default function CreateEntry({ fetchedEntryType, fetchedPermGroups }) {
     }
   }
 
-  const checkLength = (length: number, event) => {
-    let newRule: object
-    if (event.target.value.length > length) {
-      newRule = { [`${event.target.name}_length`]: "length-error" }
-      setFormErrors({ ...formErrors, ...newRule })
-      setShowError({ [`${event.target.name}_length`]: true })
-    } else {
-      if (`${event.target.name}_length` in formErrors) {
-        let copyErrors = { ...formErrors }
-        const { [`${event.target.name}_length`]: undefined, ...restOfErrors }: Record<string, string> = copyErrors
-        setFormErrors(restOfErrors)
-        setShowError({ [`${event.target.name}_length`]: false })
-      }
-    }
-  }
-
   const handleFormValuesChange = (event, valueType?: string, length?: number) => {
     let copyData = { ...formValues }
     copyData[event.target.name] = event.target.value
@@ -156,7 +142,7 @@ export default function CreateEntry({ fetchedEntryType, fetchedPermGroups }) {
     if (event.target.name !== "name") {
       checkFormRules(valueType, event)
 
-      checkLength(length, event)
+      checkLength(formErrors, setFormErrors, setShowError, length, event)
     }
 
     setFormValues(copyData)
@@ -200,7 +186,7 @@ export default function CreateEntry({ fetchedEntryType, fetchedPermGroups }) {
               ;(document.getElementById("new_entry_form") as any).reset()
               let newFields = {}
               let newErrorFields = {}
-              fetchedEntryType[0].fields.forEach((field) => {
+              fetchedEntryType[0].fields.forEach((field: object) => {
                 let fieldName = Object.keys(field).toString()
                 newFields[fieldName] = ""
                 newErrorFields[fieldName] = "empty-field"
@@ -271,95 +257,20 @@ export default function CreateEntry({ fetchedEntryType, fetchedPermGroups }) {
                 </div>
                 <div className="flex flex-col justify-center border-2 border-slate-200 p-10 ">
                   <h3 className="text-3xl mb-3">Fields</h3>
-                  {fetchedEntryType[0].fields.map((field: string | string[], index: number) => {
-                    let fieldName = Object.keys(field).toString()
-                    if (field[fieldName].form_type === "textarea") {
-                      return (
-                        <div key={index} className="w-11/12 mt-3">
-                          <label
-                            htmlFor={`${fieldName}`}
-                            className="form-label inline-block mb-2 text-gray-700 text-xl">
-                            {fieldName.charAt(0).toUpperCase() + fieldName.slice(1)}
-                          </label>
-
-                          <textarea
-                            rows={3}
-                            className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                            id={`${fieldName}`}
-                            name={`${fieldName}`}
-                            ref={(el) => (formRef.current[`${fieldName}`] = el)}
-                            defaultValue={formValues[`${fieldName}`]}
-                            onChange={(e) =>
-                              handleFormValuesChange(e, field[fieldName].value_type, field[fieldName].length)
-                            }
-                            onBlur={(e) => checkFieldEmpty(e)}
-                            required></textarea>
-                          {(showErrors || showError[`${fieldName}`]) &&
-                            formErrors[`${fieldName}`] &&
-                            formErrors[`${fieldName}`] === "empty-field" && (
-                              <span className="text-red-500 font-bold">This field is required.</span>
-                            )}
-                          {(showErrors || showError[`${fieldName}_rule`]) &&
-                            formErrors[`${fieldName}_rule`] &&
-                            formErrors[`${fieldName}_rule`] === `${field[fieldName].value_type}-field` && (
-                              <span className="text-red-500 font-bold">
-                                {` This field must be ${field[fieldName].value_type}. `}
-                              </span>
-                            )}
-                          {(showErrors || showError[`${fieldName}_length`]) &&
-                            formErrors[`${fieldName}_length`] &&
-                            formErrors[`${fieldName}_length`] === "length-error" && (
-                              <span className="text-red-500 font-bold">
-                                {`Maximum length is ${field[fieldName].length}. `}
-                              </span>
-                            )}
-                        </div>
-                      )
-                    } else {
-                      return (
-                        <div key={index} className="w-11/12 mt-3">
-                          <label
-                            htmlFor={`${fieldName}`}
-                            className="form-label inline-block mb-2 text-gray-700 text-xl">
-                            {fieldName.charAt(0).toUpperCase() + fieldName.slice(1)}
-                          </label>
-
-                          <input
-                            type="text"
-                            className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                            id={`${fieldName}`}
-                            name={`${fieldName}`}
-                            ref={(el) => (formRef.current[`${fieldName}`] = el)}
-                            defaultValue={formValues[`${fieldName}`]}
-                            onChange={(e) =>
-                              handleFormValuesChange(e, field[fieldName].value_type, field[fieldName].length)
-                            }
-                            onBlur={(e) => checkFieldEmpty(e)}
-                            required
-                          />
-                          {(showErrors || showError[`${fieldName}`]) &&
-                            formErrors[`${fieldName}`] &&
-                            formErrors[`${fieldName}`] === "empty-field" && (
-                              <span className="text-red-500 font-bold">This field is required.</span>
-                            )}
-                          {(showErrors || showError[`${fieldName}_rule`]) &&
-                            formErrors[`${fieldName}_rule`] &&
-                            formErrors[`${fieldName}_rule`] === `${field[fieldName].value_type}-field` && (
-                              <span className="text-red-500 font-bold">
-                                {` This field must be ${field[fieldName].value_type}. `}
-                              </span>
-                            )}
-                          {(showErrors || showError[`${fieldName}_length`]) &&
-                            formErrors[`${fieldName}_length`] &&
-                            formErrors[`${fieldName}_length`] === "length-error" && (
-                              <span className="text-red-500 font-bold">
-                                {`Maximum length is ${field[fieldName].length}. `}
-                              </span>
-                            )}
-                        </div>
-                      )
-                    }
-                  })}
+                  {fetchedEntryType[0].fields.map((field, index: number) => (
+                    <EntryField
+                      key={index}
+                      field={field}
+                      formRef={formRef}
+                      formValues={formValues}
+                      formErrors={formErrors}
+                      handleFormValuesChange={handleFormValuesChange}
+                      setFormErrors={setFormErrors}
+                      setShowError={setShowError}
+                      showError={showError}
+                      showErrors={showErrors}
+                    />
+                  ))}
                 </div>
                 <div id="user_submit" className="flex flex-row flex-nowrap justify-center  mt-5 p-10 ">
                   <div className=" w-11/12">

@@ -10,7 +10,7 @@ export type FindType = keyof typeof FindLike
 export interface EntryType {
   name: string
   namespace: string
-  fields: any[]
+  fields: object[]
 }
 
 export interface Entry {
