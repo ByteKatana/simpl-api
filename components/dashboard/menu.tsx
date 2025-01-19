@@ -1,11 +1,11 @@
 //Auth
-import { signIn, signOut, useSession } from "next-auth/react"
+import { SessionContextValue, signIn, signOut, useSession } from "next-auth/react"
 
 //Utility
 import { FiHome, FiBox, FiFileText, FiUsers, FiUser, FiSettings, FiLogIn, FiLogOut } from "react-icons/fi"
 
 export default function Menu() {
-  const { data: session } = useSession()
+  const { data: session }: SessionContextValue = useSession()
 
   const checkPermGroup = (permGroup: string) => {
     if (session) {

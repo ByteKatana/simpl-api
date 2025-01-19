@@ -1,5 +1,5 @@
 import { connectDB } from "../lib/mongodb"
-import { ObjectId, MongoClient, Collection } from "mongodb"
+import { ObjectId, MongoClient, Collection, InsertOneResult, DeleteResult, Filter } from "mongodb"
 
 //Interface
 import { ApiKey } from "../interfaces"
@@ -24,9 +24,9 @@ export class apiKeyController {
       console.error(e)
     }
     if (isConnected) {
-      let findResult
+      let findResult: Filter<object>
       try {
-        dbCollection = client.db(process.env.DB_NAME).collection("api_keys")
+        dbCollection = client.db(process.env.DB_NAME).collection("api_keys") as Collection
         findResult = await dbCollection.find({ key: this.apiKey.key }).toArray()
       } catch (e) {
         console.log(e)
@@ -49,7 +49,7 @@ export class apiKeyController {
       console.error(e)
     }
     if (isConnected) {
-      let insertResult
+      let insertResult: InsertOneResult
       try {
         dbCollection = client.db(process.env.DB_NAME).collection("api_keys")
         insertResult = await dbCollection.insertOne(this.apiKey)
@@ -79,7 +79,7 @@ export class apiKeyController {
       console.log(e) //TODO: better error logging & displaying
     }
     if (isConnected) {
-      let deleteResult
+      let deleteResult: DeleteResult
       try {
         dbCollection = client.db(process.env.DB_NAME).collection("api_keys")
         deleteResult = await dbCollection.deleteOne({ _id: new ObjectId(id) })

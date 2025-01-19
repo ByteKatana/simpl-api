@@ -67,7 +67,7 @@ export default function PermissionGroups({ fetchedPermissionGroups }) {
     setSearchKeyword(event.target.value)
   }
 
-  const deletePermGroup = async (id) => {
+  const deletePermGroup = async (id: string) => {
     let result
     await axios
       .delete(
@@ -78,8 +78,8 @@ export default function PermissionGroups({ fetchedPermissionGroups }) {
       })
       .catch((e: unknown) => console.log(e))
 
-    if (result.status === "success") Swal.fire("Deleted!", "", "success")
-    else if (result.status === "failed") Swal.fire("Failed to delete!", "", "error")
+    if (result.status === "success") await Swal.fire("Deleted!", "", "success")
+    else if (result.status === "failed") await Swal.fire("Failed to delete!", "", "error")
     else console.log("Something went wrong! Unexpected result status!")
   }
 
@@ -136,10 +136,11 @@ export default function PermissionGroups({ fetchedPermissionGroups }) {
                 <tbody>
                   {fetchedPermissionGroups
                     .filter(
-                      (permGroup) => permGroup.name.includes(searchKeyword) || permGroup.slug.includes(searchKeyword)
+                      (permGroup: PermissionGroup) =>
+                        permGroup.name.includes(searchKeyword) || permGroup.slug.includes(searchKeyword)
                     )
                     .slice(paginationState.min, paginationState.max)
-                    .map((permGroup, index) => {
+                    .map((permGroup: PermissionGroup, index: number) => {
                       return (
                         <tr
                           key={index}

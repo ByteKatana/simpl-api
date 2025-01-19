@@ -1,6 +1,6 @@
 //Database
 import { connectDB } from "../lib/mongodb"
-import { ObjectId, MongoClient, Collection } from "mongodb"
+import { ObjectId, MongoClient, Collection, UpdateResult } from "mongodb"
 
 //Interface
 import { EntryType } from "../interfaces"
@@ -55,7 +55,7 @@ export class EntryTypeController {
       console.log(e)
     }
     if (isConnected) {
-      let updateResult
+      let updateResult: UpdateResult
       try {
         dbCollection = client.db(process.env.DB_NAME).collection("entry_types")
         updateResult = await dbCollection.updateOne(

@@ -1,5 +1,5 @@
 import { connectDB } from "../lib/mongodb"
-import { ObjectId, MongoClient, Collection } from "mongodb"
+import { ObjectId, MongoClient, Collection, UpdateResult, DeleteResult, InsertOneResult } from "mongodb"
 import bcrypt from "bcryptjs"
 
 //Interface
@@ -25,7 +25,7 @@ export class UserController {
     }
 
     if (isConnected) {
-      let insertResult
+      let insertResult: InsertOneResult
       try {
         const plainPw = this.user.password
         let hashPw = bcrypt.hashSync(plainPw, 8)
@@ -57,7 +57,7 @@ export class UserController {
     }
 
     if (isConnected) {
-      let updateResult
+      let updateResult: UpdateResult
       try {
         let lastPw = this.user.password
         if (this.user.pwchanged) {
@@ -103,7 +103,7 @@ export class UserController {
       console.log(e)
     }
     if (isConnected) {
-      let deleteResult
+      let deleteResult: DeleteResult
       try {
         dbCollection = client.db(process.env.DB_NAME).collection("users")
         deleteResult = await dbCollection.deleteOne({ _id: new ObjectId(id) })

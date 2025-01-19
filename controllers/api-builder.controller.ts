@@ -47,21 +47,21 @@ export class apiBuilderController {
 
         dataCollection = await client
           .db(process.env.DB_NAME)
-          .collection(`${this.collectionName}`)
+          .collection(this.collectionName)
           .find({ namespace: { $regex: regexp } })
           .toArray()
       } else if (findType === "EndsWith") {
         let regexp = new RegExp(`${namespace}$`)
         dataCollection = await client
           .db(process.env.DB_NAME)
-          .collection(`${this.collectionName}`)
+          .collection(this.collectionName)
           .find({ namespace: { $regex: regexp } })
           .toArray()
       } else if (findType === "Contains") {
         let regexp = new RegExp(namespace)
         dataCollection = await client
           .db(process.env.DB_NAME)
-          .collection(`${this.collectionName}`)
+          .collection(this.collectionName)
           .find({ namespace: { $regex: regexp } })
           .toArray()
       }
@@ -71,49 +71,49 @@ export class apiBuilderController {
       if (this.findWhere === "_id") {
         dataCollection = await client
           .db(process.env.DB_NAME)
-          .collection(`${this.collectionName}`)
+          .collection(this.collectionName)
           .find({ [this.findWhere]: new ObjectId(this.routeData as string) })
           .toArray()
       } else {
         if (findType === undefined || findType === "Equals") {
           dataCollection = await client
             .db(process.env.DB_NAME)
-            .collection(`${this.collectionName}`)
+            .collection(this.collectionName)
             .find({ [this.findWhere]: `${this.routeData}` })
             .toArray()
         } else if (findType === "StartsWith") {
           let regexp = new RegExp(`^${this.routeData}`)
           dataCollection = await client
             .db(process.env.DB_NAME)
-            .collection(`${this.collectionName}`)
+            .collection(this.collectionName)
             .find({ [this.findWhere]: { $regex: regexp } })
             .toArray()
         } else if (findType === "EndsWith") {
           let regexp = new RegExp(`${this.routeData}$`)
           dataCollection = await client
             .db(process.env.DB_NAME)
-            .collection(`${this.collectionName}`)
+            .collection(this.collectionName)
             .find({ [this.findWhere]: { $regex: regexp } })
             .toArray()
         } else if (findType === "Contains") {
           let regexp = new RegExp(`${this.routeData}`)
           dataCollection = await client
             .db(process.env.DB_NAME)
-            .collection(`${this.collectionName}`)
+            .collection(this.collectionName)
             .find({ [this.findWhere]: { $regex: regexp } })
             .toArray()
         }
 
         /* dataCollection = await client
           .db("api_db")
-          .collection(`${this.collectionName}`)
+          .collection(this.collectionName)
           .find({ [this.findWhere]: `${this.routeData}` })
           .toArray()*/
       }
     } else if (this.routeType === "id") {
       dataCollection = await client
         .db("api_db")
-        .collection(`${this.collectionName}`)
+        .collection(this.collectionName)
         .find({ _id: `${this.routeData}` })
         .toArray()
     } else {

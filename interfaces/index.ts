@@ -28,6 +28,7 @@ export interface User {
 }
 
 export interface PermissionGroup {
+  _id: string
   name: string
   slug: string
   privileges: any[]

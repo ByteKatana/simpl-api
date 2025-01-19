@@ -55,7 +55,7 @@ export default function CreateEntry({ fetchedEntryType, fetchedPermGroups }) {
   useEffect(() => {
     let newFields = {}
     let newErrorFields = {}
-    fetchedEntryType[0].fields.forEach((field) => {
+    fetchedEntryType[0].fields.forEach((field: string) => {
       let fieldName = Object.keys(field).toString()
       newFields[fieldName] = ""
       newErrorFields[fieldName] = "empty-field"
@@ -69,15 +69,13 @@ export default function CreateEntry({ fetchedEntryType, fetchedPermGroups }) {
     }
   }, [fetchedEntryType])
 
-  const checkPermission = (permission, namespace) => {
+  const checkPermission = (permission: string, namespace: string): Boolean => {
     if (session) {
       let permGroup = fetchedPermGroups.find((group) => group.slug === session.user.permission_group)
-      if (permGroup.privileges.find((privilege) => Object.keys(privilege).includes(`${namespace}`))) {
-        let result = permGroup.privileges
-          .find((privilege) => Object.keys(privilege).includes(`${namespace}`))
+      if (permGroup.privileges.find((privilege: object[]) => Object.keys(privilege).includes(`${namespace}`))) {
+        return permGroup.privileges
+          .find((privilege: object[]) => Object.keys(privilege).includes(`${namespace}`))
           [`${namespace}`].permissions.includes(`${permission}`)
-
-        return result
       }
       return false
     }
@@ -98,11 +96,10 @@ export default function CreateEntry({ fetchedEntryType, fetchedPermGroups }) {
     }
   }
 
-  const isDouble = (n) => Number(n) === n && n % 1 !== 0
+  const isDouble = (n: number) => Number(n) === n && n % 1 !== 0
 
-  const isBoolean = (value) => {
-    if (value === "true" || value === "false") return true
-    return false
+  const isBoolean = (value: string): boolean => {
+    return value === "true" || value === "false"
   }
 
   const checkFormRules = (valueType: string, event) => {
@@ -203,7 +200,7 @@ export default function CreateEntry({ fetchedEntryType, fetchedPermGroups }) {
               ;(document.getElementById("new_entry_form") as any).reset()
               let newFields = {}
               let newErrorFields = {}
-              fetchedEntryType[0].fields.forEach((field, index) => {
+              fetchedEntryType[0].fields.forEach((field) => {
                 let fieldName = Object.keys(field).toString()
                 newFields[fieldName] = ""
                 newErrorFields[fieldName] = "empty-field"
@@ -249,7 +246,7 @@ export default function CreateEntry({ fetchedEntryType, fetchedPermGroups }) {
           <div className="col-start-1 col-end-6 w-10/12 mt-10 ">
             {checkPermission("create", fetchedEntryType[0].namespace) ? (
               <form action="#" id="new_entry_form">
-                <div className="flex flex-col block justify-center border-2 border-slate-200 p-10 mb-5 ">
+                <div className="flex flex-col justify-center border-2 border-slate-200 p-10 mb-5 ">
                   <div className="w-11/12">
                     <label htmlFor={`name`} className="form-label inline-block mb-2 text-gray-700 text-xl">
                       Entry Name
@@ -272,9 +269,9 @@ export default function CreateEntry({ fetchedEntryType, fetchedPermGroups }) {
                       )}
                   </div>
                 </div>
-                <div className="flex flex-col block justify-center border-2 border-slate-200 p-10 ">
+                <div className="flex flex-col justify-center border-2 border-slate-200 p-10 ">
                   <h3 className="text-3xl mb-3">Fields</h3>
-                  {fetchedEntryType[0].fields.map((field, index) => {
+                  {fetchedEntryType[0].fields.map((field: string | string[], index: number) => {
                     let fieldName = Object.keys(field).toString()
                     if (field[fieldName].form_type === "textarea") {
                       return (
