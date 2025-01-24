@@ -1,28 +1,28 @@
-import React, { Dispatch, SetStateAction } from "react"
-import { MutableRef } from "preact/hooks"
+import React, { Dispatch, MutableRefObject, SetStateAction } from "react"
 import CheckFieldEmpty from "../../lib/ui/check-field-empty"
+import handleValueChange from "../../lib/ui/handle-value-change"
 function EntryField({
   key,
   field,
   formRef,
   formValues,
-  handleFormValuesChange,
   formErrors,
   showErrors,
   showError,
   setFormErrors,
-  setShowError
+  setShowError,
+  setFormValues
 }: {
   field: object
   key: number
-  formRef: MutableRef<any[]>
+  formRef: MutableRefObject<any[]>
   formValues: object[] | { name: string; slug: string; namespace: string }
-  handleFormValuesChange: (event, valueType?: string, length?: number) => void
   formErrors: object
   showError: object
   showErrors: boolean
   setShowError: Dispatch<SetStateAction<object>>
   setFormErrors: Dispatch<SetStateAction<object>>
+  setFormValues: Dispatch<SetStateAction<object>>
 }) {
   let fieldName = Object.keys(field).toString()
   if (field[fieldName].form_type === "textarea") {
@@ -39,8 +39,21 @@ function EntryField({
           name={`${fieldName}`}
           ref={(el) => (formRef.current[`${fieldName}`] = el)}
           defaultValue={formValues[`${fieldName}`]}
-          onChange={(e) => handleFormValuesChange(e, field[fieldName].value_type, field[fieldName].length)}
-          onBlur={(e) => CheckFieldEmpty(e, formErrors, showError, setFormErrors, setShowError)}
+          onChange={(e) =>
+            handleValueChange(
+              formValues,
+              formErrors,
+              showError,
+              showErrors,
+              setFormErrors,
+              setShowError,
+              setFormValues,
+              e,
+              field[fieldName].value_type,
+              field[fieldName].length
+            )
+          }
+          onBlur={(e) => CheckFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)}
           required></textarea>
         {(showErrors || showError[`${fieldName}`]) &&
           formErrors[`${fieldName}`] &&
@@ -73,8 +86,21 @@ function EntryField({
           name={`${fieldName}`}
           ref={(el) => (formRef.current[`${fieldName}`] = el)}
           defaultValue={formValues[`${fieldName}`]}
-          onChange={(e) => handleFormValuesChange(e, field[fieldName].value_type, field[fieldName].length)}
-          onBlur={(e) => CheckFieldEmpty(e, formErrors, showError, setFormErrors, setShowError)}
+          onChange={(e) =>
+            handleValueChange(
+              formValues,
+              formErrors,
+              showError,
+              showErrors,
+              setFormErrors,
+              setShowError,
+              setFormValues,
+              e,
+              field[fieldName].value_type,
+              field[fieldName].length
+            )
+          }
+          onBlur={(e) => CheckFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)}
           required
         />
         {(showErrors || showError[`${fieldName}`]) &&

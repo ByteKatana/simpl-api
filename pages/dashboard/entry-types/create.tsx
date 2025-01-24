@@ -5,6 +5,10 @@ import withReactContent from "sweetalert2-react-content"
 import Router from "next/router"
 import { FiLoader } from "react-icons/fi"
 import { useSession } from "next-auth/react"
+import handleValueChange from "../../../lib/ui/handle-value-change"
+import checkFieldEmpty from "../../../lib/ui/check-field-empty"
+import checkPermGroup from "../../../lib/ui/check-perm-group"
+import addField from "../../../lib/ui/add-field"
 
 //React
 import { useState, useEffect, useRef } from "react"
@@ -17,6 +21,8 @@ import Menu from "../../../components/dashboard/menu"
 
 //Interfaces
 import { EntryType } from "../../../interfaces"
+import removeField from "../../../lib/ui/remove-field"
+import useSaveData from "../../../hooks/use-save-data"
 
 //===============================================
 
@@ -38,6 +44,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
   const [showErrors, setShowErrors] = useState(false)
   const [showError, setShowError] = useState({})
   const [isCreateBtnClicked, setIsCreateBtnClicked] = useState(false)
+  const saveData = useSaveData("ENTRY_TYPE", "CREATE")
 
   //sweetalert
   const resultSwal = withReactContent(Swal)
@@ -69,100 +76,6 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
     }
   }, [])
 
-  const checkPermGroup = (permGroup: string) => {
-    if (session) {
-      if (session.user.permission_group === permGroup) return true
-    }
-    return false
-  }
-
-  const checkFieldEmpty = (index: number, event) => {
-    if (event.target.name === "name" || event.target.name === "namespace") {
-      if (event.target.value === "") {
-        let newError = { [event.target.name]: "empty-field" }
-        setFormErrors({ ...formErrors, ...newError })
-        setShowError({ [event.target.name]: true })
-      } else {
-        if (`${event.target.name}` in formErrors) {
-          let copyErrors = { ...formErrors }
-          const { [event.target.name]: _, ...restOfErrors }: Record<string, string> = copyErrors
-          setFormErrors(restOfErrors)
-          setShowError({ [event.target.name]: false })
-        }
-      }
-    } else {
-      if (event.target.value === "") {
-        console.log("EMPTY FIELD")
-        let newError = { [`${event.target.name}_${index}`]: "empty-field" }
-        setFormErrors({ ...formErrors, ...newError })
-        setShowError({ [`${event.target.name}_${index}`]: true })
-      } else {
-        if (`${event.target.name}_${index}` in formErrors) {
-          let copyErrors = { ...formErrors }
-          const { [`${event.target.name}_${index}`]: undefined, ...restOfErrors }: Record<string, string> = copyErrors
-          setFormErrors(restOfErrors)
-          setShowError({ [`${event.target.name}_${index}`]: false })
-        }
-      }
-    }
-  }
-
-  const handleEntryTypeChange = (event) => {
-    let entryTypeData = { ...entryType }
-    entryTypeData[event.target.name] = event.target.value
-
-    //Empty field validation
-    checkFieldEmpty(0, event)
-
-    setEntryType(entryTypeData)
-  }
-  const handleFieldChange = (index, event) => {
-    let fieldData = [...formFields]
-    fieldData[index][event.target.name] = event.target.value
-
-    //Empty Field Validation
-    checkFieldEmpty(index, event)
-
-    setFormFields(fieldData)
-  }
-
-  const addField = () => {
-    let newField = { field_name: "", field_value_type: "", field_form_type: "" }
-
-    //Prepare empty field validation data
-    let newErrors = {
-      [`field_name_${formFields.length}`]: "empty-field",
-      [`field_length_${formFields.length}`]: "empty-field",
-      [`field_value_type_${formFields.length}`]: "empty-field",
-      [`field_form_type_${formFields.length}`]: "empty-field"
-    }
-
-    //Update validation state
-    setFormErrors({ ...formErrors, ...newErrors })
-
-    setFormFields([...formFields, newField])
-  }
-
-  const removeField = (index) => {
-    let fieldData = [...formFields]
-
-    //Copy of formErrors state
-    let copyErrors = { ...formErrors }
-
-    //remove validation data if field has been removed
-    for (let key of Object.keys(formErrors)) {
-      if (key.endsWith(index)) {
-        delete copyErrors[key]
-      }
-    }
-
-    //Update formError after removing validation data
-    setFormErrors(copyErrors)
-
-    fieldData.splice(index, 1)
-    setFormFields(fieldData)
-  }
-
   const submitData = async () => {
     if (Object.keys(formErrors).length > 0) {
       //If there is/are form error(s)
@@ -172,52 +85,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
       formRef.current[formFieldsWithErrors[0]].focus()
     } else {
       //If there is no form error
-      let formatedEntryType: object
-      if (entryType["namespace"] === "itself" || entryType["namespace"] === entryType["name"].toLowerCase()) {
-        formatedEntryType = { name: entryType["name"], namespace: entryType["name"].toLowerCase() }
-      } else {
-        formatedEntryType = {
-          name: entryType["name"],
-          namespace: `${entryType["namespace"].toLowerCase()}.${entryType["name"].toLowerCase()}`
-        }
-      }
-
-      let formatedFields = formFields.map((field) => {
-        if ("field_accepted_types" in field) {
-          return {
-            [field.field_name]: {
-              value_type: field.field_value_type,
-              form_type: field.field_form_type,
-              length: field.field_length,
-              accepted_formats: field.field_accepted_types
-            }
-          }
-        } else {
-          return {
-            [field.field_name]: {
-              value_type: field.field_value_type,
-              form_type: field.field_form_type,
-              length: field.field_length
-            }
-          }
-        }
-      })
-
-      let result
-      await axios
-        .post(
-          `${process.env.baseUrl}/api/v1/entry-type/create?apikey=${process.env.apiKey}&secretkey=${process.env.secretKey}`,
-          {
-            ...formatedEntryType,
-            slug: formatedEntryType["name"].split(" ").join("-").toLowerCase(),
-            fields: formatedFields
-          }
-        )
-        .then((res: AxiosResponse) => {
-          result = res.data
-        })
-        .catch((e: unknown) => console.log(e))
-
+      let result = await saveData({ entryType, formFields })
       if (result.status === "success") {
         resultSwal
           .fire({
@@ -272,11 +140,9 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
           </div>
           <div className="col-start-4 col-end-6 "></div>
           <div className="col-start-1 col-end-6 w-10/12 mt-10 ">
-            {checkPermGroup("admin") ? (
+            {checkPermGroup(session, "admin") ? (
               <form id="entry_type_create_form" action="#">
-                <div
-                  id="entry_type_name"
-                  className="flex flex-col block justify-center border-2 border-slate-200 p-10 ">
+                <div id="entry_type_name" className="flex flex-col justify-center border-2 border-slate-200 p-10 ">
                   <div className="w-11/12">
                     <label htmlFor="name" className="form-label inline-block mb-2 text-gray-700 text-xl">
                       Entry Type Name
@@ -289,8 +155,20 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                       ref={(el) => (formRef.current[`name`] = el)}
                       placeholder="Eg: Articles"
                       defaultValue={entryType["name"]}
-                      onChange={(e) => handleEntryTypeChange(e)}
-                      onBlur={(e) => checkFieldEmpty(0, e)}
+                      onChange={(e) =>
+                        handleValueChange(
+                          entryType,
+                          formErrors,
+                          showError,
+                          showErrors,
+                          setFormErrors,
+                          setShowError,
+                          setEntryType,
+                          e,
+                          "ENTRY_TYPE"
+                        )
+                      }
+                      onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, 0)}
                       required
                     />
                     {(showErrors || showError[`name`]) &&
@@ -308,8 +186,20 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                       name="namespace"
                       ref={(el) => (formRef.current[`namespace`] = el)}
                       defaultValue={entryType["namespace"]}
-                      onChange={(e) => handleEntryTypeChange(e)}
-                      onBlur={(e) => checkFieldEmpty(0, e)}
+                      onChange={(e) =>
+                        handleValueChange(
+                          entryType,
+                          formErrors,
+                          showError,
+                          showErrors,
+                          setFormErrors,
+                          setShowError,
+                          setEntryType,
+                          e,
+                          "ENTRY_TYPE"
+                        )
+                      }
+                      onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, 0)}
                       className="form-select form-select-lg mb-3 block w-full  px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300  rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none">
                       <option value="itself"> Itself </option>
                       {fetchedEntryTypes.map((entry_type) => {
@@ -336,7 +226,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                       key={`div_field_${index}`}
                       id="entry_type_new_field"
                       className=" flex flex-row justify-between  border-2 border-slate-200 p-10 mt-5 ">
-                      <div key={`field_block_${index}`} className="flex flex-col justify-center block w-11/12">
+                      <div key={`field_block_${index}`} className="flex flex-col justify-center w-11/12">
                         <div>
                           <label
                             key={`label_field_name_${index}`}
@@ -353,8 +243,23 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                             id="field_name"
                             placeholder="Eg: Title"
                             defaultValue={field.field_name}
-                            onChange={(e) => handleFieldChange(index, e)}
-                            onBlur={(e) => checkFieldEmpty(index, e)}
+                            onChange={(e) =>
+                              handleValueChange(
+                                formFields,
+                                formErrors,
+                                showError,
+                                showErrors,
+                                setFormErrors,
+                                setShowError,
+                                setFormFields,
+                                e,
+                                "FIELD",
+                                index
+                              )
+                            }
+                            onBlur={(e) =>
+                              checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, index)
+                            }
                           />
                           {(showErrors || showError[`field_name_${index}`]) &&
                             formErrors[`field_name_${index}`] &&
@@ -377,8 +282,23 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                             className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none"
                             placeholder="Eg: 100"
                             defaultValue={field.field_length}
-                            onChange={(e) => handleFieldChange(index, e)}
-                            onBlur={(e) => checkFieldEmpty(index, e)}
+                            onChange={(e) =>
+                              handleValueChange(
+                                formFields,
+                                formErrors,
+                                showError,
+                                showErrors,
+                                setFormErrors,
+                                setShowError,
+                                setFormFields,
+                                e,
+                                "FIELD",
+                                index
+                              )
+                            }
+                            onBlur={(e) =>
+                              checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, index)
+                            }
                             min="1"
                             required
                           />
@@ -400,8 +320,23 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                             id="field_value_type"
                             name="field_value_type"
                             ref={(el) => (formRef.current[`field_value_type_${index}`] = el)}
-                            onChange={(e) => handleFieldChange(index, e)}
-                            onBlur={(e) => checkFieldEmpty(index, e)}
+                            onChange={(e) =>
+                              handleValueChange(
+                                formFields,
+                                formErrors,
+                                showError,
+                                showErrors,
+                                setFormErrors,
+                                setShowError,
+                                setFormFields,
+                                e,
+                                "FIELD",
+                                index
+                              )
+                            }
+                            onBlur={(e) =>
+                              checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, index)
+                            }
                             defaultValue={field.field_value_type}
                             className="form-select form-select-lg mb-3 block w-full  px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300  rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none"
                             required>
@@ -430,8 +365,23 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                             name="field_form_type"
                             ref={(el) => (formRef.current[`field_form_type_${index}`] = el)}
                             defaultValue={field.field_form_type}
-                            onChange={(e) => handleFieldChange(index, e)}
-                            onBlur={(e) => checkFieldEmpty(index, e)}
+                            onChange={(e) =>
+                              handleValueChange(
+                                formFields,
+                                formErrors,
+                                showError,
+                                showErrors,
+                                setFormErrors,
+                                setShowError,
+                                setFormFields,
+                                e,
+                                "FIELD",
+                                index
+                              )
+                            }
+                            onBlur={(e) =>
+                              checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, index)
+                            }
                             className="form-select form-select-lg mb-3 block w-full  px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300  rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none"
                             required>
                             <option value="">Please select one</option>
@@ -450,7 +400,9 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                         <a
                           href="#"
                           className="text-2xl text-slate-400 transition hover:text-slate-900"
-                          onClick={() => removeField(index)}>
+                          onClick={() =>
+                            removeField(formFields, formErrors, setFormFields, setFormErrors, index, "CREATE")
+                          }>
                           <FiX />
                         </a>
                       </div>
@@ -464,7 +416,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                     <a
                       href="#"
                       className="flex flex-row justify-center text-slate-300 transition hover:text-slate-900"
-                      onClick={addField}>
+                      onClick={() => addField(formFields, formErrors, setFormFields, setFormErrors, "CREATE")}>
                       <span className="text-4xl">
                         <FiPlusSquare />
                       </span>

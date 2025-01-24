@@ -5,6 +5,8 @@ import withReactContent from "sweetalert2-react-content"
 import Router from "next/router"
 import { FiLoader } from "react-icons/fi"
 import { useSession } from "next-auth/react"
+import checkPermGroup from "../../../lib/ui/check-perm-group"
+import checkFieldEmpty from "../../../lib/ui/check-field-empty"
 
 //React
 import { useState, useEffect, useRef } from "react"
@@ -69,34 +71,12 @@ export default function CreateUser({ fetchedPermissionGroups }) {
     }
   }, [])
 
-  const checkPermGroup = (permGroup: string) => {
-    if (session) {
-      if (session.user.permission_group === permGroup) return true
-    }
-    return false
-  }
-
-  const checkFieldEmpty = (event) => {
-    if (event.target.value === "") {
-      let newError = { [event.target.name]: "empty-field" }
-      setFormErrors({ ...formErrors, ...newError })
-      setShowError({ [event.target.name]: true })
-    } else {
-      if (`${event.target.name}` in formErrors) {
-        let copyErrors = { ...formErrors }
-        const { [event.target.name]: _, ...restOfErrors }: Record<string, string> = copyErrors
-        setFormErrors(restOfErrors)
-        setShowError({ [event.target.name]: false })
-      }
-    }
-  }
-
   const handleFormValuesChange = (event) => {
     let copyData = { ...formValues }
     copyData[event.target.name] = event.target.value
 
     //Empty field validation
-    checkFieldEmpty(event)
+    checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, event)
 
     setFormValues(copyData)
   }
@@ -200,7 +180,7 @@ export default function CreateUser({ fetchedPermissionGroups }) {
           </div>
           <div className="col-start-4 col-end-6 "></div>
           <div className="col-start-1 col-end-6 w-10/12 mt-10 ">
-            {checkPermGroup("admin") ? (
+            {checkPermGroup(session, "admin") ? (
               <form action="#" id="user_create_form">
                 <div className="flex flex-col block justify-center border-2 border-slate-200 p-10 ">
                   <div className="w-11/12">
@@ -215,7 +195,7 @@ export default function CreateUser({ fetchedPermissionGroups }) {
                       ref={(el) => (formRef.current[`username`] = el)}
                       defaultValue={formValues["username"]}
                       onChange={(e) => handleFormValuesChange(e)}
-                      onBlur={(e) => checkFieldEmpty(e)}
+                      onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)}
                       required
                     />
                     {(showErrors || showError[`username`]) &&
@@ -236,7 +216,7 @@ export default function CreateUser({ fetchedPermissionGroups }) {
                       ref={(el) => (formRef.current[`email`] = el)}
                       defaultValue={formValues["email"]}
                       onChange={(e) => handleFormValuesChange(e)}
-                      onBlur={(e) => checkFieldEmpty(e)}
+                      onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)}
                       required
                     />
                     {(showErrors || showError[`email`]) &&
@@ -257,7 +237,7 @@ export default function CreateUser({ fetchedPermissionGroups }) {
                       ref={(el) => (formRef.current[`password`] = el)}
                       defaultValue={formValues["password"]}
                       onChange={(e) => handleFormValuesChange(e)}
-                      onBlur={(e) => checkFieldEmpty(e)}
+                      onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)}
                       required
                     />
                     {(showErrors || showError[`password`]) &&
@@ -276,7 +256,7 @@ export default function CreateUser({ fetchedPermissionGroups }) {
                       ref={(el) => (formRef.current[`permission_group`] = el)}
                       defaultValue={formValues["permission_group"]}
                       onChange={(e) => handleFormValuesChange(e)}
-                      onBlur={(e) => checkFieldEmpty(e)}
+                      onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)}
                       className="form-select form-select-lg mb-3 block w-full  px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300  rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none">
                       <option value="">Please choose a group</option>
                       {fetchedPermissionGroups.map((permissionGroup) => {

@@ -5,7 +5,32 @@ enum FindLike {
   Equals
 }
 
+enum ContentTypes {
+  ENTRY_TYPE,
+  ENTRY,
+  FIELD,
+  USER,
+  PERM_GROUP
+}
+
+enum DataTypes {
+  ENTRY,
+  ENTRY_TYPE,
+  USER,
+  PERM_GROUP
+}
+
+enum ActionTypes {
+  CREATE,
+  UPDATE
+}
+
+export type DataType = keyof typeof DataTypes
+export type ActionType = keyof typeof ActionTypes
+
 export type FindType = keyof typeof FindLike
+
+export type ContentType = keyof typeof ContentTypes
 
 export interface EntryType {
   name: string
@@ -36,4 +61,8 @@ export interface PermissionGroup {
 
 export interface ApiKey {
   key: string
+}
+
+export interface DOMEvent<T extends EventTarget> extends Event {
+  readonly target: T
 }

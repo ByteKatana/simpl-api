@@ -11,6 +11,10 @@ import { useState, useEffect, useRef } from "react"
 
 //Components
 import Menu from "../../../components/dashboard/menu"
+import checkFieldEmpty from "../../../lib/ui/check-field-empty"
+import checkPermGroup from "../../../lib/ui/check-perm-group"
+import handleValueChange from "../../../lib/ui/handle-value-change"
+import useSaveData from "../../../hooks/use-save-data"
 
 //===============================================
 
@@ -22,7 +26,7 @@ export default function CreatePermissionGroup() {
   const [showErrors, setShowErrors] = useState(false)
   const [showError, setShowError] = useState({})
   const [isCreateBtnClicked, setIsCreateBtnClicked] = useState(false)
-
+  const saveData = useSaveData("PERM_GROUP", "CREATE")
   //sweetalert
   const resultSwal = withReactContent(Swal)
 
@@ -48,38 +52,6 @@ export default function CreatePermissionGroup() {
     }
   }, [])
 
-  const checkPermGroup = (permGroup: string) => {
-    if (session) {
-      if (session.user.permission_group === permGroup) return true
-    }
-    return false
-  }
-
-  const checkFieldEmpty = (event) => {
-    if (event.target.value === "") {
-      let newError = { [event.target.name]: "empty-field" }
-      setFormErrors({ ...formErrors, ...newError })
-      setShowError({ [event.target.name]: true })
-    } else {
-      if (`${event.target.name}` in formErrors) {
-        let copyErrors = { ...formErrors }
-        const { [event.target.name]: _, ...restOfErrors }: Record<string, string> = copyErrors
-        setFormErrors(restOfErrors)
-        setShowError({ [event.target.name]: false })
-      }
-    }
-  }
-
-  const handleFormValuesChange = (event) => {
-    let copyData = { ...formValues }
-    copyData[event.target.name] = event.target.value
-
-    //Empty field validation
-    checkFieldEmpty(event)
-
-    setFormValues(copyData)
-  }
-
   const submitData = async () => {
     if (Object.keys(formErrors).length > 0) {
       let formValuesWithErrors = Object.keys(formErrors)
@@ -87,20 +59,7 @@ export default function CreatePermissionGroup() {
       setIsCreateBtnClicked(false)
       formRef.current[formValuesWithErrors[0]].focus()
     } else {
-      //TODO: change url
-      let result
-      await axios
-        .post(
-          `${process.env.baseUrl}/api/v1/permission-group/create?apikey=${process.env.apiKey}&secretkey=${process.env.secretKey}`,
-          {
-            ...formValues,
-            slug: formValues["name"].split(" ").join("-").toLowerCase()
-          }
-        )
-        .then((res: AxiosResponse) => {
-          result = res.data
-        })
-        .catch((e: unknown) => console.log(e))
+      let result = await saveData({ formValues })
       if (result.status === "success") {
         resultSwal
           .fire({
@@ -154,9 +113,9 @@ export default function CreatePermissionGroup() {
           </div>
           <div className="col-start-4 col-end-6 "></div>
           <div className="col-start-1 col-end-6 w-10/12 mt-10 ">
-            {checkPermGroup("admin") ? (
+            {checkPermGroup(session, "admin") ? (
               <form action="#" id="perm_group_create_form">
-                <div className="flex flex-col block justify-center border-2 border-slate-200 p-10 ">
+                <div className="flex flex-col justify-center border-2 border-slate-200 p-10 ">
                   <div className="w-11/12">
                     <label htmlFor="name" className="form-label inline-block mb-2 text-gray-700 text-xl">
                       Group Name
@@ -168,8 +127,20 @@ export default function CreatePermissionGroup() {
                       name="name"
                       ref={(el) => (formRef.current[`name`] = el)}
                       defaultValue={formValues["name"]}
-                      onChange={(e) => handleFormValuesChange(e)}
-                      onBlur={(e) => checkFieldEmpty(e)}
+                      onChange={(e) =>
+                        handleValueChange(
+                          formValues,
+                          formErrors,
+                          showError,
+                          showErrors,
+                          setFormErrors,
+                          setShowError,
+                          setFormValues,
+                          e,
+                          "PERM_GROUP"
+                        )
+                      }
+                      onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)}
                       required
                     />
                     {(showErrors || showError[`name`]) &&

@@ -6,6 +6,9 @@ import { useRouter } from "next/router"
 import Router from "next/router"
 import { FiLoader } from "react-icons/fi"
 import { useSession } from "next-auth/react"
+import checkPermGroup from "../../../../lib/ui/check-perm-group"
+import checkFieldEmpty from "../../../../lib/ui/check-field-empty"
+import useSaveData from "../../../../hooks/use-save-data"
 
 //React
 import { useState, useRef } from "react"
@@ -40,7 +43,7 @@ export default function EditPermissionGroup({ fetchedPermissionGroup }) {
   const [showErrors, setShowErrors] = useState(false)
   const [showError, setShowError] = useState({})
   const [isUpdateBtnClicked, setIsUpdateBtnClicked] = useState(false)
-
+  const saveData = useSaveData("PERM_GROUP", "UPDATE")
   //routing
   const router = useRouter()
   const { slug } = router.query
@@ -54,34 +57,13 @@ export default function EditPermissionGroup({ fetchedPermissionGroup }) {
   //Auth Session
   const { data: session } = useSession()
 
-  const checkPermGroup = (permGroup: string) => {
-    if (session) {
-      if (session.user.permission_group === permGroup) return true
-    }
-    return false
-  }
-
-  const checkFieldEmpty = (event) => {
-    if (event.target.value === "") {
-      let newError = { [event.target.name]: "empty-field" }
-      setFormErrors({ ...formErrors, ...newError })
-      setShowError({ [event.target.name]: true })
-    } else {
-      if (`${event.target.name}` in formErrors) {
-        let copyErrors = { ...formErrors }
-        const { [event.target.name]: _, ...restOfErrors }: Record<string, string> = copyErrors
-        setFormErrors(restOfErrors)
-        setShowError({ [event.target.name]: false })
-      }
-    }
-  }
-
   const handleFormValuesChange = (event) => {
     let copyData = { ...formValues }
     copyData[0][event.target.name] = event.target.value
+    console.log(copyData)
 
     //Empty field validation
-    checkFieldEmpty(event)
+    checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, event)
 
     setFormValues(copyData)
   }
@@ -93,19 +75,7 @@ export default function EditPermissionGroup({ fetchedPermissionGroup }) {
       setIsUpdateBtnClicked(false)
       formRef.current[formValuesWithErrors[0]].focus()
     } else {
-      let result
-      const actionURI: string = `${process.env.baseUrl!}/api/v1/permission-group/update/${slug}?apikey=${process.env
-        .apiKey!}&secretkey=${process.env.secretKey!}`
-      await axios
-        .put(actionURI, {
-          name: formValues[0].name,
-          privileges: formValues[0].privileges,
-          slug: formValues[0].name.split(" ").join("-").toLowerCase()
-        })
-        .then((res: AxiosResponse) => {
-          result = res.data
-        })
-        .catch((e: unknown) => console.log(e))
+      let result = await saveData({ formValues, slug })
       if (result.status === "success") {
         resultSwal
           .fire({
@@ -156,9 +126,9 @@ export default function EditPermissionGroup({ fetchedPermissionGroup }) {
           </div>
           <div className="col-start-4 col-end-6 "></div>
           <div className="col-start-1 col-end-6 w-10/12 mt-10 ">
-            {checkPermGroup("admin") ? (
+            {checkPermGroup(session, "admin") ? (
               <form action="#" id="permission_group_form">
-                <div className="flex flex-col block justify-center border-2 border-slate-200 p-10 ">
+                <div className="flex flex-col justify-center border-2 border-slate-200 p-10 ">
                   <div className="w-11/12">
                     <label htmlFor="name" className="form-label inline-block mb-2 text-gray-700 text-xl">
                       Group Name
@@ -171,7 +141,7 @@ export default function EditPermissionGroup({ fetchedPermissionGroup }) {
                       ref={(el) => (formRef.current[`name`] = el)}
                       defaultValue={formValues[0].name}
                       onChange={(e) => handleFormValuesChange(e)}
-                      onBlur={(e) => checkFieldEmpty(e)}
+                      onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)}
                       required
                     />
                     {(showErrors || showError[`name`]) &&

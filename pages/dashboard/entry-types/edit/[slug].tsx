@@ -7,6 +7,9 @@ import Router from "next/router"
 import Tippy from "@tippyjs/react"
 import { FiLoader } from "react-icons/fi"
 import { useSession } from "next-auth/react"
+import checkPermission from "../../../../lib/ui/check-permission"
+import addField from "../../../../lib/ui/add-field"
+import removeField from "../../../../lib/ui/remove-field"
 
 //React
 import { useState, useRef } from "react"
@@ -22,6 +25,8 @@ import { EntryType } from "../../../../interfaces"
 
 //Styles
 import "tippy.js/dist/tippy.css"
+import checkFieldEmpty from "../../../../lib/ui/check-field-empty"
+import useSaveData from "../../../../hooks/use-save-data"
 
 //===============================================
 
@@ -76,11 +81,14 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
   //react states
   const [formFields, setFormFields] = useState(fieldsData)
   const [entryType, setEntryType] = useState(entryTypeData)
+  const [currentNamespace, _] = useState(entryType[0].namespace)
   const [anyValueChanged, setAnyValueChanged] = useState(false)
   const [formErrors, setFormErrors] = useState({})
   const [showErrors, setShowErrors] = useState(false)
   const [showError, setShowError] = useState({})
   const [isUpdateBtnClicked, setIsUpdateBtnClicked] = useState(false)
+
+  const saveData = useSaveData("ENTRY_TYPE", "UPDATE")
 
   //routing
   const router = useRouter()
@@ -95,57 +103,12 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
   //Auth Session
   const { data: session } = useSession()
 
-  const checkPermission = (permission, namespace) => {
-    if (session) {
-      let permGroup = fetchedPermGroups.find((group) => group.slug === session.user.permission_group)
-      if (permGroup.privileges.find((privilege) => Object.keys(privilege).includes(`${namespace}`))) {
-        let result = permGroup.privileges
-          .find((privilege) => Object.keys(privilege).includes(`${namespace}`))
-          [`${namespace}`].permissions.includes(`${permission}`)
-
-        return result
-      }
-      return false
-    }
-  }
-
-  const checkFieldEmpty = (index: number, event) => {
-    if (event.target.name === "name" || event.target.name === "namespace") {
-      if (event.target.value === "") {
-        let newError = { [event.target.name]: "empty-field" }
-        setFormErrors({ ...formErrors, ...newError })
-        setShowError({ [event.target.name]: true })
-      } else {
-        if (`${event.target.name}` in formErrors) {
-          let copyErrors = { ...formErrors }
-          const { [event.target.name]: _, ...restOfErrors }: Record<string, string> = copyErrors
-          setFormErrors(restOfErrors)
-          setShowError({ [event.target.name]: false })
-        }
-      }
-    } else {
-      if (event.target.value === "") {
-        console.log("EMPTY FIELD")
-        let newError = { [`${event.target.name}_${index}`]: "empty-field" }
-        setFormErrors({ ...formErrors, ...newError })
-        setShowError({ [`${event.target.name}_${index}`]: true })
-      } else {
-        if (`${event.target.name}_${index}` in formErrors) {
-          let copyErrors = { ...formErrors }
-          const { [`${event.target.name}_${index}`]: undefined, ...restOfErrors }: Record<string, string> = copyErrors
-          setFormErrors(restOfErrors)
-          setShowError({ [`${event.target.name}_${index}`]: false })
-        }
-      }
-    }
-  }
-
   const handleEntryTypeChange = (event) => {
     let entryTypeData = { ...entryType }
     entryTypeData[0][event.target.name] = event.target.value
 
     //Empty field validation
-    checkFieldEmpty(0, event)
+    checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, event, 0)
 
     //If there is a change enable "update" button
     setAnyValueChanged(true)
@@ -172,68 +135,13 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
     fieldData[index][event.target.name] = event.target.value
 
     //Empty Field Validation
-    checkFieldEmpty(index, event)
+    checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, event, index)
+
     //Update formField state
     setFormFields(fieldData)
 
     //Enable "update" button update if there is any change
     if (fieldData.length === fieldsData.length) setAnyValueChanged(true)
-  }
-
-  const addField = () => {
-    //Prepare data for new field
-    let newField = {
-      field_name: "",
-      field_value_type: "",
-      field_form_type: ""
-    }
-    let newFieldsData = [...formFields, newField]
-
-    //Prepare empty field validation data
-    let newErrors = {
-      [`field_name_${formFields.length}`]: "empty-field",
-      [`field_length_${formFields.length}`]: "empty-field",
-      [`field_value_type_${formFields.length}`]: "empty-field",
-      [`field_form_type_${formFields.length}`]: "empty-field"
-    }
-    //Update validation state
-    setFormErrors({ ...formErrors, ...newErrors })
-
-    //Enable "update" button, so you can update entry type
-    if (newFieldsData.length > fieldsData.length) setAnyValueChanged(true)
-
-    //Update formFields state
-    setFormFields(newFieldsData)
-  }
-
-  const removeField = (index) => {
-    //Copy of formField state
-    let fieldData = [...formFields]
-
-    //Copy of formErrors state
-    let copyErrors = { ...formErrors }
-
-    //remove validation data if field has been removed
-    for (let key of Object.keys(formErrors)) {
-      if (key.endsWith(index)) {
-        delete copyErrors[key]
-      }
-    }
-    //Update formError after removing validation data
-    setFormErrors(copyErrors)
-
-    //separate field that going to be removed
-    fieldData.splice(index, 1)
-
-    //If removed field is not newly added empty field, that means one of the entry type's field is removed, so value changed.
-    if (fieldData.length < fieldsData.length) {
-      setAnyValueChanged(true)
-    } else {
-      setAnyValueChanged(false)
-    }
-
-    //update formFields state after removing field
-    setFormFields(fieldData)
   }
 
   const submitData = async () => {
@@ -246,57 +154,7 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
       formRef.current[formFieldsWithErrors[0]].focus()
     } else {
       //If there is no form error
-      let formatedEntryType: object
-
-      if (entryType[0].namespace === "itself" || entryType[0].namespace === entryType[0].name.toLowerCase()) {
-        formatedEntryType = {
-          name: entryType[0].name,
-          namespace: entryType[0].name.toLowerCase()
-        }
-      } else if (entryType[0].namespace.includes(entryType[0].name.toLowerCase())) {
-        formatedEntryType = { name: entryType[0].name, namespace: entryType[0].namespace }
-      } else {
-        formatedEntryType = {
-          name: entryType[0].name,
-          namespace: `${entryType[0].namespace.toLowerCase()}.${entryType[0].name.toLowerCase()}`
-        }
-      }
-
-      let formatedFields = formFields.map((field, index) => {
-        if ("field_accepted_types" in field) {
-          return {
-            [field.field_name]: {
-              value_type: field.field_value_type,
-              form_type: field.field_form_type,
-              length: field.field_length,
-              accepted_formats: field.field_accepted_types
-            }
-          }
-        } else {
-          return {
-            [field.field_name]: {
-              value_type: field.field_value_type,
-              form_type: field.field_form_type,
-              length: field.field_length
-            }
-          }
-        }
-      })
-
-      let result
-      await axios
-        .put(
-          `${process.env.baseUrl}/api/v1/entry-type/update/${slug}?apikey=${process.env.apiKey}&secretkey=${process.env.secretKey}`,
-          {
-            ...formatedEntryType,
-            slug: formatedEntryType["name"].split(" ").join("-").toLowerCase(),
-            fields: formatedFields
-          }
-        )
-        .then((res: AxiosResponse) => {
-          result = res.data
-        })
-        .catch((e: unknown) => console.log(e))
+      let result = await saveData({ entryType, formFields, slug })
       if (result.status === "success") {
         resultSwal
           .fire({
@@ -350,11 +208,9 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
           <div className="col-start-4 col-end-6 "></div>
 
           <div className="col-start-1 col-end-6 w-10/12 mt-10 ">
-            {checkPermission("update", entryType[0].namespace) ? (
+            {checkPermission(fetchedPermGroups, session, "update", currentNamespace) ? (
               <form action="#">
-                <div
-                  id="entry_type_name"
-                  className="flex flex-col block justify-center border-2 border-slate-200 p-10 ">
+                <div id="entry_type_name" className="flex flex-col justify-center border-2 border-slate-200 p-10 ">
                   <div className="w-11/12">
                     <label htmlFor="name" className="form-label inline-block mb-2 text-gray-700 text-xl">
                       Entry Type Name
@@ -368,7 +224,7 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                       placeholder="Eg: Articles"
                       defaultValue={entryType[0].name}
                       onChange={(e) => handleEntryTypeChange(e)}
-                      onBlur={(e) => checkFieldEmpty(0, e)}
+                      onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, 0)}
                       required
                     />
                     {(showErrors || showError[`name`]) &&
@@ -388,7 +244,7 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                       className="form-select form-select-lg mb-3 block w-full  px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300  rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none"
                       defaultValue={entryType[0].namespace}
                       onChange={(e) => handleEntryTypeChange(e)}
-                      onBlur={(e) => checkFieldEmpty(0, e)}
+                      onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, 0)}
                       required>
                       <option value="itself">Itself </option>
                       {entryTypesData.map((entry_type) => {
@@ -417,7 +273,7 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                       key={index}
                       id="new_field"
                       className=" flex flex-row justify-between  border-2 border-slate-200 p-10 mt-5 ">
-                      <div key={`field_block_${index}`} className="flex flex-col justify-center block w-11/12">
+                      <div key={`field_block_${index}`} className="flex flex-col justify-center w-11/12">
                         <div>
                           <label
                             key={`label_field_name_${index}`}
@@ -435,7 +291,9 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                             placeholder="Eg: Title"
                             defaultValue={field.field_name}
                             onChange={(e) => handleFieldChange(index, e)}
-                            onBlur={(e) => checkFieldEmpty(index, e)}
+                            onBlur={(e) =>
+                              checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, index)
+                            }
                             required
                           />
                           {(showErrors || showError[`field_name_${index}`]) &&
@@ -461,7 +319,9 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                             placeholder="Eg: 100"
                             defaultValue={field.field_length}
                             onChange={(e) => handleFieldChange(index, e)}
-                            onBlur={(e) => checkFieldEmpty(index, e)}
+                            onBlur={(e) =>
+                              checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, index)
+                            }
                             min="1"
                             required
                           />
@@ -486,7 +346,9 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                             defaultValue={field.field_value_type}
                             className="form-select form-select-lg mb-3 block w-full  px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300  rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none"
                             onChange={(e) => handleFieldChange(index, e)}
-                            onBlur={(e) => checkFieldEmpty(index, e)}
+                            onBlur={(e) =>
+                              checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, index)
+                            }
                             required>
                             <option value="">Please select one</option>
                             <option value="string">String</option>
@@ -515,7 +377,9 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                             defaultValue={field.field_form_type}
                             className="form-select form-select-lg mb-3 block w-full  px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300  rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none"
                             onChange={(e) => handleFieldChange(index, e)}
-                            onBlur={(e) => checkFieldEmpty(index, e)}
+                            onBlur={(e) =>
+                              checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, index)
+                            }
                             required>
                             <option value="">Please select one</option>
                             <option value="input">Input Field</option>
@@ -533,7 +397,18 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                         <a
                           href="#"
                           className="text-2xl text-slate-400 transition hover:text-slate-900"
-                          onClick={() => removeField(index)}>
+                          onClick={() =>
+                            removeField(
+                              formFields,
+                              formErrors,
+                              setFormFields,
+                              setFormErrors,
+                              index,
+                              "UPDATE",
+                              setAnyValueChanged,
+                              fieldsData
+                            )
+                          }>
                           <FiX />
                         </a>
                       </div>
@@ -547,7 +422,17 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                     <a
                       href="#"
                       className="flex flex-row justify-center text-slate-300 transition hover:text-slate-900"
-                      onClick={addField}>
+                      onClick={() =>
+                        addField(
+                          formFields,
+                          formErrors,
+                          setFormFields,
+                          setFormErrors,
+                          "UPDATE",
+                          setAnyValueChanged,
+                          fieldsData
+                        )
+                      }>
                       <span className="text-4xl">
                         <FiPlusSquare />
                       </span>
