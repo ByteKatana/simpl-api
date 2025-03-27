@@ -15,7 +15,9 @@ import { useState, useEffect, useRef } from "react"
 import Menu from "../../../components/dashboard/menu"
 
 //Interfaces
-import { PermissionGroup } from "../../../interfaces"
+import { PermissionGroup, UserCreateResponse } from "../../../interfaces"
+import handleValueChange from "../../../lib/ui/handle-value-change"
+import useSaveData from "../../../hooks/use-save-data"
 
 //===============================================
 
@@ -39,6 +41,8 @@ export default function CreateUser({ fetchedPermissionGroups }) {
   const [showError, setShowError] = useState({})
 
   const [isCreateBtnClicked, setIsCreateBtnClicked] = useState(false)
+
+  const saveData = useSaveData("USER", "CREATE")
 
   //sweetalert
   const resultSwal = withReactContent(Swal)
@@ -71,16 +75,6 @@ export default function CreateUser({ fetchedPermissionGroups }) {
     }
   }, [])
 
-  const handleFormValuesChange = (event) => {
-    let copyData = { ...formValues }
-    copyData[event.target.name] = event.target.value
-
-    //Empty field validation
-    checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, event)
-
-    setFormValues(copyData)
-  }
-
   const submitData = async () => {
     if (Object.keys(formErrors).length > 0) {
       let formValuesWithErrors = Object.keys(formErrors)
@@ -88,30 +82,12 @@ export default function CreateUser({ fetchedPermissionGroups }) {
       setIsCreateBtnClicked(false)
       formRef.current[formValuesWithErrors[0]].focus()
     } else {
-      let checkEmailExist
-      await axios
-        .get(`${process.env.baseUrl}/api/v1/users/email/${formValues["email"]}?apikey=${process.env.apiKey}`)
-        .then((res) => {
-          checkEmailExist = res.data
-        })
-
-      let checkUsernameExist
-      await axios
-        .get(`${process.env.baseUrl}/api/v1/users/username/${formValues["username"]}?apikey=${process.env.apiKey}`)
-        .then((res) => {
-          checkUsernameExist = res.data
-        })
-      if (checkEmailExist.length === 0 && checkUsernameExist.length === 0) {
-        let result
-        await axios
-          .post(
-            `${process.env.baseUrl}/api/v1/user/create?apikey=${process.env.apiKey}&secretkey=${process.env.secretKey}`,
-            formValues
-          )
-          .then((res) => {
-            result = res.data
-          })
-          .catch((e) => console.log(e))
+      const response = await saveData({ formValues })
+      console.log(response)
+      const result = response.result.data
+      const checkEmailExist: boolean = response.isEmailExist
+      const checkUsernameExist: boolean = response.isUsernameExist
+      if (checkEmailExist === false && checkUsernameExist === false) {
         if (result.status === "success") {
           resultSwal
             .fire({
@@ -153,8 +129,8 @@ export default function CreateUser({ fetchedPermissionGroups }) {
       } else {
         resultSwal
           .fire({
-            title: `Already exist:\n ${checkEmailExist.length > 0 ? "Email" : ""}\n ${
-              checkUsernameExist.length > 0 ? "Username" : ""
+            title: `Already exist:\n ${checkEmailExist === true ? "Email" : ""}\n ${
+              checkUsernameExist === true ? "Username" : ""
             }`,
             icon: "error",
             showDenyButton: false,
@@ -194,7 +170,19 @@ export default function CreateUser({ fetchedPermissionGroups }) {
                       name="username"
                       ref={(el) => (formRef.current[`username`] = el)}
                       defaultValue={formValues["username"]}
-                      onChange={(e) => handleFormValuesChange(e)}
+                      onChange={(e) =>
+                        handleValueChange(
+                          formValues,
+                          formErrors,
+                          showError,
+                          showErrors,
+                          setFormErrors,
+                          setShowError,
+                          setFormValues,
+                          e,
+                          "USER"
+                        )
+                      }
                       onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)}
                       required
                     />
@@ -215,7 +203,19 @@ export default function CreateUser({ fetchedPermissionGroups }) {
                       name="email"
                       ref={(el) => (formRef.current[`email`] = el)}
                       defaultValue={formValues["email"]}
-                      onChange={(e) => handleFormValuesChange(e)}
+                      onChange={(e) =>
+                        handleValueChange(
+                          formValues,
+                          formErrors,
+                          showError,
+                          showErrors,
+                          setFormErrors,
+                          setShowError,
+                          setFormValues,
+                          e,
+                          "USER"
+                        )
+                      }
                       onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)}
                       required
                     />
@@ -236,7 +236,19 @@ export default function CreateUser({ fetchedPermissionGroups }) {
                       name="password"
                       ref={(el) => (formRef.current[`password`] = el)}
                       defaultValue={formValues["password"]}
-                      onChange={(e) => handleFormValuesChange(e)}
+                      onChange={(e) =>
+                        handleValueChange(
+                          formValues,
+                          formErrors,
+                          showError,
+                          showErrors,
+                          setFormErrors,
+                          setShowError,
+                          setFormValues,
+                          e,
+                          "USER"
+                        )
+                      }
                       onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)}
                       required
                     />
@@ -255,7 +267,19 @@ export default function CreateUser({ fetchedPermissionGroups }) {
                       name="permission_group"
                       ref={(el) => (formRef.current[`permission_group`] = el)}
                       defaultValue={formValues["permission_group"]}
-                      onChange={(e) => handleFormValuesChange(e)}
+                      onChange={(e) =>
+                        handleValueChange(
+                          formValues,
+                          formErrors,
+                          showError,
+                          showErrors,
+                          setFormErrors,
+                          setShowError,
+                          setFormValues,
+                          e,
+                          "USER"
+                        )
+                      }
                       onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)}
                       className="form-select form-select-lg mb-3 block w-full  px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300  rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none">
                       <option value="">Please choose a group</option>

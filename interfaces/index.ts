@@ -1,3 +1,5 @@
+import { AxiosResponse } from "axios"
+
 enum FindLike {
   StartsWith,
   EndsWith,
@@ -50,6 +52,15 @@ export interface User {
   email: string
   permission_group: string
   pwchanged?: boolean
+}
+
+export interface UserCreateResponse {
+  data: {
+    isEmailExist: boolean
+    isUsernameExist: boolean
+    result: AxiosResponse
+  }
+  status: number
 }
 
 export interface PermissionGroup {

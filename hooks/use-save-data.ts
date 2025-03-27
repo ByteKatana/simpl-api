@@ -1,4 +1,4 @@
-import { ActionType, DataType, Entry, EntryType } from "../interfaces"
+import { ActionType, DataType, Entry, EntryType, User, UserCreateResponse } from "../interfaces"
 import axios, { AxiosResponse } from "axios"
 import { ObjectId } from "mongodb"
 
@@ -177,10 +177,62 @@ async function permGroupUpdate(formValues, slug) {
   }
 }
 
+async function checkUserEmailExist(formValues: User) {
+  try {
+    return await axios.get(
+      `${process.env.baseUrl}/api/v1/users/email/${formValues["email"]}?apikey=${process.env.apiKey}`
+    )
+  } catch (e: unknown) {
+    if (e instanceof Error) {
+      console.log("USER_CHECK_EMAIL_EXIST_ERROR", e.message) //TODO: Better logging
+    }
+  }
+}
+
+async function checkUserUsernameExist(formValues: User) {
+  try {
+    return await axios.get(
+      `${process.env.baseUrl}/api/v1/users/username/${formValues["username"]}?apikey=${process.env.apiKey}`
+    )
+  } catch (e: unknown) {
+    if (e instanceof Error) {
+      console.log("USER_CHECK_USERNAME_EXIST_ERROR", e.message) //TODO: Better logging
+    }
+  }
+}
+
+async function userCreate(formValues: User) {
+  try {
+    const isEmailExist = await checkUserEmailExist(formValues)
+    const isUsernameExist = await checkUserUsernameExist(formValues)
+    let response
+    if (isEmailExist.data.length <= 0 && isUsernameExist.data.length <= 0) {
+      response = await axios.post(
+        `${process.env.baseUrl}/api/v1/user/create?apikey=${process.env.apiKey}&secretkey=${process.env.secretKey}`,
+        formValues
+      )
+    }
+
+    const userCreateResponse: UserCreateResponse = {
+      data: {
+        isEmailExist: isEmailExist.data.length <= 0 ? false : true,
+        isUsernameExist: isUsernameExist.data.length <= 0 ? false : true,
+        result: response ? response : {}
+      },
+      status: 200
+    }
+    return userCreateResponse
+  } catch (e: unknown) {
+    if (e instanceof Error) {
+      console.log("USER_CREATE_ERROR", e.message) //TODO: Better logging
+    }
+  }
+}
+
 const useSaveData = (dataType: DataType, actionType: ActionType) => {
   const saveData = async (payload) => {
     try {
-      let response: AxiosResponse
+      let response: AxiosResponse | UserCreateResponse
 
       // ENTRY
       if (dataType === "ENTRY") {
@@ -215,6 +267,14 @@ const useSaveData = (dataType: DataType, actionType: ActionType) => {
             break
           default:
             throw new Error("INVALID_ENTRY_TYPE_ACTION_TYPE")
+        }
+      } else if (dataType === "USER") {
+        switch (actionType) {
+          case "CREATE":
+            response = await userCreate(payload.formValues)
+            break
+          default:
+            throw new Error("INVALID_USER_ACTION_TYPE")
         }
       }
 
