@@ -31,7 +31,11 @@ const handleValueChange = (
     copyData[arrayIndex][event.target.name] = event.target.value
   } else {
     copyData = { ...formData }
-    copyData[event.target.name] = event.target.value
+    if (contentType === "PERM_GROUP") {
+      copyData[0][event.target.name] = event.target.value
+    } else {
+      copyData[event.target.name] = event.target.value
+    }
   }
 
   //Empty field validation

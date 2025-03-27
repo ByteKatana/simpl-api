@@ -21,6 +21,7 @@ import { PermissionGroup } from "../../../../interfaces"
 
 //Styles
 import "tippy.js/dist/tippy.css"
+import handleValueChange from "../../../../lib/ui/handle-value-change"
 
 //===============================================
 
@@ -56,17 +57,6 @@ export default function EditPermissionGroup({ fetchedPermissionGroup }) {
 
   //Auth Session
   const { data: session } = useSession()
-
-  const handleFormValuesChange = (event) => {
-    let copyData = { ...formValues }
-    copyData[0][event.target.name] = event.target.value
-    console.log(copyData)
-
-    //Empty field validation
-    checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, event)
-
-    setFormValues(copyData)
-  }
 
   const submitData = async () => {
     if (Object.keys(formErrors).length > 0) {
@@ -140,7 +130,19 @@ export default function EditPermissionGroup({ fetchedPermissionGroup }) {
                       name="name"
                       ref={(el) => (formRef.current[`name`] = el)}
                       defaultValue={formValues[0].name}
-                      onChange={(e) => handleFormValuesChange(e)}
+                      onChange={(e) =>
+                        handleValueChange(
+                          formValues,
+                          formErrors,
+                          showError,
+                          showErrors,
+                          setFormErrors,
+                          setShowError,
+                          setFormValues,
+                          e,
+                          "PERM_GROUP"
+                        )
+                      }
                       onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)}
                       required
                     />
