@@ -229,6 +229,37 @@ async function userCreate(formValues: User) {
   }
 }
 
+async function userUpdate(formValues, slug, currentPw) {
+  try {
+    let pwChanged = false
+    let password = formValues[0].password
+    if (password === "") {
+      password = currentPw
+    }
+    if (password !== currentPw) {
+      pwChanged = true
+    } else {
+      pwChanged = false
+    }
+
+    return await axios.put(
+      `${process.env.baseUrl!}/api/v1/user/update/${slug}?apikey=${process.env.apiKey!}&secretkey=${process.env
+        .secretKey!}`,
+      {
+        username: formValues[0].username,
+        email: formValues[0].email,
+        password: password,
+        pwchanged: pwChanged,
+        permission_group: formValues[0].permission_group
+      }
+    )
+  } catch (e: unknown) {
+    if (e instanceof Error) {
+      console.log("USER_EDIT__ERROR", e.message) //TODO: Better logging
+    }
+  }
+}
+
 const useSaveData = (dataType: DataType, actionType: ActionType) => {
   const saveData = async (payload) => {
     try {
@@ -272,6 +303,9 @@ const useSaveData = (dataType: DataType, actionType: ActionType) => {
         switch (actionType) {
           case "CREATE":
             response = await userCreate(payload.formValues)
+            break
+          case "UPDATE":
+            response = await userUpdate(payload.formValues, payload.slug, payload.currentPw)
             break
           default:
             throw new Error("INVALID_USER_ACTION_TYPE")

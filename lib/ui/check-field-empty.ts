@@ -15,14 +15,14 @@ const checkFieldEmpty = (
     targetField = `${event.target.name}`
   }
 
-  if (event.target.value === "") {
+  if (event.target.name !== "password" && event.target.value === "") {
     let newError = { [targetField]: "empty-field" }
     setFormErrors({ ...formErrors, ...newError })
     setShowError({ ...showError, [targetField]: true })
   } else {
     if (targetField in formErrors) {
       let copyErrors = { ...formErrors }
-      const { [targetField]: _, ...restOfErrors }: { [key: string]: string } = copyErrors
+      const { [targetField]: _, ...restOfErrors }: Record<string, string> = copyErrors
       setFormErrors(restOfErrors)
       setShowError({ [targetField]: false })
     }

@@ -31,7 +31,7 @@ const handleValueChange = (
     copyData[arrayIndex][event.target.name] = event.target.value
   } else {
     copyData = { ...formData }
-    if (contentType === "PERM_GROUP") {
+    if (contentType === "PERM_GROUP" || contentType === "USER_EDIT") {
       copyData[0][event.target.name] = event.target.value
     } else {
       copyData[event.target.name] = event.target.value

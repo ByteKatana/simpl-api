@@ -12,6 +12,7 @@ enum ContentTypes {
   ENTRY,
   FIELD,
   USER,
+  USER_EDIT,
   PERM_GROUP
 }
 
