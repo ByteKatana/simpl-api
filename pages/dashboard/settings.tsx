@@ -13,6 +13,7 @@ import Menu from "../../components/dashboard/menu"
 
 //Interfaces
 import { PermissionGroup, EntryType, ApiKey } from "../../interfaces"
+import checkPermGroup from "../../lib/ui/check-perm-group"
 
 export async function getServerSideProps() {
   let resPermissionGroup = await axios.get(
@@ -234,13 +235,6 @@ export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, f
     }
   }
 
-  const checkPermGroup = (permGroup: string) => {
-    if (session) {
-      if (session.user.permission_group === permGroup) return true
-    }
-    return false
-  }
-
   return (
     <div className="container ">
       <div className="grid grid-flow-col auto-cols-max h-screen w-screen">
@@ -251,10 +245,10 @@ export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, f
           </div>
           <div className="col-start-4 col-end-6 "></div>
           <div className="col-start-1 col-end-6 w-10/12 mt-10 ">
-            {checkPermGroup("admin") ? (
+            {checkPermGroup(session, "admin") ? (
               <div
                 id="permssion_group_settings"
-                className="flex flex-col block justify-center border-2 border-slate-200 p-10 ">
+                className="flex flex-col justify-center border-2 border-slate-200 p-10 ">
                 <div className="w-11/12">
                   <h2 className="text-slate-800 text-2xl">Permission Groups</h2>
                   <p className="text-slate-400">Manage permission groups, edit their privileges</p>
