@@ -13,7 +13,8 @@ enum ContentTypes {
   FIELD,
   USER,
   USER_EDIT,
-  PERM_GROUP
+  PERM_GROUP,
+  PERM_GROUP_EDIT
 }
 
 enum DataTypes {
