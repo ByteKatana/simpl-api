@@ -93,17 +93,20 @@ async function EntryTypeUpdate(entryType: EntryType, formFields, slug) {
   try {
     let formatedEntryType: object
 
-    if (entryType[0].namespace === "itself" || entryType[0].namespace === entryType[0].name.toLowerCase()) {
+    if (
+      entryType[0].namespace === "itself" ||
+      entryType[0].namespace === entryType[0].name.split(" ").join("-").toLowerCase()
+    ) {
       formatedEntryType = {
         name: entryType[0].name,
-        namespace: entryType[0].name.toLowerCase()
+        namespace: entryType[0].name.split(" ").join("-").toLowerCase()
       }
-    } else if (entryType[0].namespace.includes(entryType[0].name.toLowerCase())) {
+    } else if (entryType[0].namespace.includes(entryType[0].name.split(" ").join("-").toLowerCase())) {
       formatedEntryType = { name: entryType[0].name, namespace: entryType[0].namespace }
     } else {
       formatedEntryType = {
         name: entryType[0].name,
-        namespace: `${entryType[0].namespace.toLowerCase()}.${entryType[0].name.toLowerCase()}`
+        namespace: `${entryType[0].namespace.split(" ").join("-").toLowerCase()}.${entryType[0].name.split(" ").join("-").toLowerCase()}`
       }
     }
 

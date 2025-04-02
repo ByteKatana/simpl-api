@@ -67,9 +67,28 @@ export async function getServerSideProps(req) {
   )
   let permGroups = await resPermGroups.data
 
+  const filteredEntryTypes = entryTypes.filter((entry_type) => {
+    const namespaceArr = entryType[0].namespace.split(".")
+    const lenNamespaceArr = namespaceArr.length
+    let parentNamespace: string
+    if (lenNamespaceArr >= 2) {
+      parentNamespace = namespaceArr
+        .slice(0, lenNamespaceArr - 1)
+        .join(".")
+        .toString()
+    } else {
+      parentNamespace = namespaceArr.slice(-1)[0]
+    }
+    if (entry_type.namespace === entryType[0].namespace || entry_type.namespace === parentNamespace) {
+      return false
+    } else {
+      return true
+    }
+  })
+
   return {
     props: {
-      entryTypesData: entryTypes,
+      entryTypesData: filteredEntryTypes,
       entryTypeData: entryType,
       fieldsData: fields,
       fetchedPermGroups: permGroups
@@ -114,19 +133,35 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
     setAnyValueChanged(true)
 
     //Update entrytype state
-    setEntryType(entryTypeData)
+    //setEntryType(entryTypeData)
 
     //Change namespace if name changes
-    if (entryType[0].name !== entryType[0].namespace.split(".").slice(-1).toString()) {
-      setEntryType({
-        0: {
-          name: entryType[0].name,
-          namespace: `${entryType[0].namespace
-            .split(".")
-            .splice(0, entryType[0].namespace.split(".").length - 1)
-            .join(".")}.${entryType[0].name}`
+    const slugName = entryTypeData[0].name.split(" ").join("-").toLowerCase()
+    const prefixNamespace = entryTypeData[0].namespace
+      .split(".")
+      .splice(0, entryTypeData[0].namespace.split(".").length - 1)
+      .join(".")
+    console.log("entryTypeData", entryTypeData[0].namespace)
+    console.log("prefixNamespaceX", prefixNamespace)
+    if (slugName !== entryTypeData[0].namespace.split(".").slice(-1).toString()) {
+      let newEntryType: object
+      if (prefixNamespace) {
+        console.log("prefixNamespaceT", prefixNamespace)
+        newEntryType = {
+          0: {
+            name: entryTypeData[0].name,
+            namespace: `${prefixNamespace}.${entryTypeData[0].namespace}`
+          }
         }
-      })
+      } else {
+        newEntryType = {
+          0: {
+            name: entryTypeData[0].name,
+            namespace: `${entryTypeData[0].namespace}.${slugName}`
+          }
+        }
+      }
+      //setEntryType(newEntryType)
     }
   }
 
@@ -246,11 +281,13 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                       onChange={(e) => handleEntryTypeChange(e)}
                       onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, 0)}
                       required>
-                      <option value="itself">Itself </option>
-                      {entryTypesData.map((entry_type) => {
-                        //Don't add entry type's own namespace
+                      <option key={0} value={entryType[0].namespace}>
+                        Itself{" "}
+                      </option>
+                      {entryTypesData.map((entry_type, idx) => {
+                        //TODO:Don't add entry type's own namespace
                         return (
-                          <option value={`${entry_type.namespace}`}>
+                          <option key={idx} value={`${entry_type.namespace}`}>
                             {`${entry_type.name} (${entry_type.namespace})`}
                           </option>
                         )
