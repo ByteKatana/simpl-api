@@ -25,12 +25,12 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
         param[param.length - 1].startsWith("last_") ||
         param[param.length - 1].startsWith("random_")
       ) {
-        return res.status(200).json(getByLimit(param[param.length - 1], userData))
+        res.status(200).json(getByLimit(param[param.length - 1], userData))
       } else {
-        return res.status(200).json({ message: "Invalid limit value" })
+        res.status(200).json({ message: "Invalid limit value" })
       }
     }
-    return res.status(200).json(userData)
+    res.status(200).json(userData)
   }
-  return res.status(200).json({ message: "You're not authorized!" })
+  res.status(200).json({ message: "You're not authorized!" })
 }

@@ -18,7 +18,7 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
       apiBuilder = new apiBuilderController("multi-param", "entry_types", "namespace", param)
     }
 
-    return res.status(200).json(await apiBuilder.fetchData("Equals"))
+    res.status(200).json(await apiBuilder.fetchData("Equals"))
   }
-  return res.status(200).json({ message: "You're not authorized!" })
+  res.status(200).json({ message: "You're not authorized!" })
 }
