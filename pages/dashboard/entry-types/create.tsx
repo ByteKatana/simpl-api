@@ -105,7 +105,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
               setFormFields([{ field_name: "", field_value_type: "", field_form_type: "", field_length: 100 }])
               setIsCreateBtnClicked(false)
             } else if (result.isDenied) {
-              Router.push("/dashboard/entry-types")
+              void Router.push("/dashboard/entry-types")
             }
           })
       } else if (result.status === "failed") {

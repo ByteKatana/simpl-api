@@ -194,7 +194,7 @@ function EntryForm({
             type="button"
             onClick={() => {
               setIsSubmitClicked(true)
-              submitData()
+              void submitData()
             }}
             className="mb-2 w-full inline-block px-6 py-2.5 bg-slate-700 text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-slate-800 hover:shadow-lg focus:bg-slate-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-slate-800 active:shadow-lg transition duration-150 ease-in-out">
             {isSubmitClicked ? (

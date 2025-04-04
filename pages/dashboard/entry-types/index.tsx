@@ -226,7 +226,7 @@ export default function EntryTypes({ fetchedEntryTypes, fetchedPermGroups }) {
                                         })
                                         .then((result) => {
                                           if (result.isConfirmed) {
-                                            deleteEntryType(entryType._id)
+                                            void deleteEntryType(entryType._id)
                                           }
                                         })
                                     }

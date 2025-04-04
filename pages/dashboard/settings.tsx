@@ -434,7 +434,7 @@ export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, f
                           <div className=" w-11/12">
                             <button
                               onClick={() => {
-                                sendPermissions()
+                                void sendPermissions()
                               }}
                               type="button"
                               className="mb-2 w-full inline-block px-6 py-2.5 bg-slate-700 text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-slate-800 hover:shadow-lg focus:bg-slate-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-slate-800 active:shadow-lg transition duration-150 ease-in-out">
@@ -454,7 +454,7 @@ export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, f
                   <div className="w-3/12">
                     <button
                       onClick={() => {
-                        generateApiKey()
+                        void generateApiKey()
                       }}
                       className=" flex flex-row bg-emerald-600 font-josefin text-white rounded-2xl px-7 py-2 mt-3 justify-self-end transition hover:bg-emerald-500 ">
                       <span className="pt-1">
@@ -474,7 +474,7 @@ export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, f
                           <p className="col-start-1 col-end-4"> {apiKey.key} </p>
                           <a
                             onClick={() => {
-                              removeApiKey(apiKey._id)
+                              void removeApiKey(apiKey._id)
                             }}
                             href="#"
                             className="col-start-5 col-end-6 text-2xl">
