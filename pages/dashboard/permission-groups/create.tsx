@@ -1,5 +1,4 @@
 //Utility
-import axios, { AxiosResponse } from "axios"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
 import Router from "next/router"

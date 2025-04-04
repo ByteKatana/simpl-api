@@ -25,7 +25,7 @@ async function EntryUpdate(
   slug: string | string[]
 ) {
   try {
-    const { _id: undefined, ...restOfFormValues } = formValues
+    const { _id: _, ...restOfFormValues } = formValues
     return await axios.put(
       `${process.env.baseUrl}/api/v1/entry/update/${slug}?apikey=${process.env.apiKey}&secretkey=${process.env.secretKey}`,
       {
@@ -110,7 +110,7 @@ async function EntryTypeUpdate(entryType: EntryType, formFields, slug) {
       }
     }
 
-    let formatedFields = formFields.map((field, index) => {
+    let formatedFields = formFields.map((field) => {
       if ("field_accepted_types" in field) {
         return {
           [field.field_name]: {

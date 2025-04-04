@@ -15,7 +15,7 @@ import { useState, useEffect, useRef } from "react"
 import Menu from "../../../components/dashboard/menu"
 
 //Interfaces
-import { PermissionGroup, UserCreateResponse } from "../../../interfaces"
+import { PermissionGroup } from "../../../interfaces"
 import handleValueChange from "../../../lib/ui/handle-value-change"
 import useSaveData from "../../../hooks/use-save-data"
 

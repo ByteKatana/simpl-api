@@ -1,5 +1,5 @@
 //Utility
-import axios, { AxiosResponse } from "axios"
+import axios from "axios"
 import { useSession } from "next-auth/react"
 import checkPermission from "../../../../lib/ui/check-permission"
 

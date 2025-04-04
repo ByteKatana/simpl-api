@@ -15,7 +15,7 @@ const checkLength = (
   } else {
     if (`${event.target.name}_length` in formErrors) {
       let copyErrors = { ...formErrors }
-      const { [`${event.target.name}_length`]: undefined, ...restOfErrors }: Record<string, string> = copyErrors
+      const { [`${event.target.name}_length`]: _, ...restOfErrors }: Record<string, string> = copyErrors
       setFormErrors(restOfErrors)
       setShowError({ [`${event.target.name}_length`]: false })
     }

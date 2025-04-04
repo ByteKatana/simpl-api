@@ -1,5 +1,5 @@
 //Utility
-import axios, { AxiosResponse } from "axios"
+import axios from "axios"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
 import { useRouter } from "next/router"
@@ -161,7 +161,7 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
           }
         }
       }
-      //setEntryType(newEntryType)
+      setEntryType(newEntryType)
     }
   }
 
