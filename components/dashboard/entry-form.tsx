@@ -148,7 +148,7 @@ function EntryForm({
             name={`name`}
             ref={(el) => (formRef.current[`name`] = el)}
             defaultValue={formValues[`name`]}
-            onChange={(e) =>
+            onChange={(e) => {
               handleValueChange(
                 formValues,
                 formErrors,
@@ -160,8 +160,10 @@ function EntryForm({
                 e,
                 "ENTRY"
               )
-            }
-            onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)}
+            }}
+            onBlur={(e) => {
+              checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)
+            }}
             required
           />
           {(showErrors || showError[`name`]) && formErrors[`name`] && formErrors[`name`] === "empty-field" && (

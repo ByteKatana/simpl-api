@@ -127,7 +127,7 @@ export default function CreatePermissionGroup() {
                       name="name"
                       ref={(el) => (formRef.current[`name`] = el)}
                       defaultValue={formValues["name"]}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         handleValueChange(
                           formValues,
                           formErrors,
@@ -139,8 +139,10 @@ export default function CreatePermissionGroup() {
                           e,
                           "PERM_GROUP"
                         )
-                      }
-                      onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)}
+                      }}
+                      onBlur={(e) => {
+                        checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)
+                      }}
                       required
                     />
                     {(showErrors || showError[`name`]) &&

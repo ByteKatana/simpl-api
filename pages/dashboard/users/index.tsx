@@ -242,14 +242,14 @@ export default function Users({ fetchedUsers }) {
                               : "bg-transparent text-gray-800  outline-none transition-all duration-300 hover:text-gray-800 hover:bg-gray-200 focus:shadow-none"
                           }  `}
                           href="#"
-                          onClick={() =>
+                          onClick={() => {
                             setPaginationState({
                               ...paginationState,
                               min: (page - 1) * paginationState.limit,
                               max: paginationState.limit * page,
                               currentPage: page
                             })
-                          }>
+                          }}>
                           {page}
                         </a>
                       </li>

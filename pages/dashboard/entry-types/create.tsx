@@ -155,7 +155,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                       ref={(el) => (formRef.current[`name`] = el)}
                       placeholder="Eg: Articles"
                       defaultValue={entryType["name"]}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         handleValueChange(
                           entryType,
                           formErrors,
@@ -167,7 +167,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                           e,
                           "ENTRY_TYPE"
                         )
-                      }
+                      }}
                       onBlur={(e) => {
                         checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, 0)
                       }}
@@ -259,9 +259,9 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                                 index
                               )
                             }
-                            onBlur={(e) =>
+                            onBlur={(e) => {
                               checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, index)
-                            }
+                            }}
                           />
                           {(showErrors || showError[`field_name_${index}`]) &&
                             formErrors[`field_name_${index}`] &&

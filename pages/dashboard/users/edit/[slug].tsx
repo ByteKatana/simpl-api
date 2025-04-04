@@ -139,7 +139,7 @@ export default function EditUser({ fetchedPermissionGroups, fetchedUser }) {
                       name="username"
                       ref={(el) => (formRef.current[`username`] = el)}
                       defaultValue={formValues[0].username}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         handleValueChange(
                           formValues,
                           formErrors,
@@ -151,8 +151,10 @@ export default function EditUser({ fetchedPermissionGroups, fetchedUser }) {
                           e,
                           "USER_EDIT"
                         )
-                      }
-                      onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)}
+                      }}
+                      onBlur={(e) => {
+                        checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)
+                      }}
                       required
                     />
                     {(showErrors || showError[`username`]) &&

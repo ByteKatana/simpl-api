@@ -147,7 +147,9 @@ export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, f
       .then((res: AxiosResponse) => {
         result = res.data
       })
-      .catch((e: unknown) => console.log(e))
+      .catch((e: unknown) => {
+        console.log(e)
+      })
     if (result.status === "success") {
       resultSwal.fire({
         title: `${result.message}`,
@@ -213,7 +215,9 @@ export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, f
       .then((res) => {
         result = res.data
       })
-      .catch((e) => console.log(e))
+      .catch((e: unknown) => {
+        console.log(e)
+      })
     if (result.status === "success") {
       resultSwal.fire({
         title: `${result.message}`,
@@ -265,7 +269,9 @@ export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, f
                           return (
                             <li
                               key={index}
-                              onClick={() => setActivePermissionGroup(index)}
+                              onClick={() => {
+                                setActivePermissionGroup(index)
+                              }}
                               className={`my-2 py-2 px-5 rounded-xl border-y border-gray-200 shadow-md ${
                                 activePermissionGroup === index
                                   ? "text-white bg-slate-900 hover:bg-slate-800 active:bg-slate-700"
@@ -290,14 +296,14 @@ export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, f
                                   : "bg-transparent text-gray-800  outline-none transition-all duration-300 hover:text-gray-800 hover:bg-gray-200 focus:shadow-none"
                               }  `}
                               href="#"
-                              onClick={() =>
+                              onClick={() => {
                                 setPaginationPermissionGroupState({
                                   ...paginationPermissionGroupState,
                                   min: (page - 1) * paginationPermissionGroupState.limit,
                                   max: paginationPermissionGroupState.limit * page,
                                   currentPage: page
                                 })
-                              }>
+                              }}>
                               {page}
                             </a>
                           </li>

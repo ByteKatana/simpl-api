@@ -79,7 +79,7 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
       adminGroupResult.status === "success" &&
       memberGroupResult.status === "success"
     ) {
-      return res.status(200).json({
+      res.status(200).json({
         collectionsCreated: true,
         collectionsCreatedMsg: "Collections has been created",
         adminCreated: true,

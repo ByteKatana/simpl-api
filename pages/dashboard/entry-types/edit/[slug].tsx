@@ -261,7 +261,9 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                       onChange={(e) => {
                         handleEntryTypeChange(e)
                       }}
-                      onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, 0)}
+                      onBlur={(e) => {
+                        checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, 0)
+                      }}
                       required
                     />
                     {(showErrors || showError[`name`]) &&
@@ -280,7 +282,9 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                       ref={(el) => (formRef.current[`namespace`] = el)}
                       className="form-select form-select-lg mb-3 block w-full  px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300  rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none"
                       defaultValue={entryType[0].namespace}
-                      onChange={(e) => handleEntryTypeChange(e)}
+                      onChange={(e) => {
+                        handleEntryTypeChange(e)
+                      }}
                       onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, 0)}
                       required>
                       <option key={0} value={entryType[0].namespace}>
@@ -359,7 +363,9 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                             id="field_length"
                             placeholder="Eg: 100"
                             defaultValue={field.field_length}
-                            onChange={(e) => handleFieldChange(index, e)}
+                            onChange={(e) => {
+                              handleFieldChange(index, e)
+                            }}
                             onBlur={(e) =>
                               checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, index)
                             }
@@ -438,7 +444,7 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                         <a
                           href="#"
                           className="text-2xl text-slate-400 transition hover:text-slate-900"
-                          onClick={() =>
+                          onClick={() => {
                             removeField(
                               formFields,
                               formErrors,
@@ -449,7 +455,7 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                               setAnyValueChanged,
                               fieldsData
                             )
-                          }>
+                          }}>
                           <FiX />
                         </a>
                       </div>

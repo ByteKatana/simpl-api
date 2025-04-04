@@ -130,7 +130,7 @@ export default function EditPermissionGroup({ fetchedPermissionGroup }) {
                       name="name"
                       ref={(el) => (formRef.current[`name`] = el)}
                       defaultValue={formValues[0].name}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         handleValueChange(
                           formValues,
                           formErrors,
@@ -142,7 +142,7 @@ export default function EditPermissionGroup({ fetchedPermissionGroup }) {
                           e,
                           "PERM_GROUP_EDIT"
                         )
-                      }
+                      }}
                       onBlur={(e) => {
                         checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)
                       }}

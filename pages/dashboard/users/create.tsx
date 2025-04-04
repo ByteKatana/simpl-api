@@ -170,7 +170,7 @@ export default function CreateUser({ fetchedPermissionGroups }) {
                       name="username"
                       ref={(el) => (formRef.current[`username`] = el)}
                       defaultValue={formValues["username"]}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         handleValueChange(
                           formValues,
                           formErrors,
@@ -182,7 +182,7 @@ export default function CreateUser({ fetchedPermissionGroups }) {
                           e,
                           "USER"
                         )
-                      }
+                      }}
                       onBlur={(e) => {
                         checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)
                       }}
@@ -218,7 +218,9 @@ export default function CreateUser({ fetchedPermissionGroups }) {
                           "USER"
                         )
                       }
-                      onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)}
+                      onBlur={(e) => {
+                        checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)
+                      }}
                       required
                     />
                     {(showErrors || showError[`email`]) &&
