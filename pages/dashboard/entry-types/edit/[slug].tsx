@@ -469,7 +469,7 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                     <a
                       href="#"
                       className="flex flex-row justify-center text-slate-300 transition hover:text-slate-900"
-                      onClick={() =>
+                      onClick={() => {
                         addField(
                           formFields,
                           formErrors,
@@ -479,7 +479,7 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                           setAnyValueChanged,
                           fieldsData
                         )
-                      }>
+                      }}>
                       <span className="text-4xl">
                         <FiPlusSquare />
                       </span>

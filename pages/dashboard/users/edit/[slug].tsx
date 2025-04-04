@@ -27,12 +27,13 @@ import useSaveData from "../../../../hooks/use-save-data"
 
 export async function getServerSideProps(req) {
   const { slug } = req.query
-  const resPermGroupActionURI = `${process.env.BASE_URL!}/api/v1/permission-groups?apikey=${process.env.API_KEY!}`
+  const resPermGroupActionURI = `${process.env.BASE_URL}/api/v1/permission-groups?apikey=${process.env.API_KEY}`
   let resPermissionGroups = await axios.get(resPermGroupActionURI)
   let permissionGroups: PermissionGroup = await resPermissionGroups.data
 
-  const resUserActionURI = `${process.env.BASE_URL!}/api/v1/users/_id/${slug}?apikey=${process.env
-    .API_KEY!}&secretkey=${process.env.SECRET_KEY!}`
+  const resUserActionURI = `${process.env.BASE_URL}/api/v1/users/_id/${slug}?apikey=${
+    process.env.API_KEY
+  }&secretkey=${process.env.SECRET_KEY}`
   const resUser = await axios.get(resUserActionURI)
   let user: User = await resUser.data
 
@@ -186,7 +187,9 @@ export default function EditUser({ fetchedPermissionGroups, fetchedUser }) {
                           "USER_EDIT"
                         )
                       }}
-                      onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)}
+                      onBlur={(e) => {
+                        checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)
+                      }}
                       required
                     />
                     {(showErrors || showError[`email`]) &&

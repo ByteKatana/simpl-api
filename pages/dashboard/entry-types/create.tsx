@@ -188,7 +188,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                       name="namespace"
                       ref={(el) => (formRef.current[`namespace`] = el)}
                       defaultValue={entryType["namespace"]}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         handleValueChange(
                           entryType,
                           formErrors,
@@ -200,7 +200,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                           e,
                           "ENTRY_TYPE"
                         )
-                      }
+                      }}
                       onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, 0)}
                       className="form-select form-select-lg mb-3 block w-full  px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300  rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none">
                       <option value="itself"> Itself </option>

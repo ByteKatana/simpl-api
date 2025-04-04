@@ -165,7 +165,7 @@ async function permGroupCreate(formValues) {
 async function permGroupUpdate(formValues, slug) {
   try {
     return await axios.put(
-      `${process.env.baseUrl!}/api/v1/permission-group/update/${slug}?apikey=${process.env.apiKey!}&secretkey=${process
+      `${process.env.baseUrl}/api/v1/permission-group/update/${slug}?apikey=${process.env.apiKey!}&secretkey=${process
         .env.secretKey!}`,
       {
         name: formValues[0].name,
@@ -246,7 +246,7 @@ async function userUpdate(formValues, slug, currentPw) {
     }
 
     return await axios.put(
-      `${process.env.baseUrl!}/api/v1/user/update/${slug}?apikey=${process.env.apiKey!}&secretkey=${process.env
+      `${process.env.baseUrl}/api/v1/user/update/${slug}?apikey=${process.env.apiKey!}&secretkey=${process.env
         .secretKey!}`,
       {
         username: formValues[0].username,

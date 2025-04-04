@@ -27,7 +27,7 @@ import handleValueChange from "../../../../lib/ui/handle-value-change"
 
 export async function getServerSideProps(req) {
   const { slug } = req.query
-  const actionURI = `${process.env.BASE_URL!}/api/v1/permission-group/${slug}?apikey=${process.env.API_KEY!}`
+  const actionURI = `${process.env.BASE_URL}/api/v1/permission-group/${slug}?apikey=${process.env.API_KEY}`
   const resPermGroup = await axios.get(actionURI)
   let permGroup: PermissionGroup = await resPermGroup.data
 

@@ -129,9 +129,7 @@ export default function CreateUser({ fetchedPermissionGroups }) {
       } else {
         resultSwal
           .fire({
-            title: `Already exist:\n ${checkEmailExist === true ? "Email" : ""}\n ${
-              checkUsernameExist === true ? "Username" : ""
-            }`,
+            title: `Already exist:\n ${checkEmailExist ? "Email" : ""}\n ${checkUsernameExist ? "Username" : ""}`,
             icon: "error",
             showDenyButton: false,
             showCancelButton: false,
