@@ -143,7 +143,9 @@ export default function EditPermissionGroup({ fetchedPermissionGroup }) {
                           "PERM_GROUP_EDIT"
                         )
                       }
-                      onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)}
+                      onBlur={(e) => {
+                        checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)
+                      }}
                       required
                     />
                     {(showErrors || showError[`name`]) &&

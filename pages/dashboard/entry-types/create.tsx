@@ -168,7 +168,9 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                           "ENTRY_TYPE"
                         )
                       }
-                      onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, 0)}
+                      onBlur={(e) => {
+                        checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, 0)
+                      }}
                       required
                     />
                     {(showErrors || showError[`name`]) &&
@@ -400,9 +402,9 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                         <a
                           href="#"
                           className="text-2xl text-slate-400 transition hover:text-slate-900"
-                          onClick={() =>
+                          onClick={() => {
                             removeField(formFields, formErrors, setFormFields, setFormErrors, index, "CREATE")
-                          }>
+                          }}>
                           <FiX />
                         </a>
                       </div>
@@ -416,7 +418,9 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                     <a
                       href="#"
                       className="flex flex-row justify-center text-slate-300 transition hover:text-slate-900"
-                      onClick={() => addField(formFields, formErrors, setFormFields, setFormErrors, "CREATE")}>
+                      onClick={() => {
+                        addField(formFields, formErrors, setFormFields, setFormErrors, "CREATE")
+                      }}>
                       <span className="text-4xl">
                         <FiPlusSquare />
                       </span>

@@ -178,7 +178,9 @@ export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, f
       .then((res) => {
         result = res.data
       })
-      .catch((e) => console.log(e))
+      .catch((e) => {
+        console.log(e)
+      })
     if (result.result.status === "success") {
       resultSwal.fire({
         title: `${result.result.message}\nKey:${result.key}`,
@@ -312,7 +314,9 @@ export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, f
                           return (
                             <li
                               key={index}
-                              onClick={() => setActiveNamespace(index)}
+                              onClick={() => {
+                                setActiveNamespace(index)
+                              }}
                               className={`my-2 py-2 px-5 rounded-xl border-y border-gray-200 shadow-md ${
                                 activeNamespace === index
                                   ? "text-white bg-slate-900 hover:bg-slate-800 active:bg-slate-700"
@@ -337,14 +341,14 @@ export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, f
                                   : "bg-transparent text-gray-800  outline-none transition-all duration-300 hover:text-gray-800 hover:bg-gray-200 focus:shadow-none"
                               }  `}
                               href="#"
-                              onClick={() =>
+                              onClick={() => {
                                 setPaginationNamespaceState({
                                   ...paginationNamespaceState,
                                   min: (page - 1) * paginationNamespaceState.limit,
                                   max: paginationNamespaceState.limit * page,
                                   currentPage: page
                                 })
-                              }>
+                              }}>
                               {page}
                             </a>
                           </li>
@@ -364,7 +368,9 @@ export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, f
                             value="read"
                             id="permissionRead"
                             name="permissionRead"
-                            onClick={() => updatePermissions("read")}
+                            onClick={() => {
+                              updatePermissions("read")
+                            }}
                           />
                           <label className="form-check-label inline-block text-gray-800" htmlFor="permissionRead">
                             Read
@@ -378,7 +384,9 @@ export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, f
                             value="create"
                             id="permissionCreate"
                             name="permissionCreate"
-                            onClick={() => updatePermissions("create")}
+                            onClick={() => {
+                              updatePermissions("create")
+                            }}
                           />
                           <label className="form-check-label inline-block text-gray-800" htmlFor="permissionCreate">
                             Create
@@ -392,7 +400,9 @@ export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, f
                             value="update"
                             id="permissionUpdate"
                             name="permissionUpdate"
-                            onClick={() => updatePermissions("update")}
+                            onClick={() => {
+                              updatePermissions("update")
+                            }}
                           />
                           <label className="form-check-label inline-block text-gray-800" htmlFor="permissionUpdate">
                             Update
@@ -406,7 +416,9 @@ export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, f
                             value="delete"
                             id="permissionDelete"
                             name="permissionDelete"
-                            onClick={() => updatePermissions("delete")}
+                            onClick={() => {
+                              updatePermissions("delete")
+                            }}
                           />
                           <label className="form-check-label inline-block text-gray-800" htmlFor="permissionDelete">
                             Delete
@@ -415,7 +427,9 @@ export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, f
                         <div id="send_permission_btn" className="flex flex-row flex-nowrap justify-center  mt-5">
                           <div className=" w-11/12">
                             <button
-                              onClick={() => sendPermissions()}
+                              onClick={() => {
+                                sendPermissions()
+                              }}
                               type="button"
                               className="mb-2 w-full inline-block px-6 py-2.5 bg-slate-700 text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-slate-800 hover:shadow-lg focus:bg-slate-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-slate-800 active:shadow-lg transition duration-150 ease-in-out">
                               Update
@@ -433,7 +447,9 @@ export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, f
                   </div>
                   <div className="w-3/12">
                     <button
-                      onClick={() => generateApiKey()}
+                      onClick={() => {
+                        generateApiKey()
+                      }}
                       className=" flex flex-row bg-emerald-600 font-josefin text-white rounded-2xl px-7 py-2 mt-3 justify-self-end transition hover:bg-emerald-500 ">
                       <span className="pt-1">
                         <FiPlusCircle />
@@ -451,7 +467,9 @@ export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, f
                           className="grid grid-col-6 place-content-between my-2 py-2 px-5 rounded-xl border-y border-gray-200 shadow-md text-black bg-slate-200 hover:bg-slate-300">
                           <p className="col-start-1 col-end-4"> {apiKey.key} </p>
                           <a
-                            onClick={() => removeApiKey(apiKey._id)}
+                            onClick={() => {
+                              removeApiKey(apiKey._id)
+                            }}
                             href="#"
                             className="col-start-5 col-end-6 text-2xl">
                             <FiTrash2 />

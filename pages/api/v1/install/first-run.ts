@@ -87,9 +87,9 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
         adminAccountDetails: { username: "admin", email: "admin@localhost.test", password: newPW }
       })
     } else {
-      return res.status(200).json({ message: "Installation failed! Check your console log!" })
+      res.status(200).json({ message: "Installation failed! Check your console log!" })
     }
-    //return res.status(200).json({ message: "OK!" })
+    //res.status(200).json({ message: "OK!" })
   }
-  return res.status(200).json({ message: "You're not authorized!" })
+  res.status(200).json({ message: "You're not authorized!" })
 }

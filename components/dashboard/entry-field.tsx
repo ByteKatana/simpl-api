@@ -53,7 +53,9 @@ function EntryField({
               field[fieldName].length
             )
           }
-          onBlur={(e) => CheckFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)}
+          onBlur={(e) => {
+            CheckFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)
+          }}
           required></textarea>
         {(showErrors || showError[`${fieldName}`]) &&
           formErrors[`${fieldName}`] &&

@@ -96,7 +96,9 @@ export default function EntryTypes({ fetchedEntryTypes, fetchedPermGroups }) {
       .then((res: AxiosResponse) => {
         result = res.data
       })
-      .catch((e: unknown) => console.log(e))
+      .catch((e: unknown) => {
+        console.log(e)
+      })
 
     if (result.status === "success") Swal.fire("Deleted!", "", "success")
     else if (result.status === "failed") Swal.fire("Failed to delete!", "", "error")

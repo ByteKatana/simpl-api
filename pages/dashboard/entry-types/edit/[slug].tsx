@@ -258,7 +258,9 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                       ref={(el) => (formRef.current[`name`] = el)}
                       placeholder="Eg: Articles"
                       defaultValue={entryType[0].name}
-                      onChange={(e) => handleEntryTypeChange(e)}
+                      onChange={(e) => {
+                        handleEntryTypeChange(e)
+                      }}
                       onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, 0)}
                       required
                     />
@@ -327,7 +329,9 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                             id="field_name"
                             placeholder="Eg: Title"
                             defaultValue={field.field_name}
-                            onChange={(e) => handleFieldChange(index, e)}
+                            onChange={(e) => {
+                              handleFieldChange(index, e)
+                            }}
                             onBlur={(e) =>
                               checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, index)
                             }
