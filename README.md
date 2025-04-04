@@ -1,6 +1,6 @@
 # simpl:api
 
-![License Badge](https://img.shields.io/github/license/bytekatana/simpl-api)
+![License Badge](https://img.shields.io/github/license/bytekatana/simpl-api) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/a61bb176b6c34b35bc96892e004e1469)](https://app.codacy.com/gh/ByteKatana/simpl-api/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
 simpl:api is a basic API builder that allows users to build an API easily for their front-end application or website. The main focus of this project is small applications and websites but also can be used for micro applications in large systems.
 
