@@ -15,7 +15,7 @@ export class EntryController {
   async create() {
     let client: MongoClient
     let dbCollection: Collection
-    let isConnected: boolean = false
+    let isConnected = false
 
     try {
       client = await connectDB()

@@ -39,7 +39,7 @@ export class apiKeyController {
 
   async create() {
     let dbCollection: Collection
-    let isConnected: boolean = false
+    let isConnected = false
     let client: MongoClient
 
     try {
