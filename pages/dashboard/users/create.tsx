@@ -106,7 +106,7 @@ export default function CreateUser({ fetchedPermissionGroups }) {
                 setFormValues({ username: "", password: "", email: "", permission_group: "" })
                 setIsCreateBtnClicked(false)
               } else if (result.isDenied) {
-                Router.push("/dashboard/users")
+                void Router.push("/dashboard/users")
               }
             })
         } else if (result.status === "failed") {
