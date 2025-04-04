@@ -14,7 +14,7 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
     userData.forEach((user) => {
       delete user.password
     })
-    return res.status(200).json(userData)
+    res.status(200).json(userData)
   }
-  return res.status(200).json({ message: "You're not authorized!" })
+  res.status(200).json({ message: "You're not authorized!" })
 }

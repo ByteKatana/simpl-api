@@ -15,7 +15,7 @@ import { useState, useEffect, useRef } from "react"
 import Menu from "../../../components/dashboard/menu"
 
 //Interfaces
-import { PermissionGroup, UserCreateResponse } from "../../../interfaces"
+import { PermissionGroup } from "../../../interfaces"
 import handleValueChange from "../../../lib/ui/handle-value-change"
 import useSaveData from "../../../hooks/use-save-data"
 
@@ -129,9 +129,7 @@ export default function CreateUser({ fetchedPermissionGroups }) {
       } else {
         resultSwal
           .fire({
-            title: `Already exist:\n ${checkEmailExist === true ? "Email" : ""}\n ${
-              checkUsernameExist === true ? "Username" : ""
-            }`,
+            title: `Already exist:\n ${checkEmailExist ? "Email" : ""}\n ${checkUsernameExist ? "Username" : ""}`,
             icon: "error",
             showDenyButton: false,
             showCancelButton: false,
@@ -170,7 +168,7 @@ export default function CreateUser({ fetchedPermissionGroups }) {
                       name="username"
                       ref={(el) => (formRef.current[`username`] = el)}
                       defaultValue={formValues["username"]}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         handleValueChange(
                           formValues,
                           formErrors,
@@ -182,8 +180,10 @@ export default function CreateUser({ fetchedPermissionGroups }) {
                           e,
                           "USER"
                         )
-                      }
-                      onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)}
+                      }}
+                      onBlur={(e) => {
+                        checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)
+                      }}
                       required
                     />
                     {(showErrors || showError[`username`]) &&
@@ -203,7 +203,7 @@ export default function CreateUser({ fetchedPermissionGroups }) {
                       name="email"
                       ref={(el) => (formRef.current[`email`] = el)}
                       defaultValue={formValues["email"]}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         handleValueChange(
                           formValues,
                           formErrors,
@@ -215,8 +215,10 @@ export default function CreateUser({ fetchedPermissionGroups }) {
                           e,
                           "USER"
                         )
-                      }
-                      onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)}
+                      }}
+                      onBlur={(e) => {
+                        checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)
+                      }}
                       required
                     />
                     {(showErrors || showError[`email`]) &&
@@ -249,7 +251,9 @@ export default function CreateUser({ fetchedPermissionGroups }) {
                           "USER"
                         )
                       }
-                      onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)}
+                      onBlur={(e) => {
+                        checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)
+                      }}
                       required
                     />
                     {(showErrors || showError[`password`]) &&
@@ -280,7 +284,9 @@ export default function CreateUser({ fetchedPermissionGroups }) {
                           "USER"
                         )
                       }
-                      onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)}
+                      onBlur={(e) => {
+                        checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)
+                      }}
                       className="form-select form-select-lg mb-3 block w-full  px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300  rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none">
                       <option value="">Please choose a group</option>
                       {fetchedPermissionGroups.map((permissionGroup) => {
@@ -301,7 +307,7 @@ export default function CreateUser({ fetchedPermissionGroups }) {
                       type="button"
                       onClick={() => {
                         setIsCreateBtnClicked(true)
-                        submitData()
+                        void submitData()
                       }}
                       className="mb-2 w-full inline-block px-6 py-2.5 bg-slate-700 text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-slate-800 hover:shadow-lg focus:bg-slate-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-slate-800 active:shadow-lg transition duration-150 ease-in-out">
                       {isCreateBtnClicked ? (

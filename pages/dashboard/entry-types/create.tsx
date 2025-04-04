@@ -1,5 +1,5 @@
 //Utility
-import axios, { AxiosResponse } from "axios"
+import axios from "axios"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
 import Router from "next/router"
@@ -105,7 +105,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
               setFormFields([{ field_name: "", field_value_type: "", field_form_type: "", field_length: 100 }])
               setIsCreateBtnClicked(false)
             } else if (result.isDenied) {
-              Router.push("/dashboard/entry-types")
+              void Router.push("/dashboard/entry-types")
             }
           })
       } else if (result.status === "failed") {
@@ -155,7 +155,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                       ref={(el) => (formRef.current[`name`] = el)}
                       placeholder="Eg: Articles"
                       defaultValue={entryType["name"]}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         handleValueChange(
                           entryType,
                           formErrors,
@@ -167,8 +167,10 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                           e,
                           "ENTRY_TYPE"
                         )
-                      }
-                      onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, 0)}
+                      }}
+                      onBlur={(e) => {
+                        checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, 0)
+                      }}
                       required
                     />
                     {(showErrors || showError[`name`]) &&
@@ -186,7 +188,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                       name="namespace"
                       ref={(el) => (formRef.current[`namespace`] = el)}
                       defaultValue={entryType["namespace"]}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         handleValueChange(
                           entryType,
                           formErrors,
@@ -198,8 +200,10 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                           e,
                           "ENTRY_TYPE"
                         )
-                      }
-                      onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, 0)}
+                      }}
+                      onBlur={(e) => {
+                        checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, 0)
+                      }}
                       className="form-select form-select-lg mb-3 block w-full  px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300  rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none">
                       <option value="itself"> Itself </option>
                       {fetchedEntryTypes.map((entry_type) => {
@@ -243,7 +247,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                             id="field_name"
                             placeholder="Eg: Title"
                             defaultValue={field.field_name}
-                            onChange={(e) =>
+                            onChange={(e) => {
                               handleValueChange(
                                 formFields,
                                 formErrors,
@@ -256,10 +260,10 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                                 "FIELD",
                                 index
                               )
-                            }
-                            onBlur={(e) =>
+                            }}
+                            onBlur={(e) => {
                               checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, index)
-                            }
+                            }}
                           />
                           {(showErrors || showError[`field_name_${index}`]) &&
                             formErrors[`field_name_${index}`] &&
@@ -282,7 +286,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                             className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none"
                             placeholder="Eg: 100"
                             defaultValue={field.field_length}
-                            onChange={(e) =>
+                            onChange={(e) => {
                               handleValueChange(
                                 formFields,
                                 formErrors,
@@ -295,10 +299,10 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                                 "FIELD",
                                 index
                               )
-                            }
-                            onBlur={(e) =>
+                            }}
+                            onBlur={(e) => {
                               checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, index)
-                            }
+                            }}
                             min="1"
                             required
                           />
@@ -320,7 +324,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                             id="field_value_type"
                             name="field_value_type"
                             ref={(el) => (formRef.current[`field_value_type_${index}`] = el)}
-                            onChange={(e) =>
+                            onChange={(e) => {
                               handleValueChange(
                                 formFields,
                                 formErrors,
@@ -333,7 +337,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                                 "FIELD",
                                 index
                               )
-                            }
+                            }}
                             onBlur={(e) =>
                               checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, index)
                             }
@@ -365,7 +369,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                             name="field_form_type"
                             ref={(el) => (formRef.current[`field_form_type_${index}`] = el)}
                             defaultValue={field.field_form_type}
-                            onChange={(e) =>
+                            onChange={(e) => {
                               handleValueChange(
                                 formFields,
                                 formErrors,
@@ -378,7 +382,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                                 "FIELD",
                                 index
                               )
-                            }
+                            }}
                             onBlur={(e) =>
                               checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, index)
                             }
@@ -400,9 +404,9 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                         <a
                           href="#"
                           className="text-2xl text-slate-400 transition hover:text-slate-900"
-                          onClick={() =>
+                          onClick={() => {
                             removeField(formFields, formErrors, setFormFields, setFormErrors, index, "CREATE")
-                          }>
+                          }}>
                           <FiX />
                         </a>
                       </div>
@@ -416,7 +420,9 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                     <a
                       href="#"
                       className="flex flex-row justify-center text-slate-300 transition hover:text-slate-900"
-                      onClick={() => addField(formFields, formErrors, setFormFields, setFormErrors, "CREATE")}>
+                      onClick={() => {
+                        addField(formFields, formErrors, setFormFields, setFormErrors, "CREATE")
+                      }}>
                       <span className="text-4xl">
                         <FiPlusSquare />
                       </span>

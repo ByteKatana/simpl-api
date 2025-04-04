@@ -15,7 +15,7 @@ export class UserController {
   async create() {
     let client: MongoClient
     let dbCollection: Collection
-    let isConnected: boolean = false
+    let isConnected = false
 
     try {
       client = await connectDB()
@@ -47,7 +47,7 @@ export class UserController {
   async update(id: string) {
     let client: MongoClient
     let dbCollection: Collection
-    let isConnected: boolean = false
+    let isConnected = false
 
     try {
       client = await connectDB()

@@ -76,7 +76,9 @@ export default function Users({ fetchedUsers }) {
       .then((res: AxiosResponse) => {
         result = res.data
       })
-      .catch((e: unknown) => console.log(e))
+      .catch((e: unknown) => {
+        console.log(e)
+      })
 
     if (result.status === "success") Swal.fire("Deleted!", "", "success")
     else if (result.status === "failed") Swal.fire("Failed to delete!", "", "error")
@@ -123,7 +125,9 @@ export default function Users({ fetchedUsers }) {
                   className="form-control block w-full px-3 py-1.5 text-basefont-normaltext-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none"
                   id="search"
                   placeholder="Search"
-                  onChange={(e) => searchUser(e)}
+                  onChange={(e) => {
+                    searchUser(e)
+                  }}
                 />
               </div>
             </div>
@@ -238,14 +242,14 @@ export default function Users({ fetchedUsers }) {
                               : "bg-transparent text-gray-800  outline-none transition-all duration-300 hover:text-gray-800 hover:bg-gray-200 focus:shadow-none"
                           }  `}
                           href="#"
-                          onClick={() =>
+                          onClick={() => {
                             setPaginationState({
                               ...paginationState,
                               min: (page - 1) * paginationState.limit,
                               max: paginationState.limit * page,
                               currentPage: page
                             })
-                          }>
+                          }}>
                           {page}
                         </a>
                       </li>

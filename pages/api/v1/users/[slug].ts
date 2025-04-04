@@ -24,9 +24,9 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
       userDataWithLimit.forEach((user) => {
         delete user.password
       })
-      return res.status(200).json(getByLimit(_slug, userDataWithLimit))
+      res.status(200).json(getByLimit(_slug, userDataWithLimit))
     }
-    return res.status(200).json(userData)
+    res.status(200).json(userData)
   }
-  return res.status(200).json({ message: "You're not authorized!" })
+  res.status(200).json({ message: "You're not authorized!" })
 }

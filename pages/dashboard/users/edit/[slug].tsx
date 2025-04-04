@@ -27,13 +27,13 @@ import useSaveData from "../../../../hooks/use-save-data"
 
 export async function getServerSideProps(req) {
   const { slug } = req.query
-  const resPermGroupActionURI: string = `${process.env.BASE_URL!}/api/v1/permission-groups?apikey=${process.env
-    .API_KEY!}`
+  const resPermGroupActionURI = `${process.env.BASE_URL}/api/v1/permission-groups?apikey=${process.env.API_KEY}`
   let resPermissionGroups = await axios.get(resPermGroupActionURI)
   let permissionGroups: PermissionGroup = await resPermissionGroups.data
 
-  const resUserActionURI: string = `${process.env.BASE_URL!}/api/v1/users/_id/${slug}?apikey=${process.env
-    .API_KEY!}&secretkey=${process.env.SECRET_KEY!}`
+  const resUserActionURI = `${process.env.BASE_URL}/api/v1/users/_id/${slug}?apikey=${
+    process.env.API_KEY
+  }&secretkey=${process.env.SECRET_KEY}`
   const resUser = await axios.get(resUserActionURI)
   let user: User = await resUser.data
 
@@ -139,7 +139,7 @@ export default function EditUser({ fetchedPermissionGroups, fetchedUser }) {
                       name="username"
                       ref={(el) => (formRef.current[`username`] = el)}
                       defaultValue={formValues[0].username}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         handleValueChange(
                           formValues,
                           formErrors,
@@ -151,8 +151,10 @@ export default function EditUser({ fetchedPermissionGroups, fetchedUser }) {
                           e,
                           "USER_EDIT"
                         )
-                      }
-                      onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)}
+                      }}
+                      onBlur={(e) => {
+                        checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)
+                      }}
                       required
                     />
                     {(showErrors || showError[`username`]) &&
@@ -172,7 +174,7 @@ export default function EditUser({ fetchedPermissionGroups, fetchedUser }) {
                       name="email"
                       ref={(el) => (formRef.current[`email`] = el)}
                       defaultValue={formValues[0].email}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         handleValueChange(
                           formValues,
                           formErrors,
@@ -184,8 +186,10 @@ export default function EditUser({ fetchedPermissionGroups, fetchedUser }) {
                           e,
                           "USER_EDIT"
                         )
-                      }
-                      onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)}
+                      }}
+                      onBlur={(e) => {
+                        checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)
+                      }}
                       required
                     />
                     {(showErrors || showError[`email`]) &&
@@ -204,7 +208,7 @@ export default function EditUser({ fetchedPermissionGroups, fetchedUser }) {
                       id="password"
                       name="password"
                       ref={(el) => (formRef.current[`password`] = el)}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         handleValueChange(
                           formValues,
                           formErrors,
@@ -216,7 +220,7 @@ export default function EditUser({ fetchedPermissionGroups, fetchedUser }) {
                           e,
                           "USER_EDIT"
                         )
-                      }
+                      }}
                     />
                   </div>
                   <div className="w-11/12 mt-5">
@@ -228,7 +232,7 @@ export default function EditUser({ fetchedPermissionGroups, fetchedUser }) {
                       name="permission_group"
                       ref={(el) => (formRef.current[`permission_group`] = el)}
                       defaultValue={formValues[0].permission_group}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         handleValueChange(
                           formValues,
                           formErrors,
@@ -240,8 +244,10 @@ export default function EditUser({ fetchedPermissionGroups, fetchedUser }) {
                           e,
                           "USER_EDIT"
                         )
-                      }
-                      onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)}
+                      }}
+                      onBlur={(e) => {
+                        checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)
+                      }}
                       className="form-select form-select-lg mb-3 block w-full  px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300  rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none">
                       {fetchedPermissionGroups.map((permissionGroup) => {
                         return <option value={`${permissionGroup.slug}`}>{`${permissionGroup.name}`}</option>

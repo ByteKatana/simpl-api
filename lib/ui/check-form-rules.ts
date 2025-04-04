@@ -30,7 +30,7 @@ const checkFormRules = (
   } else {
     if (`${event.target.name}_rule` in formErrors) {
       let copyErrors = { ...formErrors }
-      const { [`${event.target.name}_rule`]: undefined, ...restOfErrors }: Record<string, string> = copyErrors
+      const { [`${event.target.name}_rule`]: _, ...restOfErrors }: Record<string, string> = copyErrors
       setFormErrors(restOfErrors)
       setShowError({ [`${event.target.name}_rule`]: false })
     }

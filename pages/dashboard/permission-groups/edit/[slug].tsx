@@ -1,5 +1,5 @@
 //Utility
-import axios, { AxiosResponse } from "axios"
+import axios from "axios"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
 import { useRouter } from "next/router"
@@ -27,7 +27,7 @@ import handleValueChange from "../../../../lib/ui/handle-value-change"
 
 export async function getServerSideProps(req) {
   const { slug } = req.query
-  const actionURI: string = `${process.env.BASE_URL!}/api/v1/permission-group/${slug}?apikey=${process.env.API_KEY!}`
+  const actionURI = `${process.env.BASE_URL}/api/v1/permission-group/${slug}?apikey=${process.env.API_KEY}`
   const resPermGroup = await axios.get(actionURI)
   let permGroup: PermissionGroup = await resPermGroup.data
 
@@ -130,7 +130,7 @@ export default function EditPermissionGroup({ fetchedPermissionGroup }) {
                       name="name"
                       ref={(el) => (formRef.current[`name`] = el)}
                       defaultValue={formValues[0].name}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         handleValueChange(
                           formValues,
                           formErrors,
@@ -142,8 +142,10 @@ export default function EditPermissionGroup({ fetchedPermissionGroup }) {
                           e,
                           "PERM_GROUP_EDIT"
                         )
-                      }
-                      onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)}
+                      }}
+                      onBlur={(e) => {
+                        checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)
+                      }}
                       required
                     />
                     {(showErrors || showError[`name`]) &&

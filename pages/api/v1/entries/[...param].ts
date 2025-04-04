@@ -16,20 +16,13 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
       param[param.length - 1].startsWith("last_") ||
       param[param.length - 1].startsWith("random_")
     ) {
-      apiBuilder = new apiBuilderController(
-        "multi-param",
-        "entries",
-        "namespace",
-        param.slice(0, param.length - 1)
-      )
-      return res
-        .status(200)
-        .json(getByLimit(param[param.length - 1], await apiBuilder.fetchData("Equals")))
+      apiBuilder = new apiBuilderController("multi-param", "entries", "namespace", param.slice(0, param.length - 1))
+      res.status(200).json(getByLimit(param[param.length - 1], await apiBuilder.fetchData("Equals")))
     } else {
       apiBuilder = new apiBuilderController("multi-param", "entries", "namespace", param)
     }
 
-    return res.status(200).json(await apiBuilder.fetchData("Equals"))
+    res.status(200).json(await apiBuilder.fetchData("Equals"))
   }
-  return res.status(200).json({ message: "You're not authorized!" })
+  res.status(200).json({ message: "You're not authorized!" })
 }

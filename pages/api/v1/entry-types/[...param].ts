@@ -18,11 +18,11 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
     ) {
       //first_!
       apiBuilder = new apiBuilderController("multi-param", "entry_types", "namespace", param.slice(0, param.length - 1))
-      return res.status(200).json(getByLimit(param[param.length - 1], await apiBuilder.fetchData("StartsWith")))
+      res.status(200).json(getByLimit(param[param.length - 1], await apiBuilder.fetchData("StartsWith")))
     } else {
       apiBuilder = new apiBuilderController("multi-param", "entry_types", "namespace", param.slice(0, param.length))
     }
-    return res.status(200).json(await apiBuilder.fetchData("StartsWith"))
+    res.status(200).json(await apiBuilder.fetchData("StartsWith"))
   }
-  return res.status(200).json({ message: "You're not authorized!" })
+  res.status(200).json({ message: "You're not authorized!" })
 }

@@ -16,7 +16,7 @@ export class PermissionGroupController {
   async create() {
     let client: MongoClient
     let dbCollection: Collection
-    let isConnected: boolean = false
+    let isConnected = false
 
     try {
       client = await connectDB()
@@ -46,7 +46,7 @@ export class PermissionGroupController {
   async update(id: string) {
     let client: MongoClient
     let dbCollection: Collection
-    let isConnected: boolean = false
+    let isConnected = false
 
     try {
       client = await connectDB()

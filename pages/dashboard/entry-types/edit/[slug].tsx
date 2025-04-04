@@ -1,5 +1,5 @@
 //Utility
-import axios, { AxiosResponse } from "axios"
+import axios from "axios"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
 import { useRouter } from "next/router"
@@ -161,7 +161,7 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
           }
         }
       }
-      //setEntryType(newEntryType)
+      setEntryType(newEntryType)
     }
   }
 
@@ -258,8 +258,12 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                       ref={(el) => (formRef.current[`name`] = el)}
                       placeholder="Eg: Articles"
                       defaultValue={entryType[0].name}
-                      onChange={(e) => handleEntryTypeChange(e)}
-                      onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, 0)}
+                      onChange={(e) => {
+                        handleEntryTypeChange(e)
+                      }}
+                      onBlur={(e) => {
+                        checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, 0)
+                      }}
                       required
                     />
                     {(showErrors || showError[`name`]) &&
@@ -278,8 +282,12 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                       ref={(el) => (formRef.current[`namespace`] = el)}
                       className="form-select form-select-lg mb-3 block w-full  px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300  rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none"
                       defaultValue={entryType[0].namespace}
-                      onChange={(e) => handleEntryTypeChange(e)}
-                      onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, 0)}
+                      onChange={(e) => {
+                        handleEntryTypeChange(e)
+                      }}
+                      onBlur={(e) => {
+                        checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, 0)
+                      }}
                       required>
                       <option key={0} value={entryType[0].namespace}>
                         Itself{" "}
@@ -327,10 +335,12 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                             id="field_name"
                             placeholder="Eg: Title"
                             defaultValue={field.field_name}
-                            onChange={(e) => handleFieldChange(index, e)}
-                            onBlur={(e) =>
+                            onChange={(e) => {
+                              handleFieldChange(index, e)
+                            }}
+                            onBlur={(e) => {
                               checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, index)
-                            }
+                            }}
                             required
                           />
                           {(showErrors || showError[`field_name_${index}`]) &&
@@ -355,10 +365,12 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                             id="field_length"
                             placeholder="Eg: 100"
                             defaultValue={field.field_length}
-                            onChange={(e) => handleFieldChange(index, e)}
-                            onBlur={(e) =>
+                            onChange={(e) => {
+                              handleFieldChange(index, e)
+                            }}
+                            onBlur={(e) => {
                               checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, index)
-                            }
+                            }}
                             min="1"
                             required
                           />
@@ -382,10 +394,12 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                             ref={(el) => (formRef.current[`field_value_type_${index}`] = el)}
                             defaultValue={field.field_value_type}
                             className="form-select form-select-lg mb-3 block w-full  px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300  rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none"
-                            onChange={(e) => handleFieldChange(index, e)}
-                            onBlur={(e) =>
+                            onChange={(e) => {
+                              handleFieldChange(index, e)
+                            }}
+                            onBlur={(e) => {
                               checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, index)
-                            }
+                            }}
                             required>
                             <option value="">Please select one</option>
                             <option value="string">String</option>
@@ -413,10 +427,12 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                             ref={(el) => (formRef.current[`field_form_type_${index}`] = el)}
                             defaultValue={field.field_form_type}
                             className="form-select form-select-lg mb-3 block w-full  px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300  rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none"
-                            onChange={(e) => handleFieldChange(index, e)}
-                            onBlur={(e) =>
+                            onChange={(e) => {
+                              handleFieldChange(index, e)
+                            }}
+                            onBlur={(e) => {
                               checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, index)
-                            }
+                            }}
                             required>
                             <option value="">Please select one</option>
                             <option value="input">Input Field</option>
@@ -434,7 +450,7 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                         <a
                           href="#"
                           className="text-2xl text-slate-400 transition hover:text-slate-900"
-                          onClick={() =>
+                          onClick={() => {
                             removeField(
                               formFields,
                               formErrors,
@@ -445,7 +461,7 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                               setAnyValueChanged,
                               fieldsData
                             )
-                          }>
+                          }}>
                           <FiX />
                         </a>
                       </div>
@@ -459,7 +475,7 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                     <a
                       href="#"
                       className="flex flex-row justify-center text-slate-300 transition hover:text-slate-900"
-                      onClick={() =>
+                      onClick={() => {
                         addField(
                           formFields,
                           formErrors,
@@ -469,7 +485,7 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                           setAnyValueChanged,
                           fieldsData
                         )
-                      }>
+                      }}>
                       <span className="text-4xl">
                         <FiPlusSquare />
                       </span>
@@ -484,7 +500,7 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                         type="button"
                         onClick={() => {
                           setIsUpdateBtnClicked(true)
-                          submitData()
+                          void submitData()
                         }}
                         className="mb-2 w-full inline-block px-6 py-2.5 bg-slate-700 text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-slate-800 hover:shadow-lg focus:bg-slate-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-slate-800 active:shadow-lg transition duration-150 ease-in-out">
                         Update
