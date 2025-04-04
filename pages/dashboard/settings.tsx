@@ -180,7 +180,7 @@ export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, f
       .then((res) => {
         result = res.data
       })
-      .catch((e) => {
+      .catch((e: unknown) => {
         console.log(e)
       })
     if (result.result.status === "success") {

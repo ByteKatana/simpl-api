@@ -13,7 +13,7 @@ const checkPermission = (
     if (permGroup.privileges.find((privilege) => Object.keys(privilege).includes(namespace))) {
       return permGroup.privileges
         .find((privilege) => Object.keys(privilege).includes(namespace))
-        [namespace].permissions.includes(`${permission}`)
+        [namespace].permissions.includes(permission)
     }
     return false
   }
