@@ -285,7 +285,9 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                       onChange={(e) => {
                         handleEntryTypeChange(e)
                       }}
-                      onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, 0)}
+                      onBlur={(e) => {
+                        checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, 0)
+                      }}
                       required>
                       <option key={0} value={entryType[0].namespace}>
                         Itself{" "}
@@ -336,9 +338,9 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                             onChange={(e) => {
                               handleFieldChange(index, e)
                             }}
-                            onBlur={(e) =>
+                            onBlur={(e) => {
                               checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, index)
-                            }
+                            }}
                             required
                           />
                           {(showErrors || showError[`field_name_${index}`]) &&
@@ -366,9 +368,9 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                             onChange={(e) => {
                               handleFieldChange(index, e)
                             }}
-                            onBlur={(e) =>
+                            onBlur={(e) => {
                               checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, index)
-                            }
+                            }}
                             min="1"
                             required
                           />
@@ -392,10 +394,12 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                             ref={(el) => (formRef.current[`field_value_type_${index}`] = el)}
                             defaultValue={field.field_value_type}
                             className="form-select form-select-lg mb-3 block w-full  px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300  rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none"
-                            onChange={(e) => handleFieldChange(index, e)}
-                            onBlur={(e) =>
+                            onChange={(e) => {
+                              handleFieldChange(index, e)
+                            }}
+                            onBlur={(e) => {
                               checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, index)
-                            }
+                            }}
                             required>
                             <option value="">Please select one</option>
                             <option value="string">String</option>
@@ -424,9 +428,9 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                             defaultValue={field.field_form_type}
                             className="form-select form-select-lg mb-3 block w-full  px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300  rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none"
                             onChange={(e) => handleFieldChange(index, e)}
-                            onBlur={(e) =>
+                            onBlur={(e) => {
                               checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, index)
-                            }
+                            }}
                             required>
                             <option value="">Please select one</option>
                             <option value="input">Input Field</option>

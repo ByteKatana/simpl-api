@@ -201,7 +201,9 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                           "ENTRY_TYPE"
                         )
                       }}
-                      onBlur={(e) => checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, 0)}
+                      onBlur={(e) => {
+                        checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, 0)
+                      }}
                       className="form-select form-select-lg mb-3 block w-full  px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300  rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none">
                       <option value="itself"> Itself </option>
                       {fetchedEntryTypes.map((entry_type) => {
@@ -245,7 +247,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                             id="field_name"
                             placeholder="Eg: Title"
                             defaultValue={field.field_name}
-                            onChange={(e) =>
+                            onChange={(e) => {
                               handleValueChange(
                                 formFields,
                                 formErrors,
@@ -258,7 +260,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                                 "FIELD",
                                 index
                               )
-                            }
+                            }}
                             onBlur={(e) => {
                               checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, index)
                             }}
@@ -284,7 +286,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                             className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none"
                             placeholder="Eg: 100"
                             defaultValue={field.field_length}
-                            onChange={(e) =>
+                            onChange={(e) => {
                               handleValueChange(
                                 formFields,
                                 formErrors,
@@ -297,10 +299,10 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                                 "FIELD",
                                 index
                               )
-                            }
-                            onBlur={(e) =>
+                            }}
+                            onBlur={(e) => {
                               checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, index)
-                            }
+                            }}
                             min="1"
                             required
                           />
@@ -322,7 +324,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                             id="field_value_type"
                             name="field_value_type"
                             ref={(el) => (formRef.current[`field_value_type_${index}`] = el)}
-                            onChange={(e) =>
+                            onChange={(e) => {
                               handleValueChange(
                                 formFields,
                                 formErrors,
@@ -335,7 +337,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                                 "FIELD",
                                 index
                               )
-                            }
+                            }}
                             onBlur={(e) =>
                               checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, index)
                             }
@@ -367,7 +369,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                             name="field_form_type"
                             ref={(el) => (formRef.current[`field_form_type_${index}`] = el)}
                             defaultValue={field.field_form_type}
-                            onChange={(e) =>
+                            onChange={(e) => {
                               handleValueChange(
                                 formFields,
                                 formErrors,
@@ -380,7 +382,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                                 "FIELD",
                                 index
                               )
-                            }
+                            }}
                             onBlur={(e) =>
                               checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, index)
                             }
