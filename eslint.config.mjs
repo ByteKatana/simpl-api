@@ -10,7 +10,7 @@ export default [
   ...tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,
   {
-    plugins: ["prettier"],
+    plugins: ["prettier", "testing-library/react", "jest-dom/recommended"],
     languageOptions: { globals: globals.browser },
     rules: {
       "react/jsx-uses-react": "off",
