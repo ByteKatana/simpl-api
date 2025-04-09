@@ -67,7 +67,7 @@ describe("Check if values meets given form rules", () => {
         value: "3"
       }
     }
-    const valueValidString = checkFormRules(
+    checkFormRules(
       mockFormErrors,
       mockShowError,
       true,
