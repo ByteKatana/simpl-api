@@ -13,7 +13,7 @@ describe("Check length of the value", () => {
         value: "Lorem ipsum dolor sit amet"
       }
     }
-    const greaterValue = checkLength(mockFormErrors, mockSetFormErrors, mockSetShowError, 5, mockEvent)
+    checkLength(mockFormErrors, mockSetFormErrors, mockSetShowError, 5, mockEvent)
     expect(mockSetFormErrors).toHaveBeenCalledWith({ description_length: "length-error" })
     expect(mockSetShowError).toHaveBeenCalledWith({ description_length: true })
   })
@@ -26,7 +26,7 @@ describe("Check length of the value", () => {
         value: "Lorem ipsum dolor sit amet"
       }
     }
-    const greaterValue = checkLength(mockFormErrors, mockSetFormErrors, mockSetShowError, 500, mockEvent)
+    checkLength(mockFormErrors, mockSetFormErrors, mockSetShowError, 500, mockEvent)
     expect(mockSetFormErrors).toHaveBeenCalledWith({})
     expect(mockSetShowError).toHaveBeenCalledWith({ description_length: false })
   })

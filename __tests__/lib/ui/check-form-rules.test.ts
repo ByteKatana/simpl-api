@@ -2,8 +2,8 @@ import "@testing-library/jest-dom"
 import React, { SetStateAction } from "react"
 import checkFormRules from "../../../lib/ui/check-form-rules"
 
-const mockSetShowError: React.Dispatch<SetStateAction<T>> = jest.fn()
-const mockSetFormErrors: React.Dispatch<SetStateAction<T>> = jest.fn()
+const mockSetShowError: React.Dispatch<SetStateAction<object>> = jest.fn()
+const mockSetFormErrors: React.Dispatch<SetStateAction<object>> = jest.fn()
 
 describe("Check if values meets given form rules", () => {
   it("Check if value is not string", () => {
@@ -15,15 +15,7 @@ describe("Check if values meets given form rules", () => {
         value: 3
       }
     }
-    const value = checkFormRules(
-      mockFormErrors,
-      mockShowError,
-      true,
-      mockSetShowError,
-      mockSetFormErrors,
-      "string",
-      mockEventError
-    )
+    checkFormRules(mockFormErrors, mockShowError, true, mockSetShowError, mockSetFormErrors, "string", mockEventError)
     expect(mockSetFormErrors).toHaveBeenCalledWith({ description_rule: "string-field" })
     expect(mockSetShowError).toHaveBeenCalledWith({ description_rule: true })
   })
@@ -37,15 +29,7 @@ describe("Check if values meets given form rules", () => {
         value: "abc"
       }
     }
-    const valueValid = checkFormRules(
-      mockFormErrors,
-      mockShowError,
-      true,
-      mockSetShowError,
-      mockSetFormErrors,
-      "string",
-      mockEventValid
-    )
+    checkFormRules(mockFormErrors, mockShowError, true, mockSetShowError, mockSetFormErrors, "string", mockEventValid)
     expect(mockSetFormErrors).toHaveBeenCalledWith({})
     expect(mockSetShowError).toHaveBeenCalledWith({ description_rule: false })
   })
@@ -59,15 +43,7 @@ describe("Check if values meets given form rules", () => {
         value: "abc"
       }
     }
-    const value = checkFormRules(
-      mockFormErrors,
-      mockShowError,
-      true,
-      mockSetShowError,
-      mockSetFormErrors,
-      "integer",
-      mockEvent
-    )
+    checkFormRules(mockFormErrors, mockShowError, true, mockSetShowError, mockSetFormErrors, "integer", mockEvent)
     expect(mockSetFormErrors).toHaveBeenCalledWith({ description_rule: "integer-field" })
     expect(mockSetShowError).toHaveBeenCalledWith({ description_rule: true })
   })
@@ -81,15 +57,7 @@ describe("Check if values meets given form rules", () => {
         value: 3
       }
     }
-    const valueValid = checkFormRules(
-      mockFormErrors,
-      mockShowError,
-      true,
-      mockSetShowError,
-      mockSetFormErrors,
-      "integer",
-      mockEventValid
-    )
+    checkFormRules(mockFormErrors, mockShowError, true, mockSetShowError, mockSetFormErrors, "integer", mockEventValid)
     expect(mockSetFormErrors).toHaveBeenCalledWith({})
     expect(mockSetShowError).toHaveBeenCalledWith({ description_rule: false })
 
@@ -121,15 +89,7 @@ describe("Check if values meets given form rules", () => {
         value: 3
       }
     }
-    const value = checkFormRules(
-      mockFormErrors,
-      mockShowError,
-      true,
-      mockSetShowError,
-      mockSetFormErrors,
-      "double",
-      mockEvent
-    )
+    checkFormRules(mockFormErrors, mockShowError, true, mockSetShowError, mockSetFormErrors, "double", mockEvent)
     expect(mockSetFormErrors).toHaveBeenCalledWith({ description_rule: "integer-field" })
     expect(mockSetShowError).toHaveBeenCalledWith({ description_rule: true })
   })
@@ -143,15 +103,7 @@ describe("Check if values meets given form rules", () => {
         value: 3.5
       }
     }
-    const valueValid = checkFormRules(
-      mockFormErrors,
-      mockShowError,
-      true,
-      mockSetShowError,
-      mockSetFormErrors,
-      "double",
-      mockEventValid
-    )
+    checkFormRules(mockFormErrors, mockShowError, true, mockSetShowError, mockSetFormErrors, "double", mockEventValid)
     expect(mockSetFormErrors).toHaveBeenCalledWith({})
     expect(mockSetShowError).toHaveBeenCalledWith({ description_rule: false })
 
@@ -161,7 +113,7 @@ describe("Check if values meets given form rules", () => {
         value: "3.5"
       }
     }
-    const valueValidString = checkFormRules(
+    checkFormRules(
       mockFormErrors,
       mockShowError,
       true,
@@ -183,15 +135,7 @@ describe("Check if values meets given form rules", () => {
         value: 3
       }
     }
-    const value = checkFormRules(
-      mockFormErrors,
-      mockShowError,
-      true,
-      mockSetShowError,
-      mockSetFormErrors,
-      "boolean",
-      mockEvent
-    )
+    checkFormRules(mockFormErrors, mockShowError, true, mockSetShowError, mockSetFormErrors, "boolean", mockEvent)
     expect(mockSetFormErrors).toHaveBeenCalledWith({ description_rule: "integer-field" })
     expect(mockSetShowError).toHaveBeenCalledWith({ description_rule: true })
   })
@@ -205,15 +149,7 @@ describe("Check if values meets given form rules", () => {
         value: true
       }
     }
-    const valueValid = checkFormRules(
-      mockFormErrors,
-      mockShowError,
-      true,
-      mockSetShowError,
-      mockSetFormErrors,
-      "boolean",
-      mockEventValid
-    )
+    checkFormRules(mockFormErrors, mockShowError, true, mockSetShowError, mockSetFormErrors, "boolean", mockEventValid)
     expect(mockSetFormErrors).toHaveBeenCalledWith({})
     expect(mockSetShowError).toHaveBeenCalledWith({ description_rule: false })
 
@@ -223,7 +159,7 @@ describe("Check if values meets given form rules", () => {
         value: "true"
       }
     }
-    const valueValidString = checkFormRules(
+    checkFormRules(
       mockFormErrors,
       mockShowError,
       true,
