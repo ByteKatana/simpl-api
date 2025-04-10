@@ -5,7 +5,7 @@ import removeField from "../../../lib/ui/remove-field"
 const mockSetFormFields = jest.fn()
 const mockSetFormErrors = jest.fn()
 
-describe("Remove a field to the entry type", () => {
+describe("Remove a field from the entry type", () => {
   it("Create Mode", () => {
     const mockActionType: ActionType = "CREATE"
     const mockFormErrors = {
