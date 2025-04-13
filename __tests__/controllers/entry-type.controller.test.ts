@@ -2,7 +2,7 @@ import "@testing-library/jest-dom"
 import { EntryType } from "../../interfaces"
 import { EntryTypeController } from "../../controllers/entry-type.controller"
 
-describe("Check if entry type controller handles action properly", () => {
+describe("Check if the entry type controller handles actions properly", () => {
   let entryTypeController: EntryTypeController
   let entryTypeData: EntryType
   let entryTypeId: string

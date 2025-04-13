@@ -2,7 +2,7 @@ import "@testing-library/jest-dom"
 import { UserController } from "../../controllers/user.controller"
 import { User } from "../../interfaces"
 
-describe("Check if user controller handles action properly", () => {
+describe("Check if the user controller handles actions properly", () => {
   let userController: UserController
   let userData: User
   let userId: string

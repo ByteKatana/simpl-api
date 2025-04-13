@@ -2,7 +2,7 @@ import "@testing-library/jest-dom"
 import { PermissionGroup } from "../../interfaces"
 import { PermissionGroupController } from "../../controllers/permission-group.controller"
 
-describe("Check if permission group controller handles actions properly", () => {
+describe("Check if the permission group controller handles actions properly", () => {
   let permissionGroupController: PermissionGroupController
   let permGroupData: PermissionGroup
   let permGroupId: string
