@@ -7,9 +7,11 @@ import { User } from "../interfaces"
 
 export class UserController {
   user: User
+  mockClient: boolean
 
-  constructor(userData: User) {
+  constructor(userData: User, mockClient?: boolean) {
     this.user = userData
+    this.mockClient = mockClient
   }
 
   async create() {
@@ -18,7 +20,7 @@ export class UserController {
     let isConnected = false
 
     try {
-      client = await connectDB()
+      client = await connectDB(this.mockClient)
       isConnected = true
     } catch (e) {
       console.log(e)
@@ -31,13 +33,23 @@ export class UserController {
         let hashPw = bcrypt.hashSync(plainPw, 8)
         dbCollection = client.db(process.env.DB_NAME).collection("users")
         insertResult = await dbCollection.insertOne({ ...this.user, password: hashPw })
+
+        if (insertResult.insertedId) {
+          if (this.mockClient) {
+            return { result: { status: "success", message: "User has been created." }, userId: insertResult.insertedId }
+          }
+
+          return { status: "success", message: "User has been created." }
+        } else {
+          return { status: "failed", message: "Failed to create the user." }
+        }
       } catch (e) {
         console.log(e)
-      }
-      if (insertResult.insertedId) {
-        return { status: "success", message: "User has been created." }
-      } else {
         return { status: "failed", message: "Failed to create the user." }
+      } finally {
+        if (client?.close && typeof client.close === "function") {
+          await client.close()
+        }
       }
     } else {
       return [{ message: "Database connection is NOT established" }]
@@ -50,7 +62,7 @@ export class UserController {
     let isConnected = false
 
     try {
-      client = await connectDB()
+      client = await connectDB(this.mockClient)
       isConnected = true
     } catch (e) {
       console.log(e)
@@ -78,6 +90,10 @@ export class UserController {
         )
       } catch (e) {
         console.log(e)
+      } finally {
+        if (client?.close && typeof client.close === "function") {
+          await client.close()
+        }
       }
       if (updateResult["matchedCount"] === 1 && updateResult["modifiedCount"] === 1) {
         return { status: "success", message: "User has been updated." }
@@ -97,7 +113,7 @@ export class UserController {
     let isConnected: boolean = false
 
     try {
-      client = await connectDB()
+      client = await connectDB(this.mockClient)
       isConnected = true
     } catch (e) {
       console.log(e)
@@ -109,6 +125,10 @@ export class UserController {
         deleteResult = await dbCollection.deleteOne({ _id: new ObjectId(id) })
       } catch (e) {
         console.log(e)
+      } finally {
+        if (client?.close && typeof client.close === "function") {
+          await client.close()
+        }
       }
       if (deleteResult.deletedCount === 1) {
         return { status: "success", message: "User has been deleted." }

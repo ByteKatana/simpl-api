@@ -37,18 +37,21 @@ export type FindType = keyof typeof FindLike
 export type ContentType = keyof typeof ContentTypes
 
 export interface EntryType {
+  _id?: string
   name: string
   namespace: string
   fields: object[]
 }
 
 export interface Entry {
+  _id?: string
   name: string
   namespace: string
   slug: string
 }
 
 export interface User {
+  _id?: string
   username: string
   password: string
   email: string
@@ -66,7 +69,7 @@ export interface UserCreateResponse {
 }
 
 export interface PermissionGroup {
-  _id: string
+  _id?: string
   name: string
   slug: string
   privileges: any[]
