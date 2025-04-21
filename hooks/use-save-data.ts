@@ -300,7 +300,7 @@ const useSaveData = (dataType: DataType, actionType: ActionType) => {
             response = await permGroupUpdate(payload.formValues, payload.slug)
             break
           default:
-            throw new Error("INVALID_ENTRY_TYPE_ACTION_TYPE")
+            throw new Error("INVALID_PERM_GROUP_ACTION_TYPE")
         }
       } else if (dataType === "USER") {
         switch (actionType) {
