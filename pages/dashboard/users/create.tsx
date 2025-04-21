@@ -83,7 +83,7 @@ export default function CreateUser({ fetchedPermissionGroups }) {
       formRef.current[formValuesWithErrors[0]].focus()
     } else {
       const response = await saveData({ formValues })
-      console.log(response)
+
       const result = response.result.data
       const checkEmailExist: boolean = response.isEmailExist
       const checkUsernameExist: boolean = response.isUsernameExist
