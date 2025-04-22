@@ -2,7 +2,6 @@ import "@testing-library/jest-dom";
 import { renderHook } from "@testing-library/react";
 import { act } from "@testing-library/react";
 import useSaveData from "../../hooks/use-save-data";
-import { User } from "../../interfaces";
 
 // Create mock implementations
 const mockEntryCreate = jest.fn().mockResolvedValue({ data: { status: "success", message: "Entry created" } });

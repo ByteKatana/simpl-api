@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom"
 import { Entry } from "../../interfaces"
 import { EntryController } from "../../controllers/entry.controller"
-import { Collection, DeleteResult, InsertOneResult, MongoClient, ObjectId, UpdateResult } from "mongodb"
+import { DeleteResult, InsertOneResult, ObjectId, UpdateResult } from "mongodb"
 import { connectDB } from "../../lib/mongodb"
 
 // Mock the mongodb module

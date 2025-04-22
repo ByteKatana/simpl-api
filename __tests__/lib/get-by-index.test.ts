@@ -1,7 +1,6 @@
 import "@testing-library/jest-dom"
 import { ObjectId } from "mongodb"
 import { getByIndex } from "../../lib/get-by-index"
-import { EntryType } from "../../interfaces"
 
 const mockData = [
   {

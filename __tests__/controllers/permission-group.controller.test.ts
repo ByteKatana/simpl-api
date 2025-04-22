@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom"
 import { PermissionGroup } from "../../interfaces"
 import { PermissionGroupController } from "../../controllers/permission-group.controller"
-import { Collection, InsertOneResult, MongoClient, ObjectId, UpdateResult } from "mongodb"
+import {  InsertOneResult, ObjectId, UpdateResult } from "mongodb"
 import { connectDB } from "../../lib/mongodb"
 
 // Mock the mongodb module

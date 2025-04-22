@@ -1,6 +1,5 @@
 import "@testing-library/jest-dom"
 import { Session } from "next-auth"
-import { EntryType } from "../../../interfaces"
 import checkPermission from "../../../lib/ui/check-permission"
 
 describe("Check if user has permission to do the action", () => {

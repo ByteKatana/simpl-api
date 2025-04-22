@@ -1,9 +1,7 @@
 import "@testing-library/jest-dom"
-import { render, screen } from "@testing-library/react"
-import EntryField from "../../../components/dashboard/entry-field"
+import { render } from "@testing-library/react"
 import EntryForm from "../../../components/dashboard/entry-form"
 import { ActionType, DataType, Entry, EntryType } from "../../../interfaces"
-import { userEvent } from "@testing-library/user-event"
 
 jest.mock("next/router", () => require("next-router-mock"))
 

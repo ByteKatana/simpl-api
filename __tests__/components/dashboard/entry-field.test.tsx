@@ -2,7 +2,6 @@ import "@testing-library/jest-dom"
 import React, { MutableRefObject, useRef } from "react"
 import EntryField from "../../../components/dashboard/entry-field"
 import { render } from "@testing-library/react"
-import { before } from "node:test"
 
 const mockSetShowError = jest.fn()
 const mockSetFormErrors = jest.fn()
@@ -33,7 +32,6 @@ describe("Check if EntryField component rendered properly", () => {
       slug: "",
       namespace: ""
     }
-    const formErrors = {}
     const mockShowError = {}
     const mockFormErrors = {}
     const mockShowErrors = true
@@ -79,7 +77,6 @@ describe("Check if EntryField component rendered properly", () => {
       slug: "",
       namespace: ""
     }
-    const formErrors = {}
     const mockShowError = {}
     const mockFormErrors = {}
     const mockShowErrors = true
