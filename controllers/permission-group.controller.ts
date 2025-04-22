@@ -8,9 +8,11 @@ import { PermissionGroup } from "../interfaces"
 
 export class PermissionGroupController {
   permissionGroup: PermissionGroup
+  mockClient: boolean
 
-  constructor(permissionGroupData: PermissionGroup) {
+  constructor(permissionGroupData: PermissionGroup, mockClient: boolean) {
     this.permissionGroup = permissionGroupData
+    this.mockClient = mockClient
   }
 
   async create() {
@@ -19,7 +21,7 @@ export class PermissionGroupController {
     let isConnected = false
 
     try {
-      client = await connectDB()
+      client = await connectDB(this.mockClient)
       isConnected = true
     } catch (e) {
       console.log(e)
@@ -30,13 +32,26 @@ export class PermissionGroupController {
       try {
         dbCollection = client.db(process.env.DB_NAME).collection("permission_groups")
         insertResult = await dbCollection.insertOne(this.permissionGroup)
+
+        if (insertResult.insertedId) {
+          if (this.mockClient) {
+            return {
+              result: { status: "success", message: "Permission group has been created." },
+              permGroupId: insertResult.insertedId
+            }
+          }
+
+          return { status: "success", message: "Permission group has been created." }
+        } else {
+          return { status: "failed", message: "Failed to create the permission group." }
+        }
       } catch (e) {
         console.log(e)
-      }
-      if (insertResult.insertedId) {
-        return { status: "success", message: "Permission group has been created." }
-      } else {
         return { status: "failed", message: "Failed to create the permission group." }
+      } finally {
+        if (client?.close && typeof client.close === "function") {
+          await client.close()
+        }
       }
     } else {
       return [{ message: "Database connection is NOT established" }]
@@ -49,7 +64,7 @@ export class PermissionGroupController {
     let isConnected = false
 
     try {
-      client = await connectDB()
+      client = await connectDB(this.mockClient)
       isConnected = true
     } catch (e) {
       console.log(e)
@@ -65,6 +80,10 @@ export class PermissionGroupController {
         )
       } catch (e) {
         console.log(e)
+      } finally {
+        if (client?.close && typeof client.close === "function") {
+          await client.close()
+        }
       }
       if (updateResult["modifiedCount"] === 1) {
         return { status: "success", message: "Permission group has been updated." }
@@ -84,7 +103,7 @@ export class PermissionGroupController {
     let isConnected: boolean = false
 
     try {
-      client = await connectDB()
+      client = await connectDB(this.mockClient)
       isConnected = true
     } catch (e) {
       console.log(e)
@@ -96,6 +115,10 @@ export class PermissionGroupController {
         deleteResult = await dbCollection.deleteOne({ _id: new ObjectId(id) })
       } catch (e) {
         console.log(e)
+      } finally {
+        if (client?.close && typeof client.close === "function") {
+          await client.close()
+        }
       }
       if (deleteResult.deletedCount === 1) {
         return { status: "success", message: "Permission group has been deleted." }

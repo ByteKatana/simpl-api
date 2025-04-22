@@ -7,9 +7,10 @@ import { Entry } from "../interfaces"
 
 export class EntryController {
   entry: Entry
-
-  constructor(entryData: Entry) {
+  mockClient: boolean
+  constructor(entryData: Entry, mockClient: boolean) {
     this.entry = entryData
+    this.mockClient = mockClient
   }
 
   async create() {
@@ -18,7 +19,7 @@ export class EntryController {
     let isConnected = false
 
     try {
-      client = await connectDB()
+      client = await connectDB(this.mockClient)
       isConnected = true
     } catch (e) {
       console.log(e)
@@ -28,14 +29,28 @@ export class EntryController {
       try {
         dbCollection = client.db(process.env.DB_NAME).collection("entries")
         insertResult = await dbCollection.insertOne(this.entry)
+        if (insertResult.insertedId) {
+          if (this.mockClient) {
+            return {
+              result: { status: "success", message: "Entry has been created." },
+              entryId: insertResult.insertedId
+            }
+          }
+
+          return { status: "success", message: "Entry has been created." }
+        } else {
+          return { status: "failed", message: "Failed to create the entry." }
+        }
       } catch (e) {
         console.log(e)
-      }
-      if (insertResult.insertedId) {
-        return { status: "success", message: "Entry has been created." }
-      } else {
         return { status: "failed", message: "Failed to create the entry." }
+      } finally {
+        if (client?.close && typeof client.close === "function") {
+          await client.close()
+        }
       }
+    } else {
+      return [{ message: "Database connection is NOT established" }]
     }
   }
 
@@ -45,7 +60,7 @@ export class EntryController {
     let isConnected = false
 
     try {
-      client = await connectDB()
+      client = await connectDB(this.mockClient)
       isConnected = true
     } catch (e) {
       console.log(e)
@@ -57,6 +72,10 @@ export class EntryController {
         updateResult = await dbCollection.updateOne({ _id: new ObjectId(id) }, { $set: this.entry }, { upsert: false })
       } catch (e) {
         console.log(e)
+      } finally {
+        if (client?.close && typeof client.close === "function") {
+          await client.close()
+        }
       }
       if (updateResult.modifiedCount === 1) {
         return { status: "success", message: "Entry has been updated." }
@@ -76,7 +95,7 @@ export class EntryController {
     let isConnected: boolean = false
 
     try {
-      client = await connectDB()
+      client = await connectDB(this.mockClient)
       isConnected = true
     } catch (e) {
       console.log(e)
@@ -88,6 +107,10 @@ export class EntryController {
         deleteResult = await dbCollection.deleteOne({ _id: new ObjectId(id) })
       } catch (e) {
         console.log(e)
+      } finally {
+        if (client?.close && typeof client.close === "function") {
+          await client.close()
+        }
       }
       if (deleteResult.deletedCount === 1) {
         return { status: "success", message: "Entry has been deleted." }
