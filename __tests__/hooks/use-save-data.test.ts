@@ -15,8 +15,7 @@ const mockUserUpdate = jest.fn().mockResolvedValue({ data: { status: "success", 
 
 // Mock the functions directly in the module
 jest.mock("../../hooks/use-save-data", () => {
-  const originalModule = jest.requireActual("../../hooks/use-save-data");
-  
+
   // Create a mock function that will replace the original implementation
   return {
     __esModule: true,

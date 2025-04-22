@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom"
-import React, { MutableRefObject, useRef } from "react"
+import React, { MutableRefObject } from "react"
 import EntryField from "../../../components/dashboard/entry-field"
 import { render } from "@testing-library/react"
 
