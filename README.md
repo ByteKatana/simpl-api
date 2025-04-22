@@ -21,6 +21,8 @@ simpl:api is a basic API builder that allows users to build an API easily for th
 - [SweetAlert](https://sweetalert.js.org/)
 - [Tippy.js](https://atomiks.github.io/tippyjs/)
 - [axios](https://axios-http.com/)
+- [jest](https://jestjs.io/)
+- [Testing Library](https://testing-library.com/)
 
 
 ## License
