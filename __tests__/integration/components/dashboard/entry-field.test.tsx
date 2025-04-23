@@ -63,7 +63,7 @@ describe("EntryField Integration Tests", () => {
       const user = userEvent.setup()
 
       // Use jest.spyOn to get a properly typed reference
-      const mockModule = jest.requireMock("../../../../lib/ui/handle-value-change") as { default: jest.Mock }
+      const mockModule = jest.requireMock("../../../../lib/ui/handle-value-change")
       const handleValueChangeMock = mockModule.default
 
       const { key, ...restTextFieldProps } = textFieldProps
