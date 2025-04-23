@@ -43,7 +43,7 @@ export class apiBuilderController {
           .find({ namespace: namespace })
           .toArray()
       } else if (findType === "StartsWith") {
-        let regexp = new RegExp(`^${namespace}`)
+        const regexp = new RegExp(`^${namespace}`)
 
         dataCollection = await client
           .db(process.env.DB_NAME)
@@ -51,14 +51,14 @@ export class apiBuilderController {
           .find({ namespace: { $regex: regexp } })
           .toArray()
       } else if (findType === "EndsWith") {
-        let regexp = new RegExp(`${namespace}$`)
+        const regexp = new RegExp(`${namespace}$`)
         dataCollection = await client
           .db(process.env.DB_NAME)
           .collection(this.collectionName)
           .find({ namespace: { $regex: regexp } })
           .toArray()
       } else if (findType === "Contains") {
-        let regexp = new RegExp(namespace)
+        const regexp = new RegExp(namespace)
         dataCollection = await client
           .db(process.env.DB_NAME)
           .collection(this.collectionName)
@@ -82,21 +82,21 @@ export class apiBuilderController {
             .find({ [this.findWhere]: `${this.routeData}` })
             .toArray()
         } else if (findType === "StartsWith") {
-          let regexp = new RegExp(`^${this.routeData}`)
+          const regexp = new RegExp(`^${this.routeData}`)
           dataCollection = await client
             .db(process.env.DB_NAME)
             .collection(this.collectionName)
             .find({ [this.findWhere]: { $regex: regexp } })
             .toArray()
         } else if (findType === "EndsWith") {
-          let regexp = new RegExp(`${this.routeData}$`)
+          const regexp = new RegExp(`${this.routeData}$`)
           dataCollection = await client
             .db(process.env.DB_NAME)
             .collection(this.collectionName)
             .find({ [this.findWhere]: { $regex: regexp } })
             .toArray()
         } else if (findType === "Contains") {
-          let regexp = new RegExp(`${this.routeData}`)
+          const regexp = new RegExp(`${this.routeData}`)
           dataCollection = await client
             .db(process.env.DB_NAME)
             .collection(this.collectionName)

@@ -21,7 +21,7 @@ import "tippy.js/dist/tippy.css"
 
 export async function getServerSideProps() {
   const res = await axios.get(`${process.env.BASE_URL}/api/v1/permission-groups?apikey=${process.env.API_KEY}`)
-  let permissionGroups: PermissionGroup = await res.data
+  const permissionGroups: PermissionGroup = await res.data
 
   return {
     props: {
@@ -47,7 +47,7 @@ export default function PermissionGroups({ fetchedPermissionGroups }) {
 
   useEffect(() => {
     function calcPages() {
-      let count = []
+      const count = []
       for (let i = 1; i <= fetchedPermissionGroups.length / paginationState.limit + 1; i++) {
         count.push(i)
       }

@@ -28,14 +28,14 @@ import useSaveData from "../../../../hooks/use-save-data"
 export async function getServerSideProps(req) {
   const { slug } = req.query
   const resPermGroupActionURI = `${process.env.BASE_URL}/api/v1/permission-groups?apikey=${process.env.API_KEY}`
-  let resPermissionGroups = await axios.get(resPermGroupActionURI)
-  let permissionGroups: PermissionGroup = await resPermissionGroups.data
+  const resPermissionGroups = await axios.get(resPermGroupActionURI)
+  const permissionGroups: PermissionGroup = await resPermissionGroups.data
 
   const resUserActionURI = `${process.env.BASE_URL}/api/v1/users/_id/${slug}?apikey=${
     process.env.API_KEY
   }&secretkey=${process.env.SECRET_KEY}`
   const resUser = await axios.get(resUserActionURI)
-  let user: User = await resUser.data
+  const user: User = await resUser.data
 
   return {
     props: {
@@ -69,7 +69,7 @@ export default function EditUser({ fetchedPermissionGroups, fetchedUser }) {
 
   const submitData = async () => {
     if (Object.keys(formErrors).length > 0) {
-      let formValuesWithErrors = Object.keys(formErrors)
+      const formValuesWithErrors = Object.keys(formErrors)
       setShowErrors(true)
       setIsUpdateBtnClicked(false)
       formRef.current[formValuesWithErrors[0]].focus()

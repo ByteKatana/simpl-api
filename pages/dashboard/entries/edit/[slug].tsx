@@ -16,21 +16,21 @@ export async function getServerSideProps(req) {
   const { slug } = req.query
 
   const res = await axios.get(`${process.env.BASE_URL}/api/v1/entry/_id/${slug}/first_1?apikey=${process.env.API_KEY}`)
-  let entry: Entry = await res.data
+  const entry: Entry = await res.data
 
-  let entryTypeSlug = entry[0].namespace.split(".")
+  const entryTypeSlug = entry[0].namespace.split(".")
 
   const resEntryType = await axios.get(
     `${process.env.BASE_URL}/api/v1/entry-type/slug/${entryTypeSlug[entryTypeSlug.length - 1]}?apikey=${
       process.env.API_KEY
     }`
   )
-  let entryType: EntryType = await resEntryType.data
+  const entryType: EntryType = await resEntryType.data
 
   const resPermGroups = await axios.get(
     `${process.env.BASE_URL}/api/v1/permission-groups/?apikey=${process.env.API_KEY}`
   )
-  let permGroups: PermissionGroup[] = await resPermGroups.data
+  const permGroups: PermissionGroup[] = await resPermGroups.data
 
   return {
     props: {

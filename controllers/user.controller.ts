@@ -30,7 +30,7 @@ export class UserController {
       let insertResult: InsertOneResult
       try {
         const plainPw = this.user.password
-        let hashPw = bcrypt.hashSync(plainPw, 8)
+        const hashPw = bcrypt.hashSync(plainPw, 8)
         dbCollection = client.db(process.env.DB_NAME).collection("users")
         insertResult = await dbCollection.insertOne({ ...this.user, password: hashPw })
 

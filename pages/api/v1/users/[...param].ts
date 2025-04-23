@@ -9,11 +9,11 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
   const {
     query: { param, apikey, secretkey }
   } = _req
-  let apiKey = new apiKeyController({ key: apikey as string })
-  let apiKeyData = await apiKey.findKey()
+  const apiKey = new apiKeyController({ key: apikey as string })
+  const apiKeyData = await apiKey.findKey()
   if (apiKeyData[0] !== undefined && apiKeyData[0].key === apikey) {
-    let user = new apiBuilderController("single-param", "users", param[0], param[1])
-    let userData: any[] = await user.fetchData("Equals")
+    const user = new apiBuilderController("single-param", "users", param[0], param[1])
+    const userData: any[] = await user.fetchData("Equals")
     if (process.env.SECRET_KEY !== secretkey) {
       userData.forEach((user) => {
         delete user.password

@@ -24,7 +24,7 @@ function EntryField({
   setFormErrors: Dispatch<SetStateAction<object>>
   setFormValues: Dispatch<SetStateAction<object>>
 }) {
-  let fieldName = Object.keys(field).toString()
+  const fieldName = Object.keys(field).toString()
   if (field[fieldName].form_type === "textarea") {
     return (
       <div key={key} className="w-11/12 mt-3">

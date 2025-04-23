@@ -6,11 +6,11 @@ import { apiKeyController } from "../../../../controllers/api-key.controller"
 
 export default async function handler(_req: NextApiRequest, res: NextApiResponse) {
   const { apikey } = _req.query
-  let apiKey = new apiKeyController({ key: apikey as string })
-  let apiKeyData = await apiKey.findKey()
+  const apiKey = new apiKeyController({ key: apikey as string })
+  const apiKeyData = await apiKey.findKey()
   if (apiKeyData[0] !== undefined && apiKeyData[0].key === apikey) {
-    let user = new apiBuilderController("index", "users")
-    let userData: any[] = await user.fetchData()
+    const user = new apiBuilderController("index", "users")
+    const userData: any[] = await user.fetchData()
     userData.forEach((user) => {
       delete user.password
     })

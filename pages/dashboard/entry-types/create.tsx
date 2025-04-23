@@ -28,7 +28,7 @@ import useSaveData from "../../../hooks/use-save-data"
 
 export async function getServerSideProps() {
   const res = await axios.get(`${process.env.BASE_URL}/api/v1/entry-types?apikey=${process.env.API_KEY}`)
-  let entryTypes: EntryType = await res.data
+  const entryTypes: EntryType = await res.data
 
   return {
     props: {
@@ -79,13 +79,13 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
   const submitData = async () => {
     if (Object.keys(formErrors).length > 0) {
       //If there is/are form error(s)
-      let formFieldsWithErrors = Object.keys(formErrors)
+      const formFieldsWithErrors = Object.keys(formErrors)
       setShowErrors(true)
       setIsCreateBtnClicked(false)
       formRef.current[formFieldsWithErrors[0]].focus()
     } else {
       //If there is no form error
-      let result = await saveData({ entryType, formFields })
+      const result = await saveData({ entryType, formFields })
       if (result.status === "success") {
         resultSwal
           .fire({
