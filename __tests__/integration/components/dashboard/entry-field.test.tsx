@@ -38,7 +38,8 @@ describe("EntryField Integration Tests", () => {
     }
 
     it("renders text input with correct label", () => {
-      render(<EntryField {...textFieldProps} />)
+      const { key, ...restTextFieldProps } = textFieldProps
+      render(<EntryField key={key} {...restTextFieldProps} />)
 
       expect(screen.getByLabelText("Name")).toBeInTheDocument()
       expect(screen.getByRole("textbox")).toBeInTheDocument()
@@ -48,8 +49,8 @@ describe("EntryField Integration Tests", () => {
       const user = userEvent.setup()
       const formErrors = { name: "empty-field" }
       const showError = { name: true }
-
-      render(<EntryField {...textFieldProps} formErrors={formErrors} showError={showError} />)
+      const { key, ...restTextFieldProps } = textFieldProps
+      render(<EntryField key={key} {...restTextFieldProps} formErrors={formErrors} showError={showError} />)
 
       const input = screen.getByRole("textbox")
       await user.click(input)
@@ -60,16 +61,18 @@ describe("EntryField Integration Tests", () => {
 
     it("calls handleValueChange when input changes", async () => {
       const user = userEvent.setup()
+
+      // Get a reference to the mocked function
       const handleValueChangeMock = require("../../../../lib/ui/handle-value-change")
 
-      render(<EntryField {...textFieldProps} />)
+      const { key, ...restTextFieldProps } = textFieldProps
+      render(<EntryField key={key} {...restTextFieldProps} />)
 
       const input = screen.getByRole("textbox")
       await user.type(input, "Test value")
 
       expect(handleValueChangeMock).toHaveBeenCalled()
     })
-
   })
 
   describe("Textarea Rendering", () => {
@@ -87,18 +90,18 @@ describe("EntryField Integration Tests", () => {
     }
 
     it("renders textarea with correct label", () => {
-      render(<EntryField {...textareaFieldProps} />)
+      const { key, ...restTextareaFieldProps } = textareaFieldProps
+      render(<EntryField key={key} {...restTextareaFieldProps} />)
 
       expect(screen.getByLabelText("Description")).toBeInTheDocument()
       expect(screen.getByRole("textbox")).toHaveAttribute("rows", "3")
     })
 
-    it("shows length error when exceeding maximum length", async () => {
-      const user = userEvent.setup()
+    it("shows length error when exceeding maximum length", () => {
       const formErrors = { description_length: "length-error" }
       const showError = { description_length: true }
-
-      render(<EntryField {...textareaFieldProps} formErrors={formErrors} showError={showError} />)
+      const { key, ...restTextareaFieldProps } = textareaFieldProps
+      render(<EntryField key={key} {...restTextareaFieldProps} formErrors={formErrors} showError={showError} />)
 
       expect(screen.getByText("Maximum length is 200.")).toBeInTheDocument()
     })
@@ -119,7 +122,8 @@ describe("EntryField Integration Tests", () => {
     }
 
     it("shows type validation error for non-number input in number field", () => {
-      render(<EntryField {...numberFieldProps} />)
+      const { key, ...restNumberFieldProps } = numberFieldProps
+      render(<EntryField key={key} {...restNumberFieldProps} />)
 
       expect(screen.getByText("This field must be number.")).toBeInTheDocument()
     })
@@ -139,8 +143,8 @@ describe("EntryField Integration Tests", () => {
         setShowError: mockSetShowError,
         setFormValues: mockSetFormValues
       }
-
-      render(<EntryField {...props} />)
+      const { key, ...restProps } = props
+      render(<EntryField key={key} {...restProps} />)
 
       // Check if formRef has been updated
       expect(mockFormRef.current).toHaveProperty("title")
