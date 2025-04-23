@@ -62,10 +62,12 @@ describe("EntryField Integration Tests", () => {
     it("calls handleValueChange when input changes", async () => {
       const user = userEvent.setup()
 
-      // Get a reference to the mocked function
-      const handleValueChangeMock = require("../../../../lib/ui/handle-value-change")
+      // Use jest.spyOn to get a properly typed reference
+      const mockModule = jest.requireMock("../../../../lib/ui/handle-value-change") as { default: jest.Mock }
+      const handleValueChangeMock = mockModule.default
 
       const { key, ...restTextFieldProps } = textFieldProps
+
       render(<EntryField key={key} {...restTextFieldProps} />)
 
       const input = screen.getByRole("textbox")
