@@ -53,7 +53,7 @@ async function EntryTypeCreate(entryType: EntryType, formFields) {
       }
     }
 
-    let formatedFields = formFields.map((field) => {
+    const formatedFields = formFields.map((field) => {
       if ("field_accepted_types" in field) {
         return {
           [field.field_name]: {
@@ -110,7 +110,7 @@ async function EntryTypeUpdate(entryType: EntryType, formFields, slug) {
       }
     }
 
-    let formatedFields = formFields.map((field) => {
+    const formatedFields = formFields.map((field) => {
       if ("field_accepted_types" in field) {
         return {
           [field.field_name]: {

@@ -23,7 +23,7 @@ import useSaveData from "../../../hooks/use-save-data"
 
 export async function getServerSideProps() {
   const res = await axios.get(`${process.env.BASE_URL}/api/v1/permission-groups?apikey=${process.env.API_KEY}`)
-  let permissionGroups: PermissionGroup = await res.data
+  const permissionGroups: PermissionGroup = await res.data
 
   return {
     props: {
@@ -77,7 +77,7 @@ export default function CreateUser({ fetchedPermissionGroups }) {
 
   const submitData = async () => {
     if (Object.keys(formErrors).length > 0) {
-      let formValuesWithErrors = Object.keys(formErrors)
+      const formValuesWithErrors = Object.keys(formErrors)
       setShowErrors(true)
       setIsCreateBtnClicked(false)
       formRef.current[formValuesWithErrors[0]].focus()

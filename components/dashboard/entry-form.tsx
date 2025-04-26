@@ -27,7 +27,7 @@ function EntryForm({
   fetchedEntryType: EntryType
   fetchedEntry?: Entry
 }) {
-  let initialFormValues = actionType === "CREATE" ? { name: "", slug: "", namespace: "" } : fetchedEntry
+  const initialFormValues = actionType === "CREATE" ? { name: "", slug: "", namespace: "" } : fetchedEntry
 
   const [formValues, setFormValues] = useState(initialFormValues)
   const [formErrors, setFormErrors] = useState({})
@@ -48,10 +48,10 @@ function EntryForm({
 
   useEffect(() => {
     if (actionType === "CREATE") {
-      let newFields = {}
-      let newErrorFields = {}
+      const newFields = {}
+      const newErrorFields = {}
       fetchedEntryType.fields.forEach((field) => {
-        let fieldName = Object.keys(field).toString()
+        const fieldName = Object.keys(field).toString()
         newFields[fieldName] = ""
         newErrorFields[fieldName] = "empty-field"
       })
@@ -67,7 +67,7 @@ function EntryForm({
 
   const submitData = async () => {
     if (Object.keys(formErrors).length > 0) {
-      let formValuesWithErrors = Object.keys(formErrors)
+      const formValuesWithErrors = Object.keys(formErrors)
       setShowErrors(true)
       setIsSubmitClicked(false)
       formRef.current[formValuesWithErrors[0]].focus()
@@ -98,10 +98,10 @@ function EntryForm({
             if (result.isConfirmed) {
               //Clear form and set default if user want create another one
               ;(document.getElementById("new_entry_form") as any).reset()
-              let newFields = {}
-              let newErrorFields = {}
+              const newFields = {}
+              const newErrorFields = {}
               fetchedEntryType.fields.forEach((field: object) => {
-                let fieldName = Object.keys(field).toString()
+                const fieldName = Object.keys(field).toString()
                 newFields[fieldName] = ""
                 newErrorFields[fieldName] = "empty-field"
               })

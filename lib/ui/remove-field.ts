@@ -12,13 +12,13 @@ const removeField = (
   fieldsData?
 ) => {
   //Copy of formField state
-  let fieldData = [...formFields]
+  const fieldData = [...formFields]
 
   //Copy of formErrors state
-  let copyErrors = { ...formErrors }
+  const copyErrors = { ...formErrors }
 
   //remove validation data if field has been removed
-  for (let key of Object.keys(formErrors)) {
+  for (const key of Object.keys(formErrors)) {
     if (key.endsWith(index)) {
       delete copyErrors[key]
     }

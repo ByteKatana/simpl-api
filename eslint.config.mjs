@@ -2,15 +2,32 @@ import globals from "globals"
 import pluginJs from "@eslint/js"
 import tseslint from "typescript-eslint"
 import pluginReact from "eslint-plugin-react"
+import prettier from "eslint-plugin-prettier"
+import testingLibrary from "eslint-plugin-testing-library"
+import jestDom from "eslint-plugin-jest-dom"
 
-/** @type {import('eslint').Linter.Config[]} */
+/** @type {import("eslint").Linter.Config[]} */
 export default [
   { files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"] },
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,
   {
-    plugins: ["prettier", "testing-library/react", "jest-dom/recommended"],
+    plugins: {
+      prettier: prettier,
+      "testing-library": testingLibrary,
+      "jest-dom": jestDom
+    },
+    settings: {
+      react: {
+        version: "detect"
+      },
+      "import/resolver": {
+        node: {
+          extensions: [".js", ".mjs", ".cjs", ".ts", ".jsx", ".tsx"]
+        }
+      }
+    },
     languageOptions: { globals: globals.browser },
     rules: {
       "react/jsx-uses-react": "off",

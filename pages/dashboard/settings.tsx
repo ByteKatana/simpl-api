@@ -16,18 +16,18 @@ import { PermissionGroup, EntryType, ApiKey } from "../../interfaces"
 import checkPermGroup from "../../lib/ui/check-perm-group"
 
 export async function getServerSideProps() {
-  let resPermissionGroup = await axios.get(
+  const resPermissionGroup = await axios.get(
     `${process.env.BASE_URL}/api/v1/permission-groups?apikey=${process.env.API_KEY}`
   )
-  let permissionGroups: PermissionGroup = await resPermissionGroup.data
+  const permissionGroups: PermissionGroup = await resPermissionGroup.data
 
-  let resNamespace = await axios.get(`${process.env.BASE_URL}/api/v1/entry-types?apikey=${process.env.API_KEY}`)
-  let namespaces: EntryType = await resNamespace.data
+  const resNamespace = await axios.get(`${process.env.BASE_URL}/api/v1/entry-types?apikey=${process.env.API_KEY}`)
+  const namespaces: EntryType = await resNamespace.data
 
-  let resApiKey = await axios.get(
+  const resApiKey = await axios.get(
     `${process.env.BASE_URL}/api/v1/key/list-all?apikey=${process.env.API_KEY}&secretkey=${process.env.SECRET_KEY}`
   )
-  let apiKeys: ApiKey = await resApiKey.data
+  const apiKeys: ApiKey = await resApiKey.data
 
   return {
     props: {
@@ -67,14 +67,14 @@ export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, f
 
   useEffect(() => {
     function calcNamespacePages() {
-      let count = []
+      const count = []
       for (let i = 1; i <= fetchedNamespaces.length / paginationNamespaceState.limit + 1; i++) {
         count.push(i)
       }
       setPaginationNamespaceState({ ...paginationNamespaceState, pages: count })
     }
     function calcPermissionGroupPages() {
-      let count = []
+      const count = []
       for (let i = 1; i <= fetchedPermissionGroups.length / paginationPermissionGroupState.limit + 1; i++) {
         count.push(i)
       }
@@ -84,12 +84,12 @@ export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, f
     const getActivePermissions = () => {
       setActivePermissions([])
 
-      let permGroupIndex = paginationPermissionGroupState.min + activePermissionGroup
+      const permGroupIndex = paginationPermissionGroupState.min + activePermissionGroup
       fetchedPermissionGroups[permGroupIndex].privileges.map((privilege) => {
-        let namespaceIndex = paginationNamespaceState.min + activeNamespace
-        let namespaceKey = fetchedNamespaces[namespaceIndex].namespace
+        const namespaceIndex = paginationNamespaceState.min + activeNamespace
+        const namespaceKey = fetchedNamespaces[namespaceIndex].namespace
         if (privilege[namespaceKey] !== undefined) {
-          let activePerms = privilege[namespaceKey].permissions
+          const activePerms = privilege[namespaceKey].permissions
           setActivePermissions(activePerms)
         }
       })
@@ -111,10 +111,10 @@ export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, f
 
   const sendPermissions = async () => {
     let result
-    let permIndex = paginationPermissionGroupState.min + activePermissionGroup
-    let namespaceIndex = paginationNamespaceState.min + activeNamespace
-    let permissionGroupId = fetchedPermissionGroups[permIndex]._id
-    let privilegeIndex = fetchedPermissionGroups[permIndex].privileges.findIndex((privilege) =>
+    const permIndex = paginationPermissionGroupState.min + activePermissionGroup
+    const namespaceIndex = paginationNamespaceState.min + activeNamespace
+    const permissionGroupId = fetchedPermissionGroups[permIndex]._id
+    const privilegeIndex = fetchedPermissionGroups[permIndex].privileges.findIndex((privilege) =>
       Object.keys(privilege).includes(fetchedNamespaces[namespaceIndex].namespace)
     )
     let payload

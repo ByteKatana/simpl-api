@@ -29,7 +29,7 @@ export async function getServerSideProps(req) {
   const { slug } = req.query
   const actionURI = `${process.env.BASE_URL}/api/v1/permission-group/${slug}?apikey=${process.env.API_KEY}`
   const resPermGroup = await axios.get(actionURI)
-  let permGroup: PermissionGroup = await resPermGroup.data
+  const permGroup: PermissionGroup = await resPermGroup.data
 
   return {
     props: {
@@ -60,12 +60,12 @@ export default function EditPermissionGroup({ fetchedPermissionGroup }) {
 
   const submitData = async () => {
     if (Object.keys(formErrors).length > 0) {
-      let formValuesWithErrors = Object.keys(formErrors)
+      const formValuesWithErrors = Object.keys(formErrors)
       setShowErrors(true)
       setIsUpdateBtnClicked(false)
       formRef.current[formValuesWithErrors[0]].focus()
     } else {
-      let result = await saveData({ formValues, slug })
+      const result = await saveData({ formValues, slug })
       if (result.status === "success") {
         resultSwal
           .fire({

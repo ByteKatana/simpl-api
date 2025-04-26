@@ -21,7 +21,7 @@ import "tippy.js/dist/tippy.css"
 
 export async function getServerSideProps() {
   const res = await axios.get(`${process.env.BASE_URL}/api/v1/users?apikey=${process.env.API_KEY}`)
-  let users: User = await res.data
+  const users: User = await res.data
 
   return {
     props: {
@@ -47,7 +47,7 @@ export default function Users({ fetchedUsers }) {
 
   useEffect(() => {
     function calcPages() {
-      let count = []
+      const count = []
       for (let i = 1; i <= fetchedUsers.length / paginationState.limit + 1; i++) {
         count.push(i)
       }

@@ -53,12 +53,12 @@ export default function CreatePermissionGroup() {
 
   const submitData = async () => {
     if (Object.keys(formErrors).length > 0) {
-      let formValuesWithErrors = Object.keys(formErrors)
+      const formValuesWithErrors = Object.keys(formErrors)
       setShowErrors(true)
       setIsCreateBtnClicked(false)
       formRef.current[formValuesWithErrors[0]].focus()
     } else {
-      let result = await saveData({ formValues })
+      const result = await saveData({ formValues })
       if (result.status === "success") {
         resultSwal
           .fire({

@@ -21,12 +21,12 @@ import "tippy.js/dist/tippy.css"
 
 export async function getServerSideProps() {
   const res = await axios.get(`${process.env.BASE_URL}/api/v1/entry-types?apikey=${process.env.API_KEY}`)
-  let entryTypes: EntryType = await res.data
+  const entryTypes: EntryType = await res.data
 
   const resPermGroups = await axios.get(
     `${process.env.BASE_URL}/api/v1/permission-groups/?apikey=${process.env.API_KEY}`
   )
-  let permGroups = await resPermGroups.data
+  const permGroups = await resPermGroups.data
 
   return {
     props: {
@@ -52,7 +52,7 @@ export default function EntryTypes({ fetchedEntryTypes, fetchedPermGroups }) {
 
   useEffect(() => {
     function calcPages() {
-      let count = []
+      const count = []
       for (let i = 1; i <= fetchedEntryTypes.length / paginationState.limit + 1; i++) {
         count.push(i)
       }
@@ -64,9 +64,9 @@ export default function EntryTypes({ fetchedEntryTypes, fetchedPermGroups }) {
 
   const checkPermission = (permission, namespace) => {
     if (session) {
-      let permGroup = fetchedPermGroups.find((group) => group.slug === session.user.permission_group)
+      const permGroup = fetchedPermGroups.find((group) => group.slug === session.user.permission_group)
       if (permGroup.privileges.find((privilege) => Object.keys(privilege).includes(`${namespace}`))) {
-        let result = permGroup.privileges
+        const result = permGroup.privileges
           .find((privilege) => Object.keys(privilege).includes(`${namespace}`))
           [`${namespace}`].permissions.includes(`${permission}`)
 

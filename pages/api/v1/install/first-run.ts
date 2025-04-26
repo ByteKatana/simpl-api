@@ -44,7 +44,7 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
 
         //Creating Admin Account
         newPW = Math.random().toString(36).slice(2)
-        let UserData = new UserController({
+        const UserData = new UserController({
           username: "admin",
           password: newPW,
           email: "admin@localhost.test",
@@ -52,14 +52,14 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
         })
         accountResult = await UserData.create()
 
-        let AdminPermissionGroupData = new PermissionGroupController({
+        const AdminPermissionGroupData = new PermissionGroupController({
           name: "Admin",
           slug: "admin",
           privileges: []
         })
         adminGroupResult = await AdminPermissionGroupData.create()
 
-        let MemberPermissionGroupData = new PermissionGroupController({
+        const MemberPermissionGroupData = new PermissionGroupController({
           name: "Member",
           slug: "member",
           privileges: []

@@ -11,16 +11,16 @@ const addField = (
   fieldsData?: object[]
 ) => {
   //Prepare data for new field
-  let newField = {
+  const newField = {
     field_name: "",
     field_value_type: "",
     field_form_type: ""
   }
 
-  let newFieldsData = [...formFields, newField]
+  const newFieldsData = [...formFields, newField]
 
   //Prepare empty field validation data
-  let newErrors = {
+  const newErrors = {
     [`field_name_${formFields.length}`]: "empty-field",
     [`field_length_${formFields.length}`]: "empty-field",
     [`field_value_type_${formFields.length}`]: "empty-field",

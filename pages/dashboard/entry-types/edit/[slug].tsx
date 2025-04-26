@@ -34,16 +34,16 @@ export async function getServerSideProps(req) {
   const { slug } = req.query
 
   const resEntryTypes = await axios.get(`${process.env.BASE_URL}/api/v1/entry-types?apikey=${process.env.API_KEY}`)
-  let entryTypes: EntryType = await resEntryTypes.data
+  const entryTypes: EntryType = await resEntryTypes.data
 
   const resEntryType = await axios.get(
     `${process.env.BASE_URL}/api/v1/entry-type/id/${slug}?apikey=${process.env.API_KEY}`
   )
-  let entryType = await resEntryType.data
-  let fields = []
+  const entryType = await resEntryType.data
+  const fields = []
 
   entryType[0].fields.map((field) => {
-    let fieldKey: any = Object.keys(field)
+    const fieldKey: any = Object.keys(field)
     if ("accepted_types" in field) {
       fields.push({
         field_name: fieldKey[0],
@@ -65,7 +65,7 @@ export async function getServerSideProps(req) {
   const resPermGroups = await axios.get(
     `${process.env.BASE_URL}/api/v1/permission-groups/?apikey=${process.env.API_KEY}`
   )
-  let permGroups = await resPermGroups.data
+  const permGroups = await resPermGroups.data
 
   const filteredEntryTypes = entryTypes.filter((entry_type) => {
     const namespaceArr = entryType[0].namespace.split(".")
@@ -123,7 +123,7 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
   const { data: session } = useSession()
 
   const handleEntryTypeChange = (event) => {
-    let entryTypeData = { ...entryType }
+    const entryTypeData = { ...entryType }
     entryTypeData[0][event.target.name] = event.target.value
 
     //Empty field validation
@@ -166,7 +166,7 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
   }
 
   const handleFieldChange = (index, event) => {
-    let fieldData = [...formFields]
+    const fieldData = [...formFields]
     fieldData[index][event.target.name] = event.target.value
 
     //Empty Field Validation
@@ -183,13 +183,13 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
     //Form Error Handling
     if (Object.keys(formErrors).length > 0) {
       //If there is/are form error(s)
-      let formFieldsWithErrors = Object.keys(formErrors)
+      const formFieldsWithErrors = Object.keys(formErrors)
       setShowErrors(true)
       setIsUpdateBtnClicked(false)
       formRef.current[formFieldsWithErrors[0]].focus()
     } else {
       //If there is no form error
-      let result = await saveData({ entryType, formFields, slug })
+      const result = await saveData({ entryType, formFields, slug })
       if (result.status === "success") {
         resultSwal
           .fire({

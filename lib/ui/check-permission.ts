@@ -9,7 +9,7 @@ const checkPermission = (
   namespace: string
 ) => {
   if (session) {
-    let permGroup = fetchedPermGroups.find((group) => group.slug === session.user.permission_group)
+    const permGroup = fetchedPermGroups.find((group) => group.slug === session.user.permission_group)
     if (permGroup.privileges.find((privilege) => Object.keys(privilege).includes(namespace))) {
       return permGroup.privileges
         .find((privilege) => Object.keys(privilege).includes(namespace))

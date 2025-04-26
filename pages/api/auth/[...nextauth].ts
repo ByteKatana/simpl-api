@@ -34,7 +34,7 @@ export default NextAuth({
 
         if (dbCollection.length > 0) {
           //check password is correct
-          let isPwCorrect = bcrypt.compareSync(credentials.password, dbCollection[0].password)
+          const isPwCorrect = bcrypt.compareSync(credentials.password, dbCollection[0].password)
 
           if (isPwCorrect) {
             return {
