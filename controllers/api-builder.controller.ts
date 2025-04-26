@@ -46,19 +46,19 @@ export class apiBuilderController {
         dataCollection = await client
           .db(process.env.DB_NAME)
           .collection(this.collectionName)
-          .find({ namespace: { $regex: `^${namespace}` } })
+          .find({ namespace: { $regex: `^${String(namespace)}` } })
           .toArray()
       } else if (findType === "EndsWith") {
         dataCollection = await client
           .db(process.env.DB_NAME)
           .collection(this.collectionName)
-          .find({ namespace: { $regex:  } })
+          .find({ namespace: { $regex: `${String(namespace)}$` } })
           .toArray()
       } else if (findType === "Contains") {
         dataCollection = await client
           .db(process.env.DB_NAME)
           .collection(this.collectionName)
-          .find({ namespace: { $regex: `${namespace}$` } })
+          .find({ namespace: { $regex: `${String(namespace)}$` } })
           .toArray()
       }
     } else if (this.routeType === "index") {
@@ -93,7 +93,7 @@ export class apiBuilderController {
           dataCollection = await client
             .db(process.env.DB_NAME)
             .collection(this.collectionName)
-            .find({ [this.findWhere]: { $regex: `${this.routeData}` } })
+            .find({ [this.findWhere]: { $regex: `${String(this.routeData)}$` } })
             .toArray()
         }
 
