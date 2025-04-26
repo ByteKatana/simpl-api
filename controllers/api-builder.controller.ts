@@ -1,5 +1,5 @@
 import { connectDB } from "../lib/mongodb"
-import { ObjectId, MongoClient } from "mongodb"
+import { MongoClient, ObjectId } from "mongodb"
 import { FindType } from "../interfaces"
 
 export class apiBuilderController {
@@ -43,19 +43,16 @@ export class apiBuilderController {
           .find({ namespace: namespace })
           .toArray()
       } else if (findType === "StartsWith") {
-        const regexp = new RegExp(`^${namespace}`)
-
         dataCollection = await client
           .db(process.env.DB_NAME)
           .collection(this.collectionName)
-          .find({ namespace: { $regex: regexp } })
+          .find({ namespace: { $regex: `^${namespace}` } })
           .toArray()
       } else if (findType === "EndsWith") {
-        const regexp = new RegExp(`${namespace}$`)
         dataCollection = await client
           .db(process.env.DB_NAME)
           .collection(this.collectionName)
-          .find({ namespace: { $regex: regexp } })
+          .find({ namespace: { $regex: `${namespace}$` } })
           .toArray()
       } else if (findType === "Contains") {
         const regexp = new RegExp(namespace)
@@ -82,25 +79,22 @@ export class apiBuilderController {
             .find({ [this.findWhere]: `${this.routeData}` })
             .toArray()
         } else if (findType === "StartsWith") {
-          const regexp = new RegExp(`^${this.routeData}`)
           dataCollection = await client
             .db(process.env.DB_NAME)
             .collection(this.collectionName)
-            .find({ [this.findWhere]: { $regex: regexp } })
+            .find({ [this.findWhere]: { $regex: `^${this.routeData}` } })
             .toArray()
         } else if (findType === "EndsWith") {
-          const regexp = new RegExp(`${this.routeData}$`)
           dataCollection = await client
             .db(process.env.DB_NAME)
             .collection(this.collectionName)
-            .find({ [this.findWhere]: { $regex: regexp } })
+            .find({ [this.findWhere]: { $regex: `${this.routeData}$` } })
             .toArray()
         } else if (findType === "Contains") {
-          const regexp = new RegExp(`${this.routeData}`)
           dataCollection = await client
             .db(process.env.DB_NAME)
             .collection(this.collectionName)
-            .find({ [this.findWhere]: { $regex: regexp } })
+            .find({ [this.findWhere]: { $regex: `${this.routeData}` } })
             .toArray()
         }
 
