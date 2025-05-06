@@ -1,9 +1,10 @@
 //Database
 import { connectDB } from "../lib/mongodb"
-import { ObjectId, MongoClient, Collection, UpdateResult } from "mongodb"
+import { Collection, MongoClient, ObjectId, UpdateResult } from "mongodb"
 
 //Interface
 import { EntryType } from "../interfaces"
+
 //===============================================
 
 export class EntryTypeController {
@@ -29,11 +30,25 @@ export class EntryTypeController {
 
     if (isConnected) {
       let insertResult
+      let addPrivileges
       try {
         dbCollection = client.db(process.env.DB_NAME).collection("entry_types")
         insertResult = await dbCollection.insertOne(this.entryType)
 
-        if (insertResult.insertedId) {
+        //add CRUD privileges to the user's permission group for this entry type
+        dbCollection = client.db(process.env.DB_NAME).collection("permission_groups")
+        const permGroupData = await dbCollection.findOne({ slug: this.entryType.createdBy })
+        permGroupData.privileges.push({
+          [this.entryType.namespace]: {
+            permissions: ["read", "update", "delete", "create"]
+          }
+        })
+        addPrivileges = await dbCollection.updateOne(
+          { _id: new ObjectId(permGroupData._id) },
+          { $set: permGroupData },
+          { upsert: false }
+        )
+        if (insertResult.insertedId && addPrivileges.modifiedCount === 1) {
           if (this.mockClient) {
             return {
               result: { status: "success", message: "Entry Type has been created." },
