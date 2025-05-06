@@ -2,7 +2,7 @@
 import { SessionContextValue, signIn, signOut, useSession } from "next-auth/react"
 
 //Utility
-import { FiHome, FiBox, FiFileText, FiUsers, FiUser, FiSettings, FiLogIn, FiLogOut } from "react-icons/fi"
+import { FiBox, FiFileText, FiHome, FiLogIn, FiLogOut, FiSettings, FiUser, FiUsers } from "react-icons/fi"
 
 export default function Menu() {
   const { data: session }: SessionContextValue = useSession()
@@ -15,8 +15,10 @@ export default function Menu() {
   }
 
   return (
-    <div className="flex flex-nowrap flex-col w-64 font-josefin bg-gradient-to-t from-slate-900 to-slate-700 ">
-      <div className="text-white hover:text-yellow-500 h-24 font-raleway text-5xl pl-5 pt-5">
+    <div
+      data-testid="menu-component"
+      className="flex flex-nowrap flex-col w-64 font-josefin bg-gradient-to-t from-slate-900 to-slate-700 ">
+      <div data-testid="menu-logo" className="text-white hover:text-yellow-500 h-24 font-raleway text-5xl pl-5 pt-5">
         <a href="#">simpl:api</a>
       </div>
       <div className="text-white h-80 grow text-2xl list-none">

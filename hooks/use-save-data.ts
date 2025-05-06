@@ -41,15 +41,16 @@ async function EntryUpdate(
   }
 }
 
-async function EntryTypeCreate(entryType: EntryType, formFields) {
+async function EntryTypeCreate(entryType: EntryType, formFields, permGroup: string) {
   try {
     let formatedEntryType: object
     if (entryType["namespace"] === "itself" || entryType["namespace"] === entryType["name"].toLowerCase()) {
-      formatedEntryType = { name: entryType["name"], namespace: entryType["name"].toLowerCase() }
+      formatedEntryType = { name: entryType["name"], namespace: entryType["name"].toLowerCase(), createdBy: permGroup }
     } else {
       formatedEntryType = {
         name: entryType["name"],
-        namespace: `${entryType["namespace"].toLowerCase()}.${entryType["name"].toLowerCase()}`
+        namespace: `${entryType["namespace"].toLowerCase()}.${entryType["name"].toLowerCase()}`,
+        createdBy: permGroup
       }
     }
 
@@ -283,7 +284,7 @@ const useSaveData = (dataType: DataType, actionType: ActionType) => {
       } else if (dataType === "ENTRY_TYPE") {
         switch (actionType) {
           case "CREATE":
-            response = await EntryTypeCreate(payload.entryType, payload.formFields)
+            response = await EntryTypeCreate(payload.entryType, payload.formFields, payload.permGroup)
             break
           case "UPDATE":
             response = await EntryTypeUpdate(payload.entryType, payload.formFields, payload.slug)
