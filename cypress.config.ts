@@ -8,8 +8,8 @@ export default defineConfig({
     baseUrl: "http://localhost:3000",
     specPattern: "**/*.feature",
     env: {
-      USER_EMAIL: "admin@localhost.test",
-      USER_PASSWORD: "ms5prux6dm"
+      USER_EMAIL: "",
+      USER_PASSWORD: ""
     },
     async setupNodeEvents(on, config) {
       await addCucumberPreprocessorPlugin(on, config)
