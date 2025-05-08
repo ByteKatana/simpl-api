@@ -1,6 +1,6 @@
 //Database
 import { connectDB } from "../lib/mongodb"
-import { Collection, MongoClient, ObjectId, UpdateResult } from "mongodb"
+import { Collection, InsertOneResult, MongoClient, ObjectId, UpdateResult } from "mongodb"
 
 //Interface
 import { EntryType } from "../interfaces"
@@ -29,8 +29,8 @@ export class EntryTypeController {
     }
 
     if (isConnected) {
-      let insertResult
-      let addPrivileges
+      let insertResult: InsertOneResult
+      let addPrivileges: UpdateResult
       try {
         dbCollection = client.db(process.env.DB_NAME).collection("entry_types")
         insertResult = await dbCollection.insertOne(this.entryType)
@@ -39,7 +39,7 @@ export class EntryTypeController {
         dbCollection = client.db(process.env.DB_NAME).collection("permission_groups")
         const permGroupData = await dbCollection.findOne({ slug: this.entryType.createdBy })
         permGroupData.privileges.push({
-          [this.entryType.namespace]: {
+          [this.entryType.namespace.split(" ").join("-").toLowerCase()]: {
             permissions: ["read", "update", "delete", "create"]
           }
         })
@@ -85,13 +85,32 @@ export class EntryTypeController {
     }
     if (isConnected) {
       let updateResult: UpdateResult
+      let addPrivileges: UpdateResult
       try {
         dbCollection = client.db(process.env.DB_NAME).collection("entry_types")
+        const prevState = await dbCollection.findOne({ _id: new ObjectId(id) })
+
         updateResult = await dbCollection.updateOne(
           { _id: new ObjectId(id) },
           { $set: this.entryType },
           { upsert: false }
         )
+
+        if (prevState.namespace !== this.entryType.namespace) {
+          //add CRUD privileges to the user's permission group for this entry type
+          dbCollection = client.db(process.env.DB_NAME).collection("permission_groups")
+          const permGroupData = await dbCollection.findOne({ slug: this.entryType.createdBy })
+          permGroupData.privileges.push({
+            [this.entryType.namespace.split(" ").join("-").toLowerCase()]: {
+              permissions: ["read", "update", "delete", "create"]
+            }
+          })
+          addPrivileges = await dbCollection.updateOne(
+            { _id: new ObjectId(permGroupData._id) },
+            { $set: permGroupData },
+            { upsert: false }
+          )
+        }
       } catch (e) {
         console.log(e)
       } finally {
