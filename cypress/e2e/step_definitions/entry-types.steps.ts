@@ -135,7 +135,7 @@ When("I click edit button", () => {
   cy.visit("/dashboard/entry-types")
   cy.waitForRequest()
 
-  cy.contains("tr", newEntryType.name).getDataTest(`edit-entry-type-btn-${newEntryType.slug}`).click()
+  cy.getDataTest(`edit-entry-type-btn-${newEntryType.slug}`).click()
   cy.waitForRequest()
 })
 
@@ -177,7 +177,7 @@ Then("I should see newly updated entry with its new name in the table", () => {
 
 // Scenario: adding a entry from this entry type
 When("I click create entry button", () => {
-  cy.contains("td", modifiedEntryType.name).getDataTest("create-entry-btn").click()
+  cy.getDataTest("create-entry-btn").click()
   cy.waitForRequest()
 })
 
@@ -219,7 +219,7 @@ Then("I should see newly created entry in the table", () => {
 When("I click the delete button", () => {
   cy.visit("/dashboard/entry-types")
   cy.waitForRequest()
-  cy.contains("tr", modifiedEntryType.name).find('[data-testid="delete-entry-type-btn"]').click()
+  cy.getDataTest("delete-entry-type-btn").click()
 })
 
 Then('I should see "Do you really want to delete this item?" message on the screen', () => {
