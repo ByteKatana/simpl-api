@@ -1,13 +1,13 @@
 //Utility
 import axios, { AxiosResponse } from "axios"
-import { FiTrash2, FiEdit } from "react-icons/fi"
+import { FiEdit, FiTrash2 } from "react-icons/fi"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
 import Tippy from "@tippyjs/react"
 import { useSession } from "next-auth/react"
 
 //React
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
 
 //Components
 import Menu from "../../../components/dashboard/menu"
@@ -17,6 +17,7 @@ import { Entry } from "../../../interfaces"
 
 //Styles
 import "tippy.js/dist/tippy.css"
+
 //===============================================
 
 export async function getServerSideProps() {
@@ -58,6 +59,7 @@ export default function Entries({ fetchedEntries, fetchedPermGroups }) {
       }
       setPaginationState({ ...paginationState, pages: count })
     }
+
     calcPages()
   }, [fetchedEntries])
 
@@ -158,7 +160,10 @@ export default function Entries({ fetchedEntries, fetchedPermGroups }) {
                             <div>
                               {checkPermission("update", entry.namespace) ? (
                                 <Tippy content="Edit Entry" theme="translucent">
-                                  <a href={`entries/edit/${entry._id}`} className="transition hover:text-amber-400">
+                                  <a
+                                    href={`entries/edit/${entry._id}`}
+                                    data-testid={`edit-entry-btn-${entry.slug}`}
+                                    className="transition hover:text-amber-400">
                                     <FiEdit />
                                   </a>
                                 </Tippy>
