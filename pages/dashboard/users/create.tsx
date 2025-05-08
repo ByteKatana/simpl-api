@@ -9,7 +9,7 @@ import checkPermGroup from "../../../lib/ui/check-perm-group"
 import checkFieldEmpty from "../../../lib/ui/check-field-empty"
 
 //React
-import { useState, useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 
 //Components
 import Menu from "../../../components/dashboard/menu"
@@ -305,6 +305,7 @@ export default function CreateUser({ fetchedPermissionGroups }) {
                   <div className=" w-11/12">
                     <button
                       type="button"
+                      data-testid="create_user_btn"
                       onClick={() => {
                         setIsCreateBtnClicked(true)
                         void submitData()
@@ -313,7 +314,9 @@ export default function CreateUser({ fetchedPermissionGroups }) {
                       {isCreateBtnClicked ? (
                         <span className="flex flex-row justify-center">
                           <FiLoader className="animate-spin text-2xl" />
-                          <span className="mt-1 ml-3">Processing</span>
+                          <span data-testid="create_user_btn_processing" className="mt-1 ml-3">
+                            Processing
+                          </span>
                         </span>
                       ) : (
                         "Create"

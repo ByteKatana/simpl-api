@@ -2,19 +2,18 @@
 import axios from "axios"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
-import { useRouter } from "next/router"
-import Router from "next/router"
+import Router, { useRouter } from "next/router"
 import { FiLoader } from "react-icons/fi"
 import { useSession } from "next-auth/react"
 
 //React
-import { useState, useRef } from "react"
+import { useRef, useState } from "react"
 
 //Components
 import Menu from "../../../../components/dashboard/menu"
 
 //Interfaces
-import { User, PermissionGroup } from "../../../../interfaces"
+import { PermissionGroup, User } from "../../../../interfaces"
 
 //Styles
 import "tippy.js/dist/tippy.css"
@@ -265,6 +264,7 @@ export default function EditUser({ fetchedPermissionGroups, fetchedUser }) {
                   <div className=" w-11/12">
                     <button
                       type="button"
+                      data-testid="update_user_btn"
                       onClick={() => {
                         setIsUpdateBtnClicked(true)
                         submitData()
@@ -273,7 +273,9 @@ export default function EditUser({ fetchedPermissionGroups, fetchedUser }) {
                       {isUpdateBtnClicked ? (
                         <span className="flex flex-row justify-center">
                           <FiLoader className="animate-spin text-2xl" />
-                          <span className="mt-1 ml-3">Processing</span>
+                          <span data-testid="update_user_btn_processing" className="mt-1 ml-3">
+                            Processing
+                          </span>
                         </span>
                       ) : (
                         "Update"
