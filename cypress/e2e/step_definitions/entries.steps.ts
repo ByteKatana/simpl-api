@@ -121,7 +121,7 @@ When("I click the delete button.", () => {
   // or fallback to the first entry in the table
   cy.contains("tr", modifiedEntry.name).then(($row) => {
     if ($row.length) {
-      cy.wrap($row).find('[data-testid="delete-entry-btn"]').click()
+      cy.wrap($row).getDataTest("delete-entry-btn").click()
     } else {
       cy.get("table tbody tr").first().find('[data-testid="delete-entry-btn"]').click()
     }
