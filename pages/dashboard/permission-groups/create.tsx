@@ -6,7 +6,7 @@ import { FiLoader } from "react-icons/fi"
 import { useSession } from "next-auth/react"
 
 //React
-import { useState, useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 
 //Components
 import Menu from "../../../components/dashboard/menu"
@@ -156,6 +156,7 @@ export default function CreatePermissionGroup() {
                   <div className=" w-11/12">
                     <button
                       type="button"
+                      data-testid="create_perm_group_btn"
                       onClick={() => {
                         setIsCreateBtnClicked(true)
                         void submitData()
@@ -164,7 +165,9 @@ export default function CreatePermissionGroup() {
                       {isCreateBtnClicked ? (
                         <span className="flex flex-row justify-center">
                           <FiLoader className="animate-spin text-2xl" />
-                          <span className="mt-1 ml-3">Processing</span>
+                          <span data-testid="create_perm_group_btn_processing" className="mt-1 ml-3">
+                            Processing
+                          </span>
                         </span>
                       ) : (
                         "Create"

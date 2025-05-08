@@ -41,6 +41,7 @@ export interface EntryType {
   name: string
   namespace: string
   fields: object[]
+  createdBy?: string
 }
 
 export interface Entry {

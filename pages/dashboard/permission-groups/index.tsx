@@ -1,13 +1,13 @@
 //Utility
 import axios, { AxiosResponse } from "axios"
-import { FiPlusCircle, FiTrash2, FiEdit } from "react-icons/fi"
+import { FiEdit, FiPlusCircle, FiTrash2 } from "react-icons/fi"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
 import Tippy from "@tippyjs/react"
 import { useSession } from "next-auth/react"
 
 //React
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
 
 //Components
 import Menu from "../../../components/dashboard/menu"
@@ -17,6 +17,7 @@ import { PermissionGroup } from "../../../interfaces"
 
 //Styles
 import "tippy.js/dist/tippy.css"
+
 //===============================================
 
 export async function getServerSideProps() {
@@ -96,7 +97,9 @@ export default function PermissionGroups({ fetchedPermissionGroups }) {
             </div>
             <div className="col-start-4 col-end-6 flex flex-row ">
               <a href="permission-groups/create">
-                <button className=" flex flex-row bg-emerald-600 font-josefin text-white rounded-2xl px-7 py-2 mt-3 justify-self-end transition hover:bg-emerald-500 ">
+                <button
+                  data-testid="perm_group_add_btn"
+                  className=" flex flex-row bg-emerald-600 font-josefin text-white rounded-2xl px-7 py-2 mt-3 justify-self-end transition hover:bg-emerald-500 ">
                   <span className="pt-1">
                     <FiPlusCircle />
                   </span>
@@ -164,6 +167,7 @@ export default function PermissionGroups({ fetchedPermissionGroups }) {
                                 <Tippy content="Edit Group" theme="translucent">
                                   <a
                                     href={`permission-groups/edit/${permGroup._id}`}
+                                    data-testid={`edit-permission-group-btn-${permGroup.slug}`}
                                     className="transition hover:text-amber-400">
                                     <FiEdit />
                                   </a>
@@ -173,6 +177,7 @@ export default function PermissionGroups({ fetchedPermissionGroups }) {
                                 <Tippy content="Delete Group" theme="translucent">
                                   <a
                                     href="#"
+                                    data-testid="delete-permission-group-btn"
                                     onClick={() =>
                                       deleteSwal
                                         .fire({

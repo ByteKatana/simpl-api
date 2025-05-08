@@ -3,7 +3,8 @@ import axios from "axios"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
 import Router from "next/router"
-import { FiLoader } from "react-icons/fi"
+//Icons
+import { FiLoader, FiPlusSquare, FiX } from "react-icons/fi"
 import { useSession } from "next-auth/react"
 import handleValueChange from "../../../lib/ui/handle-value-change"
 import checkFieldEmpty from "../../../lib/ui/check-field-empty"
@@ -11,10 +12,7 @@ import checkPermGroup from "../../../lib/ui/check-perm-group"
 import addField from "../../../lib/ui/add-field"
 
 //React
-import { useState, useEffect, useRef } from "react"
-
-//Icons
-import { FiPlusSquare, FiX } from "react-icons/fi"
+import { useEffect, useRef, useState } from "react"
 
 //Components
 import Menu from "../../../components/dashboard/menu"
@@ -74,7 +72,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
     if (Object.keys(entryType).length === 0) {
       setEntryType({ name: "", slug: "", namespace: "itself" })
     }
-  }, [])
+  }, [session])
 
   const submitData = async () => {
     if (Object.keys(formErrors).length > 0) {
@@ -85,7 +83,8 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
       formRef.current[formFieldsWithErrors[0]].focus()
     } else {
       //If there is no form error
-      const result = await saveData({ entryType, formFields })
+      const permGroup = session.user.permission_group
+      const result = await saveData({ entryType, formFields, permGroup })
       if (result.status === "success") {
         resultSwal
           .fire({
@@ -205,7 +204,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                         checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, 0)
                       }}
                       className="form-select form-select-lg mb-3 block w-full  px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300  rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none">
-                      <option value="itself"> Itself </option>
+                      <option value="itself"> Itself</option>
                       {fetchedEntryTypes.map((entry_type) => {
                         return (
                           <option
@@ -241,6 +240,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                           <input
                             key={`input_field_name_${index}`}
                             name="field_name"
+                            data-testid={`input_field_name_${index}`}
                             ref={(el) => (formRef.current[`field_name_${index}`] = el)}
                             type="text"
                             className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none"
@@ -281,6 +281,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                           <input
                             key={`input_field_length_${index}`}
                             name="field_length"
+                            data-testid={`input_field_length_${index}`}
                             id="field_length"
                             type="number"
                             className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none"
@@ -320,9 +321,10 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                             Value Type
                           </label>
                           <select
-                            key={`input_field_value_type_${index}`}
+                            key={`select_field_value_type_${index}`}
                             id="field_value_type"
                             name="field_value_type"
+                            data-testid={`select_field_value_type_${index}`}
                             ref={(el) => (formRef.current[`field_value_type_${index}`] = el)}
                             onChange={(e) => {
                               handleValueChange(
@@ -364,9 +366,10 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                             Form Type
                           </label>
                           <select
-                            key={`input_field_form_type_${index}`}
+                            key={`select_field_form_type_${index}`}
                             id="field_form_type"
                             name="field_form_type"
+                            data-testid={`select_field_form_type_${index}`}
                             ref={(el) => (formRef.current[`field_form_type_${index}`] = el)}
                             defaultValue={field.field_form_type}
                             onChange={(e) => {
@@ -434,15 +437,18 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
                   <div className=" w-11/12">
                     <button
                       type="button"
+                      data-testid="create_entry_type_btn"
                       onClick={() => {
                         setIsCreateBtnClicked(true)
-                        submitData()
+                        void submitData()
                       }}
                       className="mb-2 w-full inline-block px-6 py-2.5 bg-slate-700 text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-slate-800 hover:shadow-lg focus:bg-slate-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-slate-800 active:shadow-lg transition duration-150 ease-in-out">
                       {isCreateBtnClicked ? (
                         <span className="flex flex-row justify-center">
                           <FiLoader className="animate-spin text-2xl" />
-                          <span className="mt-1 ml-3">Processing</span>
+                          <span data-testid="create_entry_type_btn_processing" className="mt-1 ml-3">
+                            Processing
+                          </span>
                         </span>
                       ) : (
                         "Create"

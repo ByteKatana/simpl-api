@@ -192,6 +192,7 @@ function EntryForm({
         <div className=" w-11/12">
           <button
             type="button"
+            data-testid="submit_entry_button"
             onClick={() => {
               setIsSubmitClicked(true)
               void submitData()
@@ -200,7 +201,9 @@ function EntryForm({
             {isSubmitClicked ? (
               <span className="flex flex-row justify-center">
                 <FiLoader className="animate-spin text-2xl" />
-                <span className="mt-1 ml-3">PROCESSING</span>
+                <span data-testid="submit_entry_button_processing" className="mt-1 ml-3">
+                  PROCESSING
+                </span>
               </span>
             ) : (
               actionType

@@ -2,20 +2,17 @@
 import axios from "axios"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
-import { useRouter } from "next/router"
-import Router from "next/router"
+import Router, { useRouter } from "next/router"
 import Tippy from "@tippyjs/react"
-import { FiLoader } from "react-icons/fi"
+//Icons
+import { FiLoader, FiPlusSquare, FiX } from "react-icons/fi"
 import { useSession } from "next-auth/react"
 import checkPermission from "../../../../lib/ui/check-permission"
 import addField from "../../../../lib/ui/add-field"
 import removeField from "../../../../lib/ui/remove-field"
 
 //React
-import { useState, useRef } from "react"
-
-//Icons
-import { FiPlusSquare, FiX } from "react-icons/fi"
+import { useRef, useState } from "react"
 
 //Components
 import Menu from "../../../../components/dashboard/menu"
@@ -498,6 +495,7 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                     {anyValueChanged ? (
                       <button
                         type="button"
+                        data-testid="update_entry_type_btn"
                         onClick={() => {
                           setIsUpdateBtnClicked(true)
                           void submitData()
@@ -513,7 +511,9 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
                           {isUpdateBtnClicked ? (
                             <span className="flex flex-row justify-center">
                               <FiLoader className="animate-spin text-2xl" />
-                              <span className="mt-1 ml-3">Processing</span>
+                              <span data-testid="update_entry_type_btn_processing" className="mt-1 ml-3">
+                                Processing
+                              </span>
                             </span>
                           ) : (
                             "Update"

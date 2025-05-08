@@ -1,9 +1,10 @@
 //Database
 import { connectDB } from "../lib/mongodb"
-import { ObjectId, MongoClient, Collection, UpdateResult } from "mongodb"
+import { Collection, InsertOneResult, MongoClient, ObjectId, UpdateResult } from "mongodb"
 
 //Interface
 import { EntryType } from "../interfaces"
+
 //===============================================
 
 export class EntryTypeController {
@@ -28,12 +29,26 @@ export class EntryTypeController {
     }
 
     if (isConnected) {
-      let insertResult
+      let insertResult: InsertOneResult
+      let addPrivileges: UpdateResult
       try {
         dbCollection = client.db(process.env.DB_NAME).collection("entry_types")
         insertResult = await dbCollection.insertOne(this.entryType)
 
-        if (insertResult.insertedId) {
+        //add CRUD privileges to the user's permission group for this entry type
+        dbCollection = client.db(process.env.DB_NAME).collection("permission_groups")
+        const permGroupData = await dbCollection.findOne({ slug: this.entryType.createdBy })
+        permGroupData.privileges.push({
+          [this.entryType.namespace.split(" ").join("-").toLowerCase()]: {
+            permissions: ["read", "update", "delete", "create"]
+          }
+        })
+        addPrivileges = await dbCollection.updateOne(
+          { _id: new ObjectId(permGroupData._id) },
+          { $set: permGroupData },
+          { upsert: false }
+        )
+        if (insertResult.insertedId && addPrivileges.modifiedCount === 1) {
           if (this.mockClient) {
             return {
               result: { status: "success", message: "Entry Type has been created." },
@@ -70,13 +85,32 @@ export class EntryTypeController {
     }
     if (isConnected) {
       let updateResult: UpdateResult
+      let addPrivileges: UpdateResult
       try {
         dbCollection = client.db(process.env.DB_NAME).collection("entry_types")
+        const prevState = await dbCollection.findOne({ _id: new ObjectId(id) })
+
         updateResult = await dbCollection.updateOne(
           { _id: new ObjectId(id) },
           { $set: this.entryType },
           { upsert: false }
         )
+
+        if (prevState.namespace !== this.entryType.namespace) {
+          //add CRUD privileges to the user's permission group for this entry type
+          dbCollection = client.db(process.env.DB_NAME).collection("permission_groups")
+          const permGroupData = await dbCollection.findOne({ slug: this.entryType.createdBy })
+          permGroupData.privileges.push({
+            [this.entryType.namespace.split(" ").join("-").toLowerCase()]: {
+              permissions: ["read", "update", "delete", "create"]
+            }
+          })
+          addPrivileges = await dbCollection.updateOne(
+            { _id: new ObjectId(permGroupData._id) },
+            { $set: permGroupData },
+            { upsert: false }
+          )
+        }
       } catch (e) {
         console.log(e)
       } finally {
@@ -84,7 +118,7 @@ export class EntryTypeController {
           await client.close()
         }
       }
-      if (updateResult.modifiedCount === 1) {
+      if (updateResult.modifiedCount === 1 && addPrivileges.modifiedCount === 1) {
         return { status: "success", message: "Entry Type has been updated." }
       } else if (updateResult.matchedCount === 1 && updateResult.modifiedCount === 0) {
         return { status: "failed", message: "You didn't make any change." }

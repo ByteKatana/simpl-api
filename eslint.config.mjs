@@ -5,6 +5,7 @@ import pluginReact from "eslint-plugin-react"
 import prettier from "eslint-plugin-prettier"
 import testingLibrary from "eslint-plugin-testing-library"
 import jestDom from "eslint-plugin-jest-dom"
+import pluginCypress from "eslint-plugin-cypress/flat"
 
 /** @type {import("eslint").Linter.Config[]} */
 export default [
@@ -16,7 +17,8 @@ export default [
     plugins: {
       prettier: prettier,
       "testing-library": testingLibrary,
-      "jest-dom": jestDom
+      "jest-dom": jestDom,
+      pluginCypress: pluginCypress
     },
     settings: {
       react: {

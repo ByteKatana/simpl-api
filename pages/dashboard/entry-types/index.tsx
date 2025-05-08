@@ -1,13 +1,13 @@
 //Utility
 import axios, { AxiosResponse } from "axios"
-import { FiPlusCircle, FiTrash2, FiEdit, FiFileText } from "react-icons/fi"
+import { FiEdit, FiFileText, FiPlusCircle, FiTrash2 } from "react-icons/fi"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
 import Tippy from "@tippyjs/react"
 import { useSession } from "next-auth/react"
 
 //React
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
 
 //Components
 import Menu from "../../../components/dashboard/menu"
@@ -17,6 +17,7 @@ import { EntryType } from "../../../interfaces"
 
 //Styles
 import "tippy.js/dist/tippy.css"
+
 //===============================================
 
 export async function getServerSideProps() {
@@ -186,6 +187,7 @@ export default function EntryTypes({ fetchedEntryTypes, fetchedPermGroups }) {
                               {checkPermission("create", entryType.namespace) ? (
                                 <Tippy content="Create Entry" theme="translucent">
                                   <a
+                                    data-test-id="create-entry-btn"
                                     href={`entries/create/${entryType.slug}`}
                                     className="transition hover:text-amber-400">
                                     <FiFileText />
@@ -199,6 +201,7 @@ export default function EntryTypes({ fetchedEntryTypes, fetchedPermGroups }) {
                               {checkPermission("update", entryType.namespace) ? (
                                 <Tippy content="Edit Entry Type" theme="translucent">
                                   <a
+                                    data-testid={`edit-entry-type-btn-${entryType.slug}`}
                                     href={`entry-types/edit/${entryType._id}`}
                                     className="transition hover:text-amber-400">
                                     <FiEdit />
@@ -212,6 +215,7 @@ export default function EntryTypes({ fetchedEntryTypes, fetchedPermGroups }) {
                               {checkPermission("delete", entryType.namespace) ? (
                                 <Tippy content="Delete Entry Type" theme="translucent">
                                   <a
+                                    data-testid="delete-entry-type-btn"
                                     href="#"
                                     onClick={() =>
                                       deleteSwal

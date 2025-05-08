@@ -6,13 +6,13 @@ import { FiPlusCircle, FiTrash2 } from "react-icons/fi"
 import { useSession } from "next-auth/react"
 
 //React
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
 
 //Components
 import Menu from "../../components/dashboard/menu"
 
 //Interfaces
-import { PermissionGroup, EntryType, ApiKey } from "../../interfaces"
+import { ApiKey, EntryType, PermissionGroup } from "../../interfaces"
 import checkPermGroup from "../../lib/ui/check-perm-group"
 
 export async function getServerSideProps() {
@@ -73,6 +73,7 @@ export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, f
       }
       setPaginationNamespaceState({ ...paginationNamespaceState, pages: count })
     }
+
     function calcPermissionGroupPages() {
       const count = []
       for (let i = 1; i <= fetchedPermissionGroups.length / paginationPermissionGroupState.limit + 1; i++) {
@@ -437,6 +438,7 @@ export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, f
                                 void sendPermissions()
                               }}
                               type="button"
+                              data-testid="update_permission_btn"
                               className="mb-2 w-full inline-block px-6 py-2.5 bg-slate-700 text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-slate-800 hover:shadow-lg focus:bg-slate-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-slate-800 active:shadow-lg transition duration-150 ease-in-out">
                               Update
                             </button>
@@ -453,6 +455,7 @@ export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, f
                   </div>
                   <div className="w-3/12">
                     <button
+                      data-testid="generate_api_key_btn"
                       onClick={() => {
                         void generateApiKey()
                       }}
@@ -473,6 +476,7 @@ export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, f
                           className="grid grid-col-6 place-content-between my-2 py-2 px-5 rounded-xl border-y border-gray-200 shadow-md text-black bg-slate-200 hover:bg-slate-300">
                           <p className="col-start-1 col-end-4"> {apiKey.key} </p>
                           <a
+                            data-testid="delete-api-key-btn"
                             onClick={() => {
                               void removeApiKey(apiKey._id)
                             }}
