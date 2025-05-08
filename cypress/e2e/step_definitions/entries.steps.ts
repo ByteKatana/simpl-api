@@ -50,7 +50,7 @@ Then("I should see entries table", () => {
 // Scenario: editing entries
 When("I click edit button.", () => {
   // Find the first entry in the table and click its edit button
-  cy.contains("tr", modifiedEntry.name).getDataTest(`edit-entry-btn-${modifiedEntry.slug}`).click()
+  cy.getDataTest(`edit-entry-btn-${modifiedEntry.slug}`).click()
   cy.waitForRequest()
 })
 
