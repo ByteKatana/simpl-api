@@ -2,8 +2,7 @@
 import axios from "axios"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
-import { useRouter } from "next/router"
-import Router from "next/router"
+import Router, { useRouter } from "next/router"
 import { FiLoader } from "react-icons/fi"
 import { useSession } from "next-auth/react"
 import checkPermGroup from "../../../../lib/ui/check-perm-group"
@@ -11,7 +10,7 @@ import checkFieldEmpty from "../../../../lib/ui/check-field-empty"
 import useSaveData from "../../../../hooks/use-save-data"
 
 //React
-import { useState, useRef } from "react"
+import { useRef, useState } from "react"
 
 //Components
 import Menu from "../../../../components/dashboard/menu"
@@ -160,6 +159,7 @@ export default function EditPermissionGroup({ fetchedPermissionGroup }) {
                   <div className=" w-11/12">
                     <button
                       type="button"
+                      data-testid="update_perm_group_btn"
                       onClick={() => {
                         setIsUpdateBtnClicked(true)
                         void submitData()
@@ -168,7 +168,9 @@ export default function EditPermissionGroup({ fetchedPermissionGroup }) {
                       {isUpdateBtnClicked ? (
                         <span className="flex flex-row justify-center">
                           <FiLoader className="animate-spin text-2xl" />
-                          <span className="mt-1 ml-3">Processing</span>
+                          <span data-testid="update_perm_group_btn_processing" className="mt-1 ml-3">
+                            Processing
+                          </span>
                         </span>
                       ) : (
                         "Update"
