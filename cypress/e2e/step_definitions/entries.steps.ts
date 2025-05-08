@@ -43,7 +43,7 @@ Then("I should see navigation menu.", () => {
   cy.get(`[data-testid='menu-component']`).should("be.visible")
 })
 
-Then("I should see entries table", () => {
+Then("I should see entries table.", () => {
   cy.get("table").should("be.visible")
 })
 
