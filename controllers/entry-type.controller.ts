@@ -118,7 +118,7 @@ export class EntryTypeController {
           await client.close()
         }
       }
-      if (updateResult.modifiedCount === 1) {
+      if (updateResult.modifiedCount === 1 && addPrivileges.modifiedCount === 1) {
         return { status: "success", message: "Entry Type has been updated." }
       } else if (updateResult.matchedCount === 1 && updateResult.modifiedCount === 0) {
         return { status: "failed", message: "You didn't make any change." }
