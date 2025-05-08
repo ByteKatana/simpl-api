@@ -1,9 +1,5 @@
 import { Then, When } from "@badeball/cypress-cucumber-preprocessor"
 
-//User credentials
-const USER_EMAIL = Cypress.env("USER_EMAIL")
-const USER_PASSWORD = Cypress.env("USER_PASSWORD")
-
 // Test data for entry editing
 const modifiedEntry = {
   name: "Modified Entry Title",

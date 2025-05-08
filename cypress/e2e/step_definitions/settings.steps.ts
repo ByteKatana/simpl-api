@@ -1,9 +1,5 @@
 import { Then, When } from "@badeball/cypress-cucumber-preprocessor"
 
-// User credentials (reusing from entry-types.steps.ts)
-const USER_EMAIL = Cypress.env("USER_EMAIL")
-const USER_PASSWORD = Cypress.env("USER_PASSWORD")
-
 // Test data for permission group settings
 const permissionSettings = {
   permissionGroup: "Member",
@@ -56,13 +52,13 @@ Then("I update the permission", () => {
   cy.wait("@updatePermissionRequest").its("response.statusCode").should("eq", 200)
 })
 
-Then("I should see \"Permission group has been updated.\" message on the screen.", () => {
+Then('I should see "Permission group has been updated." message on the screen.', () => {
   cy.contains("Permission group has been updated.").should("be.visible")
   cy.contains("button", "Ok", { matchCase: false }).click()
 })
 
 // Scenario: generating API keys
-When("I click \"Generate\" button.", () => {
+When('I click "Generate" button.', () => {
   cy.visit("/dashboard/settings")
   cy.getDataTest("generate_api_key_btn").as("generateButton")
   cy.get("@generateButton").should("exist").should("be.visible").should("not.be.disabled")
@@ -74,7 +70,7 @@ When("I click \"Generate\" button.", () => {
   cy.wait("@generateApiKeyRequest").its("response.statusCode").should("eq", 200)
 })
 
-Then("I should see \"API Key has been generated.\" message on the screen.", () => {
+Then('I should see "API Key has been generated." message on the screen.', () => {
   cy.contains("API Key has been generated.").should("be.visible")
   cy.contains("button", "Ok", { matchCase: false }).click()
 })
@@ -87,7 +83,7 @@ When("I click the delete button of a API key", () => {
   cy.wait("@deleteApiKeyRequest").its("response.statusCode").should("eq", 200)
 })
 
-Then("I should see \"API Key has been removed.\" message on the screen.", () => {
+Then('I should see "API Key has been removed." message on the screen.', () => {
   cy.contains("API Key has been removed.").should("be.visible")
   cy.contains("button", "Ok", { matchCase: false }).click()
 })

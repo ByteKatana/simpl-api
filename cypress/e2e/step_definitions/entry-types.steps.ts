@@ -1,9 +1,5 @@
 import { Then, When } from "@badeball/cypress-cucumber-preprocessor"
 
-//User credentials
-const USER_EMAIL = Cypress.env("USER_EMAIL")
-const USER_PASSWORD = Cypress.env("USER_PASSWORD")
-
 // Test data for entry type creation
 const newEntryType = {
   name: "Test Entry Type",
@@ -36,30 +32,6 @@ const newEntry = {
 const modifiedEntryType = {
   name: "Modified Entry Type"
 }
-
-/*Before(() => {
-  // Login before each test (assuming you have authentication)
-  cy.session(
-    "authenticated",
-    () => {
-      cy.visit("/api/auth/signin")
-      cy.get('input[name="email"]').type(USER_EMAIL)
-      cy.get('input[name="password"]').type(USER_PASSWORD)
-      cy.contains("button", "Sign in with credentials").click()
-      /!*    cy.waitForRequest()
-        cy.contains("button", "Dashboard").click()
-        cy.waitForRequest()
-        cy.url().should("include", "/dashboard")*!/
-    },
-    {
-      validate: () => {
-        // Check if user is authenticated
-        cy.getCookie("next-auth.session-token").should("exist")
-      }
-    }
-  )
-  cy.visit("/dashboard/entry-types")
-})*/
 
 // Scenario: visiting entry types page
 When("I visit entry types page", () => {
