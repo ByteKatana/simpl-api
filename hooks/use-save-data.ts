@@ -44,12 +44,19 @@ async function EntryUpdate(
 async function EntryTypeCreate(entryType: EntryType, formFields, permGroup: string) {
   try {
     let formatedEntryType: object
-    if (entryType["namespace"] === "itself" || entryType["namespace"] === entryType["name"].toLowerCase()) {
-      formatedEntryType = { name: entryType["name"], namespace: entryType["name"].toLowerCase(), createdBy: permGroup }
+    if (
+      entryType["namespace"] === "itself" ||
+      entryType["namespace"] === entryType["name"].split(" ").join("-").toLowerCase()
+    ) {
+      formatedEntryType = {
+        name: entryType["name"],
+        namespace: entryType["name"].split(" ").join("-").toLowerCase(),
+        createdBy: permGroup
+      }
     } else {
       formatedEntryType = {
         name: entryType["name"],
-        namespace: `${entryType["namespace"].toLowerCase()}.${entryType["name"].toLowerCase()}`,
+        namespace: `${entryType["namespace"].split(" ").join("-").toLowerCase()}.${entryType["name"].split(" ").join("-").toLowerCase()}`,
         createdBy: permGroup
       }
     }
