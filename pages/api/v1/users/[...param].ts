@@ -1,4 +1,4 @@
-import { NextApiResponse, NextApiRequest } from "next"
+import { NextApiRequest, NextApiResponse } from "next"
 import { apiBuilderController } from "../../../../controllers/api-builder.controller"
 import { apiKeyController } from "../../../../controllers/api-key.controller"
 import { getByLimit } from "../../../../lib/get-by-limit"
@@ -25,12 +25,12 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
         param[param.length - 1].startsWith("last_") ||
         param[param.length - 1].startsWith("random_")
       ) {
-        res.status(200).json(getByLimit(param[param.length - 1], userData))
+        return res.status(200).json(getByLimit(param[param.length - 1], userData))
       } else {
-        res.status(200).json({ message: "Invalid limit value" })
+        return res.status(200).json({ message: "Invalid limit value" })
       }
     }
-    res.status(200).json(userData)
+    return res.status(200).json(userData)
   }
-  res.status(200).json({ message: "You're not authorized!" })
+  return res.status(200).json({ message: "You're not authorized!" })
 }

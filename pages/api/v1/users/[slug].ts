@@ -1,4 +1,4 @@
-import { NextApiResponse, NextApiRequest } from "next"
+import { NextApiRequest, NextApiResponse } from "next"
 import { apiBuilderController } from "../../../../controllers/api-builder.controller"
 import { apiKeyController } from "../../../../controllers/api-key.controller"
 import { getByLimit } from "../../../../lib/get-by-limit"
@@ -16,17 +16,19 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
     const user = new apiBuilderController("single-param", "users", "permission_group", slug)
     const userData: any[] = await user.fetchData("Equals")
     userData.forEach((user) => {
-      delete user.password
+      const { password, ...rest } = user
+      return rest
     })
     if (_slug.startsWith("first_") || _slug.startsWith("last_") || _slug.startsWith("random_")) {
       const userWithLimit = new apiBuilderController("index", "users")
       const userDataWithLimit: any[] = await userWithLimit.fetchData("Equals")
       userDataWithLimit.forEach((user) => {
-        delete user.password
+        const { password, ...rest } = user
+        return rest
       })
-      res.status(200).json(getByLimit(_slug, userDataWithLimit))
+      return res.status(200).json(getByLimit(_slug, userDataWithLimit))
     }
-    res.status(200).json(userData)
+    return res.status(200).json(userData)
   }
   res.status(200).json({ message: "You're not authorized!" })
 }
