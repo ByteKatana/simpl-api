@@ -1,4 +1,4 @@
-import { NextApiResponse, NextApiRequest } from "next"
+import { NextApiRequest, NextApiResponse } from "next"
 import { apiBuilderController } from "../../../../controllers/api-builder.controller"
 import { apiKeyController } from "../../../../controllers/api-key.controller"
 import { getByLimit } from "../../../../lib/get-by-limit"
@@ -14,12 +14,12 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
     let apiBuilder: apiBuilderController
     if (_slug.startsWith("first_") || _slug.startsWith("last_") || _slug.startsWith("random_")) {
       apiBuilder = new apiBuilderController("index", "entries", "namespace")
-      res.status(200).json(getByLimit(_slug, await apiBuilder.fetchData("Equals")))
+      return res.status(200).json(getByLimit(_slug, await apiBuilder.fetchData("Equals")))
     } else {
       apiBuilder = new apiBuilderController("single-param", "entries", "namespace", _slug)
     }
 
-    res.status(200).json(await apiBuilder.fetchData("Equals"))
+    return res.status(200).json(await apiBuilder.fetchData("Equals"))
   }
-  res.status(200).json({ message: "You're not authorized!" })
+  return res.status(200).json({ message: "You're not authorized!" })
 }
