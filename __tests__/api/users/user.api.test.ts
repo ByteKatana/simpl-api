@@ -79,7 +79,7 @@ describe("/api/v1/user/", () => {
     await createRouteHandler(request, response)
     const data = await response._getJSONData()
     expect(response._getStatusCode()).toBe(200)
-    expect(data.result.message).toBe("You're not authorized!")
+    expect(data.message).toBe("You're not authorized!")
   })
 
   it("PUT /update - should update the user", async () => {
@@ -154,7 +154,7 @@ describe("/api/v1/user/", () => {
     await updateRouteHandler(request, response)
     const data = await response._getJSONData()
     expect(response._getStatusCode()).toBe(200)
-    expect(data.result.message).toBe("You're not authorized!")
+    expect(data.message).toBe("You're not authorized!")
   })
 
   it("DELETE /delete - should delete the user", async () => {
@@ -223,6 +223,6 @@ describe("/api/v1/user/", () => {
     await deleteRouteHandler(request, response)
     const data = await response._getJSONData()
     expect(response._getStatusCode()).toBe(200)
-    expect(data.result.message).toBe("You're not authorized!")
+    expect(data.message).toBe("You're not authorized!")
   })
 })
