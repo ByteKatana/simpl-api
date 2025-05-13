@@ -3,6 +3,7 @@ import indexRouteHandler from "../../../pages/api/v1/users/index"
 import slugRouteHandler from "../../../pages/api/v1/users/[slug]"
 import paramRouteHandler from "../../../pages/api/v1/users/[...param]"
 import { NextApiRequest, NextApiResponse } from "next"
+import { User } from "../../../interfaces"
 
 describe("/api/v1/users", () => {
   afterEach(() => {
@@ -111,7 +112,7 @@ describe("/api/v1/users", () => {
     await slugRouteHandler(request, response)
     const data = await response._getJSONData()
     expect(response._getStatusCode()).toBe(200)
-    data.forEach((user: any) => {
+    data.forEach((user: User) => {
       expect(user.permission_group).toEqual("admin")
     })
   })
@@ -130,7 +131,7 @@ describe("/api/v1/users", () => {
     await paramRouteHandler(request, response)
     const data = await response._getJSONData()
     expect(response._getStatusCode()).toBe(200)
-    data.forEach((user: any) => {
+    data.forEach((user: User) => {
       expect(user.username).toEqual("mock_user")
     })
   })
@@ -150,7 +151,7 @@ describe("/api/v1/users", () => {
     const data = await response._getJSONData()
     expect(response._getStatusCode()).toBe(200)
     expect(data.length).toBeLessThanOrEqual(3)
-    data.forEach((user: any) => {
+    data.forEach((user: User) => {
       expect(user.username).toEqual("mock_user")
     })
   })
@@ -170,7 +171,7 @@ describe("/api/v1/users", () => {
     const data = await response._getJSONData()
     expect(response._getStatusCode()).toBe(200)
     expect(data.length).toBeLessThanOrEqual(3)
-    data.forEach((user: any) => {
+    data.forEach((user: User) => {
       expect(user.username).toEqual("mock_user")
     })
   })
@@ -190,7 +191,7 @@ describe("/api/v1/users", () => {
     const data = await response._getJSONData()
     expect(response._getStatusCode()).toBe(200)
     expect(data.length).toBeLessThanOrEqual(3)
-    data.forEach((user: any) => {
+    data.forEach((user: User) => {
       expect(user.username).toEqual("mock_user")
     })
   })
