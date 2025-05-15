@@ -1,4 +1,4 @@
-import { NextApiResponse, NextApiRequest } from "next"
+import { NextApiRequest, NextApiResponse } from "next"
 import { apiBuilderController } from "../../../../controllers/api-builder.controller"
 import { apiKeyController } from "../../../../controllers/api-key.controller"
 
@@ -12,9 +12,10 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
     const user = new apiBuilderController("index", "users")
     const userData: any[] = await user.fetchData()
     userData.forEach((user) => {
-      delete user.password
+      const { password, ...rest } = user
+      return rest
     })
-    res.status(200).json(userData)
+    return res.status(200).json(userData)
   }
-  res.status(200).json({ message: "You're not authorized!" })
+  return res.status(200).json({ message: "You're not authorized!" })
 }

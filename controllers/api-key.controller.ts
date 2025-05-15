@@ -1,8 +1,9 @@
 import { connectDB } from "../lib/mongodb"
-import { ObjectId, MongoClient, Collection, InsertOneResult, DeleteResult, Filter } from "mongodb"
+import { Collection, DeleteResult, Filter, InsertOneResult, MongoClient, ObjectId } from "mongodb"
 
 //Interface
 import { ApiKey } from "../interfaces"
+
 //===============================================
 
 export class apiKeyController {
@@ -18,22 +19,30 @@ export class apiKeyController {
     let client: MongoClient
 
     try {
-      client = await connectDB()
-      isConnected = true
-    } catch (e) {
-      console.error(e)
-    }
-    if (isConnected) {
-      let findResult: Filter<object>
       try {
-        dbCollection = client.db(process.env.DB_NAME).collection("api_keys") as Collection
-        findResult = await dbCollection.find({ key: this.apiKey.key }).toArray()
+        client = await connectDB()
+        isConnected = true
       } catch (e) {
         console.log(e)
       }
-      return findResult
-    } else {
-      return [{ message: "Database connection is NOT established" }]
+      if (isConnected) {
+        let findResult: Filter<object>
+        try {
+          dbCollection = client.db(process.env.DB_NAME).collection("api_keys") as Collection
+          findResult = await dbCollection.find({ key: this.apiKey.key }).toArray()
+        } catch (e) {
+          console.log(e)
+        }
+        return findResult
+      } else {
+        return [{ message: "Database connection is NOT established" }]
+      }
+    } catch (e) {
+      console.error(e)
+    } finally {
+      if (client?.close && typeof client.close === "function") {
+        await client.close()
+      }
     }
   }
 
@@ -43,27 +52,35 @@ export class apiKeyController {
     let client: MongoClient
 
     try {
-      client = await connectDB()
-      isConnected = true
-    } catch (e) {
-      console.error(e)
-    }
-    if (isConnected) {
-      let insertResult: InsertOneResult
       try {
-        dbCollection = client.db(process.env.DB_NAME).collection("api_keys")
-        insertResult = await dbCollection.insertOne(this.apiKey)
+        client = await connectDB()
+        isConnected = true
       } catch (e) {
         console.log(e)
       }
+      if (isConnected) {
+        let insertResult: InsertOneResult
+        try {
+          dbCollection = client.db(process.env.DB_NAME).collection("api_keys")
+          insertResult = await dbCollection.insertOne(this.apiKey)
+        } catch (e) {
+          console.log(e)
+        }
 
-      if (insertResult.insertedId) {
-        return { status: "success", message: "API Key has been generated." }
+        if (insertResult.insertedId) {
+          return { status: "success", message: "API Key has been generated.", keyId: insertResult.insertedId }
+        } else {
+          return { status: "failed", message: "Failed to create the api key." }
+        }
       } else {
-        return { status: "failed", message: "Failed to create the api key." }
+        return [{ message: "Database connection is NOT established" }]
       }
-    } else {
-      return [{ message: "Database connection is NOT established" }]
+    } catch (e) {
+      console.error(e)
+    } finally {
+      if (client?.close && typeof client.close === "function") {
+        await client.close()
+      }
     }
   }
 
@@ -73,26 +90,34 @@ export class apiKeyController {
     let isConnected = false
 
     try {
-      client = await connectDB()
-      isConnected = true
+      try {
+        client = await connectDB()
+        isConnected = true
+      } catch (e) {
+        console.log(e)
+      }
+      if (isConnected) {
+        let deleteResult: DeleteResult
+        try {
+          dbCollection = client.db(process.env.DB_NAME).collection("api_keys")
+          deleteResult = await dbCollection.deleteOne({ _id: new ObjectId(id) })
+        } catch (e) {
+          console.log("deleteResult:", deleteResult, "Error:", e) //TODO: better error logging & displaying
+        }
+        if (deleteResult.deletedCount === 1) {
+          return { status: "success", message: "API Key has been removed." }
+        } else {
+          return { status: "failed", message: "Failed to delete the api key." }
+        }
+      } else {
+        return [{ message: "Database connection is NOT established" }]
+      }
     } catch (e) {
       console.log(e) //TODO: better error logging & displaying
-    }
-    if (isConnected) {
-      let deleteResult: DeleteResult
-      try {
-        dbCollection = client.db(process.env.DB_NAME).collection("api_keys")
-        deleteResult = await dbCollection.deleteOne({ _id: new ObjectId(id) })
-      } catch (e) {
-        console.log(e) //TODO: better error logging & displaying
+    } finally {
+      if (client?.close && typeof client.close === "function") {
+        await client.close()
       }
-      if (deleteResult.deletedCount === 1) {
-        return { status: "success", message: "API Key has been removed." }
-      } else {
-        return { status: "failed", message: "Failed to delete the api key." }
-      }
-    } else {
-      return [{ message: "Database connection is NOT established" }]
     }
   }
 }

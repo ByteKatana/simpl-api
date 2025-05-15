@@ -1,5 +1,5 @@
 //Core
-import { NextApiResponse, NextApiRequest } from "next"
+import { NextApiRequest, NextApiResponse } from "next"
 
 //Controller
 import { EntryController } from "../../../../../controllers/entry.controller"
@@ -10,7 +10,7 @@ import { Entry } from "../../../../../interfaces/"
 //===============================================
 
 export default async function handler(_req: NextApiRequest, res: NextApiResponse) {
-  const { slug, apikey, secretkey } = _req.query
+  const { slug, apikey, secretkey, mockclient } = _req.query
   const apiKey = new apiKeyController({ key: apikey as string })
   const apiKeyData = await apiKey.findKey()
   if (apiKeyData[0] !== undefined && apiKeyData[0].key === apikey && process.env.SECRET_KEY === secretkey) {
@@ -20,12 +20,12 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
         namespace: "",
         slug: ""
       }
-      const EntryData = new EntryController(dummyObj)
+      const EntryData = new EntryController(dummyObj, mockclient === "true")
       const result = await EntryData.delete(slug as string)
-      res.status(200).json(result)
+      return res.status(200).json(result)
     } else {
-      res.status(200).json({ message: "You can only do DELETE request for this endpoint!" })
+      return res.status(200).json({ message: "You can only do DELETE request for this endpoint!" })
     }
   }
-  res.status(200).json({ message: "You're not authorized!" })
+  return res.status(200).json({ message: "You're not authorized!" })
 }

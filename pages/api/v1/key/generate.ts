@@ -1,5 +1,5 @@
 //Core
-import { NextApiResponse, NextApiRequest } from "next"
+import { NextApiRequest, NextApiResponse } from "next"
 
 //Utility
 import { uid } from "uid"
@@ -16,7 +16,7 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
     const keyObj = { key: generatedKey }
     const apiKeyData = new apiKeyController(keyObj)
     const result = await apiKeyData.create()
-    res.status(200).json({ key: generatedKey, result: result })
+    return res.status(200).json({ key: generatedKey, result: result })
   }
-  res.status(200).json({ message: "You're not authorized!" })
+  return res.status(200).json({ message: "You're not authorized!" })
 }
