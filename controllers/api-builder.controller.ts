@@ -18,7 +18,7 @@ export class apiBuilderController {
   async fetchData(findType?: FindType) {
     let dataCollection: object[]
     let isConnected = false
-    let client: MongoClient | undefined
+    let client: MongoClient
 
     try {
       client = await connectDB()
