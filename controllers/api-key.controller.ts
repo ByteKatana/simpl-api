@@ -60,7 +60,7 @@ export class apiKeyController {
         }
 
         if (insertResult.insertedId) {
-          return { status: "success", message: "API Key has been generated." }
+          return { status: "success", message: "API Key has been generated.", keyId: insertResult.insertedId }
         } else {
           return { status: "failed", message: "Failed to create the api key." }
         }
@@ -90,7 +90,7 @@ export class apiKeyController {
           dbCollection = client.db(process.env.DB_NAME).collection("api_keys")
           deleteResult = await dbCollection.deleteOne({ _id: new ObjectId(id) })
         } catch (e) {
-          console.log(e) //TODO: better error logging & displaying
+          console.log("deleteResult:", deleteResult, "Error:", e) //TODO: better error logging & displaying
         }
         if (deleteResult.deletedCount === 1) {
           return { status: "success", message: "API Key has been removed." }

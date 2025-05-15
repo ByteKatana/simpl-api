@@ -1,5 +1,5 @@
 //Core
-import { NextApiResponse, NextApiRequest } from "next"
+import { NextApiRequest, NextApiResponse } from "next"
 
 //Controller
 import { apiKeyController } from "../../../../../controllers/api-key.controller"
@@ -19,10 +19,10 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
       }
       const apiKeyData = new apiKeyController(dummyObj)
       const result = await apiKeyData.delete(slug as string)
-      res.status(200).json(result)
+      return res.status(200).json(result)
     } else {
-      res.status(200).json({ message: "You can only do DELETE request for this endpoint!" })
+      return res.status(200).json({ message: "You can only do DELETE request for this endpoint!" })
     }
   }
-  res.status(200).json({ message: "You're not authorized!" })
+  return res.status(200).json({ message: "You're not authorized!" })
 }
