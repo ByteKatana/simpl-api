@@ -52,8 +52,12 @@ export class apiKeyController {
     let client: MongoClient
 
     try {
-      client = await connectDB()
-      isConnected = true
+      try {
+        client = await connectDB()
+        isConnected = true
+      } catch (e) {
+        console.log(e)
+      }
       if (isConnected) {
         let insertResult: InsertOneResult
         try {
@@ -86,8 +90,12 @@ export class apiKeyController {
     let isConnected = false
 
     try {
-      client = await connectDB()
-      isConnected = true
+      try {
+        client = await connectDB()
+        isConnected = true
+      } catch (e) {
+        console.log(e)
+      }
       if (isConnected) {
         let deleteResult: DeleteResult
         try {
