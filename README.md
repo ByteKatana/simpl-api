@@ -23,6 +23,7 @@ going on with the project.
 - [SweetAlert](https://sweetalert.js.org/)
 - [Tippy.js](https://atomiks.github.io/tippyjs/)
 - [axios](https://axios-http.com/)
+- [node-mocks-http](https://github.com/eugef/node-mocks-http)
 - [jest](https://jestjs.io/)
 - [Testing Library](https://testing-library.com/)
 - [Cucumber.js](https://cucumber.io/)
