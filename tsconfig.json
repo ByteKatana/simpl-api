@@ -18,12 +18,21 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "strictNullChecks": true,
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "jest.setup.ts"
+    "jest.setup.ts",
+    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"
