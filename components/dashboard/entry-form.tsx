@@ -1,7 +1,7 @@
 // Utility
-import handleValueChange from "../../lib/ui/handle-value-change"
-import checkFieldEmpty from "../../lib/ui/check-field-empty"
-import useSaveData from "../../hooks/use-save-data"
+import handleValueChange from "@/lib/ui/handle-value-change"
+import checkFieldEmpty from "@/lib/ui/check-field-empty"
+import useSaveData from "@/hooks/use-save-data"
 import Router, { useRouter } from "next/router"
 import withReactContent from "sweetalert2-react-content"
 import Swal from "sweetalert2"
@@ -14,7 +14,7 @@ import React, { useEffect, useRef, useState } from "react"
 import EntryField from "./entry-field"
 
 //Interfaces
-import { ActionType, DataType, Entry, EntryType } from "../../interfaces"
+import { ActionType, DataType, Entry, EntryType } from "@/interfaces"
 
 function EntryForm({
   dataType,

@@ -1,6 +1,6 @@
 import React, { Dispatch, MutableRefObject, SetStateAction } from "react"
-import CheckFieldEmpty from "../../lib/ui/check-field-empty"
-import handleValueChange from "../../lib/ui/handle-value-change"
+import CheckFieldEmpty from "@/lib/ui/check-field-empty"
+import handleValueChange from "@/lib/ui/handle-value-change"
 function EntryField({
   key,
   field,
