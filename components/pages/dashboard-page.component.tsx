@@ -1,8 +1,10 @@
-//Components
-import Menu from "../../components/dashboard/menu"
-import ContentCard from "../../components/dashboard/content-card"
+"use client"
 
-export default function Index() {
+//Components
+import Menu from "@/components/dashboard/menu"
+import ContentCard from "@/components/dashboard/content-card"
+
+export default function DashboardPage() {
   return (
     <div className="container ">
       <div className="grid grid-flow-col auto-cols-max h-screen w-screen">
