@@ -36,6 +36,21 @@ export type FindType = keyof typeof FindLike
 
 export type ContentType = keyof typeof ContentTypes
 
+export type ResponseType = "api" | "server"
+
+export type ActionResponse<T = null> = {
+  success: boolean
+  status?: number
+  data?: T
+  error?: {
+    message: string
+    details?: Record<string, string[]>
+  }
+}
+
+export type SuccessResponse<T = null> = ActionResponse<T> & { success: true }
+export type ErrorResponse = ActionResponse<undefined> & { success: false }
+
 export interface EntryType {
   _id?: string
   name: string
