@@ -1,3 +1,5 @@
+"use client"
+
 //Utility
 import axios, { AxiosResponse } from "axios"
 import Swal from "sweetalert2"
@@ -12,8 +14,12 @@ import { useEffect, useState } from "react"
 import Menu from "../../components/dashboard/menu"
 
 //Interfaces
-import { ApiKey, EntryType, PermissionGroup } from "../../interfaces"
+import { ActionResponse, ApiKey, EntryType, ErrorResponse, PermissionGroup, SuccessResponse } from "../../interfaces"
 import checkPermGroup from "../../lib/ui/check-perm-group"
+import generateApiKeyAction from "@/lib/actions/dashboard/settings/generate-api-key.action"
+import { NextResponse } from "next/dist/server/web/spec-extension/response"
+import removeApiKeyAction from "@/lib/actions/dashboard/settings/remove-api-key.action"
+import updatePermissionsAction from "@/lib/actions/dashboard/settings/updatePermissionsAction"
 
 export async function getServerSideProps() {
   const resPermissionGroup = await axios.get(
@@ -38,7 +44,15 @@ export async function getServerSideProps() {
   }
 }
 
-export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, fetchedApiKeys }) {
+export default function SettingsPage({
+  fetchedPermissionGroups,
+  fetchedNamespaces,
+  fetchedApiKeys
+}: {
+  fetchedPermissionGroups: PermissionGroup
+  fetchedNamespaces: EntryType
+  fetchedApiKeys: ApiKey
+}) {
   const [paginationNamespaceState, setPaginationNamespaceState] = useState({
     min: 0,
     max: 5,
@@ -111,7 +125,6 @@ export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, f
   }
 
   const sendPermissions = async () => {
-    let result
     const permIndex = paginationPermissionGroupState.min + activePermissionGroup
     const namespaceIndex = paginationNamespaceState.min + activeNamespace
     const permissionGroupId = fetchedPermissionGroups[permIndex]._id
@@ -140,17 +153,9 @@ export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, f
         }
       }
     }
-    await axios
-      .put(
-        `${process.env.baseUrl}/api/v1/permission-group/update/${permissionGroupId}?apikey=${process.env.apiKey}&secretkey=${process.env.secretKey}`,
-        payload
-      )
-      .then((res: AxiosResponse) => {
-        result = res.data
-      })
-      .catch((e: unknown) => {
-        console.log(e)
-      })
+
+    const response = await updatePermissionsAction(permissionGroupId, payload)
+    const result = response.data
     if (result.status === "success") {
       resultSwal.fire({
         title: `${result.message}`,
@@ -175,7 +180,7 @@ export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, f
   }
 
   const generateApiKey = async () => {
-    let result
+    /*let result
     await axios
       .get(`${process.env.baseUrl}/api/v1/key/generate?secretkey=${process.env.secretKey}`)
       .then((res) => {
@@ -183,8 +188,11 @@ export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, f
       })
       .catch((e: unknown) => {
         console.log(e)
-      })
-    if (result.result.status === "success") {
+      })*/
+    const response = await generateApiKeyAction()
+    console.log(fetchedRes)
+    const result = await response.data
+    if (response.success) {
       resultSwal.fire({
         title: `${result.result.message}\nKey:${result.key}`,
         icon: "success",
@@ -208,7 +216,7 @@ export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, f
   }
 
   const removeApiKey = async (id: string) => {
-    let result
+    /*let result
     await axios
       .delete(
         `${process.env.baseUrl}/api/v1/key/remove/${id}?apikey=${process.env.apiKey}&secretkey=${process.env.secretKey}`
@@ -218,8 +226,11 @@ export default function Settings({ fetchedPermissionGroups, fetchedNamespaces, f
       })
       .catch((e: unknown) => {
         console.log(e)
-      })
-    if (result.status === "success") {
+      })*/
+    const response = await removeApiKeyAction(id)
+    console.log("DEL_RESPONSE:", response)
+    const result = response.data
+    if (response.success) {
       resultSwal.fire({
         title: `${result.message}`,
         icon: "success",
