@@ -51,6 +51,12 @@ export type ActionResponse<T = null> = {
 export type SuccessResponse<T = null> = ActionResponse<T> & { success: true }
 export type ErrorResponse = ActionResponse<undefined> & { success: false }
 
+export type SettingsData = {
+  permissionGroups: PermissionGroup
+  namespaces: EntryType
+  apiKeys: ApiKey[]
+}
+
 export interface EntryType {
   _id?: string
   name: string
