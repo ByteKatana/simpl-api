@@ -49,9 +49,9 @@ export default function SettingsPage({
   fetchedNamespaces,
   fetchedApiKeys
 }: {
-  fetchedPermissionGroups: PermissionGroup
-  fetchedNamespaces: EntryType
-  fetchedApiKeys: ApiKey
+  fetchedPermissionGroups: PermissionGroup[]
+  fetchedNamespaces: EntryType[]
+  fetchedApiKeys: ApiKey[]
 }) {
   const [paginationNamespaceState, setPaginationNamespaceState] = useState({
     min: 0,
