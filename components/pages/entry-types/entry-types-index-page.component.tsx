@@ -1,3 +1,5 @@
+"use client"
+
 //Utility
 import axios, { AxiosResponse } from "axios"
 import { FiEdit, FiFileText, FiPlusCircle, FiTrash2 } from "react-icons/fi"
@@ -13,7 +15,7 @@ import { useEffect, useState } from "react"
 import Menu from "../../../components/dashboard/menu"
 
 //Interfaces
-import { EntryType } from "../../../interfaces"
+import { EntryType, PermissionGroup } from "../../../interfaces"
 
 //Styles
 import "tippy.js/dist/tippy.css"
@@ -37,7 +39,13 @@ export async function getServerSideProps() {
   }
 }
 
-export default function EntryTypes({ fetchedEntryTypes, fetchedPermGroups }) {
+export default function EntryTypesIndexPage({
+  fetchedEntryTypes,
+  fetchedPermGroups
+}: {
+  fetchedEntryTypes: EntryType[]
+  fetchedPermGroups: PermissionGroup[]
+}) {
   const [searchKeyword, setSearchKeyword] = useState("")
   const [paginationState, setPaginationState] = useState({
     min: 0,
