@@ -104,3 +104,31 @@ export interface ApiKey {
 export interface DOMEvent<T extends EventTarget> extends Event {
   readonly target: T
 }
+
+export interface FormField {
+  field_name: string
+  field_value_type: string
+  field_form_type: string
+  field_length: number | string
+  field_accepted_types?: string[]
+}
+
+export interface FormattedEntryType {
+  name: string
+  namespace: string
+  createdBy?: string
+}
+
+export interface UserCreateActionResponse {
+  success: boolean
+  status?: number
+  data?: {
+    isEmailExist: boolean
+    isUsernameExist: boolean
+    result: any
+  }
+  error?: {
+    message: string
+    details?: Record<string, string[]>
+  }
+}
