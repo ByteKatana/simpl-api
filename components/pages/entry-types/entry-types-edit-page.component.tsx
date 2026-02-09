@@ -1,99 +1,48 @@
+"use client"
+
 //Utility
-import axios from "axios"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
-import Router, { useRouter } from "next/router"
+import { useRouter } from "next/navigation"
 import Tippy from "@tippyjs/react"
 //Icons
 import { FiLoader, FiPlusSquare, FiX } from "react-icons/fi"
 import { useSession } from "next-auth/react"
-import checkPermission from "../../../../lib/ui/check-permission"
-import addField from "../../../../lib/ui/add-field"
-import removeField from "../../../../lib/ui/remove-field"
+import checkPermission from "../../../lib/ui/check-permission"
+import addField from "../../../lib/ui/add-field"
+import removeField from "../../../lib/ui/remove-field"
 
 //React
 import { useRef, useState } from "react"
 
 //Components
-import Menu from "../../../../components/dashboard/menu"
+import Menu from "../../../components/dashboard/menu"
 
 //Interfaces
-import { EntryType } from "../../../../interfaces"
+import { EntryType, PermissionGroup } from "../../../interfaces"
 
 //Styles
 import "tippy.js/dist/tippy.css"
-import checkFieldEmpty from "../../../../lib/ui/check-field-empty"
-import useSaveData from "../../../../hooks/use-save-data"
+import checkFieldEmpty from "../../../lib/ui/check-field-empty"
+import useSaveData from "../../../hooks/use-save-data"
 
 //===============================================
 
-export async function getServerSideProps(req) {
-  const { slug } = req.query
-
-  const resEntryTypes = await axios.get(`${process.env.BASE_URL}/api/v1/entry-types?apikey=${process.env.API_KEY}`)
-  const entryTypes: EntryType = await resEntryTypes.data
-
-  const resEntryType = await axios.get(
-    `${process.env.BASE_URL}/api/v1/entry-type/id/${slug}?apikey=${process.env.API_KEY}`
-  )
-  const entryType = await resEntryType.data
-  const fields = []
-
-  entryType[0].fields.map((field) => {
-    const fieldKey: any = Object.keys(field)
-    if ("accepted_types" in field) {
-      fields.push({
-        field_name: fieldKey[0],
-        field_value_type: field[fieldKey]["value_type"],
-        field_form_type: field[fieldKey]["form_type"],
-        field_length: field[fieldKey]["length"],
-        field_accepted_types: field[fieldKey]["accepted_types"]
-      })
-    } else {
-      fields.push({
-        field_name: fieldKey[0],
-        field_value_type: field[fieldKey]["value_type"],
-        field_form_type: field[fieldKey]["form_type"],
-        field_length: field[fieldKey]["length"]
-      })
-    }
-  })
-
-  const resPermGroups = await axios.get(
-    `${process.env.BASE_URL}/api/v1/permission-groups/?apikey=${process.env.API_KEY}`
-  )
-  const permGroups = await resPermGroups.data
-
-  const filteredEntryTypes = entryTypes.filter((entry_type) => {
-    const namespaceArr = entryType[0].namespace.split(".")
-    const lenNamespaceArr = namespaceArr.length
-    let parentNamespace: string
-    if (lenNamespaceArr >= 2) {
-      parentNamespace = namespaceArr
-        .slice(0, lenNamespaceArr - 1)
-        .join(".")
-        .toString()
-    } else {
-      parentNamespace = namespaceArr.slice(-1)[0]
-    }
-    if (entry_type.namespace === entryType[0].namespace || entry_type.namespace === parentNamespace) {
-      return false
-    } else {
-      return true
-    }
-  })
-
-  return {
-    props: {
-      entryTypesData: filteredEntryTypes,
-      entryTypeData: entryType,
-      fieldsData: fields,
-      fetchedPermGroups: permGroups
-    }
-  }
+interface EntryTypesEditPageProps {
+  entryTypesData: EntryType[]
+  entryTypeData: EntryType[]
+  fieldsData: any[]
+  fetchedPermGroups: PermissionGroup[]
+  slug: string
 }
 
-export default function EditEntryType({ entryTypesData, entryTypeData, fieldsData, fetchedPermGroups }) {
+export default function EntryTypesEditPage({
+  entryTypesData,
+  entryTypeData,
+  fieldsData,
+  fetchedPermGroups,
+  slug
+}: EntryTypesEditPageProps) {
   //react states
   const [formFields, setFormFields] = useState(fieldsData)
   const [entryType, setEntryType] = useState(entryTypeData)
@@ -108,7 +57,6 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
 
   //routing
   const router = useRouter()
-  const { slug } = router.query
 
   //sweetalert
   const resultSwal = withReactContent(Swal)
@@ -129,37 +77,33 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
     //If there is a change enable "update" button
     setAnyValueChanged(true)
 
-    //Update entrytype state
-    //setEntryType(entryTypeData)
-
     //Change namespace if name changes
-    const slugName = entryTypeData[0].name.split(" ").join("-").toLowerCase()
-    const prefixNamespace = entryTypeData[0].namespace
-      .split(".")
-      .splice(0, entryTypeData[0].namespace.split(".").length - 1)
-      .join(".")
-    console.log("entryTypeData", entryTypeData[0].namespace)
-    console.log("prefixNamespaceX", prefixNamespace)
-    if (slugName !== entryTypeData[0].namespace.split(".").slice(-1).toString()) {
-      let newEntryType: object
-      if (prefixNamespace) {
-        console.log("prefixNamespaceT", prefixNamespace)
-        newEntryType = {
-          0: {
-            name: entryTypeData[0].name,
-            namespace: `${prefixNamespace}.${entryTypeData[0].namespace}`
-          }
+    if (event.target.name === "name") {
+      const slugName = entryTypeData[0].name.split(" ").join("-").toLowerCase()
+
+      // Extract parent namespace (everything before the last dot)
+      const namespaceParts = entryTypeData[0].namespace.split(".")
+      const prefixNamespace = namespaceParts.slice(0, -1).join(".")
+
+      // Only update namespace if the name actually changed
+      const currentLastSegment = namespaceParts[namespaceParts.length - 1]
+      if (slugName !== currentLastSegment) {
+        let newNamespace: string
+
+        if (prefixNamespace) {
+          // Has parent namespace: keep parent and append new slug
+          newNamespace = `${prefixNamespace}.${slugName}`
+        } else {
+          // No parent namespace: just use the new slug
+          newNamespace = slugName
         }
-      } else {
-        newEntryType = {
-          0: {
-            name: entryTypeData[0].name,
-            namespace: `${entryTypeData[0].namespace}.${slugName}`
-          }
-        }
+
+        entryTypeData[0].namespace = newNamespace
       }
-      setEntryType(newEntryType)
     }
+
+    // Update entry type state
+    setEntryType(entryTypeData)
   }
 
   const handleFieldChange = (index, event) => {
@@ -187,10 +131,10 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
     } else {
       //If there is no form error
       const result = await saveData({ entryType, formFields, slug })
-      if (result.status === "success") {
+      if (result.success) {
         resultSwal
           .fire({
-            title: `${result.message} Do you want to continue editing it?`,
+            title: `${result.data.message} Do you want to continue editing it?`,
             icon: "success",
             showDenyButton: true,
             showCancelButton: false,
@@ -200,7 +144,7 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
           })
           .then((result) => {
             if (result.isDenied) {
-              Router.push("/dashboard/entry-types")
+              router.push("/dashboard/entry-types")
             } else {
               setIsUpdateBtnClicked(false)
             }
@@ -208,7 +152,7 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
       } else if (result.status === "failed") {
         resultSwal
           .fire({
-            title: `${result.message} Do you want to continue editing it?`,
+            title: `${result.data.message} Do you want to continue editing it?`,
             icon: "error",
             showDenyButton: true,
             showCancelButton: false,
@@ -218,7 +162,7 @@ export default function EditEntryType({ entryTypesData, entryTypeData, fieldsDat
           })
           .then((result) => {
             if (result.isDenied) {
-              Router.push("/dashboard/entry-types")
+              router.push("/dashboard/entry-types")
             } else {
               setIsUpdateBtnClicked(false)
             }

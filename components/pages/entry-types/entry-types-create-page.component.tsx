@@ -1,8 +1,10 @@
+"use client"
+
 //Utility
 import axios from "axios"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
-import Router from "next/router"
+import { useRouter } from "next/navigation"
 //Icons
 import { FiLoader, FiPlusSquare, FiX } from "react-icons/fi"
 import { useSession } from "next-auth/react"
@@ -24,18 +26,7 @@ import useSaveData from "../../../hooks/use-save-data"
 
 //===============================================
 
-export async function getServerSideProps() {
-  const res = await axios.get(`${process.env.BASE_URL}/api/v1/entry-types?apikey=${process.env.API_KEY}`)
-  const entryTypes: EntryType = await res.data
-
-  return {
-    props: {
-      fetchedEntryTypes: entryTypes
-    }
-  }
-}
-
-export default function CreateEntryType({ fetchedEntryTypes }) {
+export default function EntryTypesCreatePage({ fetchedEntryTypes }: { fetchedEntryTypes: EntryType[] }) {
   const [entryType, setEntryType] = useState({})
   const [formFields, setFormFields] = useState([])
   const [formErrors, setFormErrors] = useState({})
@@ -43,6 +34,9 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
   const [showError, setShowError] = useState({})
   const [isCreateBtnClicked, setIsCreateBtnClicked] = useState(false)
   const saveData = useSaveData("ENTRY_TYPE", "CREATE")
+
+  //router
+  const router = useRouter()
 
   //sweetalert
   const resultSwal = withReactContent(Swal)
@@ -85,10 +79,10 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
       //If there is no form error
       const permGroup = session.user.permission_group
       const result = await saveData({ entryType, formFields, permGroup })
-      if (result.status === "success") {
+      if (result.success) {
         resultSwal
           .fire({
-            title: `${result.message} Do you want to create another one?`,
+            title: `Do you want to create another one?`,
             icon: "success",
             showDenyButton: true,
             showCancelButton: false,
@@ -104,7 +98,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
               setFormFields([{ field_name: "", field_value_type: "", field_form_type: "", field_length: 100 }])
               setIsCreateBtnClicked(false)
             } else if (result.isDenied) {
-              void Router.push("/dashboard/entry-types")
+              router.push("/dashboard/entry-types")
             }
           })
       } else if (result.status === "failed") {
@@ -120,7 +114,7 @@ export default function CreateEntryType({ fetchedEntryTypes }) {
           })
           .then((result) => {
             if (result.isDenied) {
-              Router.push("/dashboard/entry-types")
+              router.push("/dashboard/entry-types")
             } else {
               setIsCreateBtnClicked(false)
             }
