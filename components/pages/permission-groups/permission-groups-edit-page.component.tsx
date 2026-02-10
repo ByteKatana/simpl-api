@@ -1,43 +1,37 @@
+"use client"
 //Utility
 import axios from "axios"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
-import Router, { useRouter } from "next/router"
+import { useRouter } from "next/navigation"
 import { FiLoader } from "react-icons/fi"
 import { useSession } from "next-auth/react"
-import checkPermGroup from "../../../../lib/ui/check-perm-group"
-import checkFieldEmpty from "../../../../lib/ui/check-field-empty"
-import useSaveData from "../../../../hooks/use-save-data"
+import checkPermGroup from "@/lib/ui/check-perm-group"
+import checkFieldEmpty from "@/lib/ui/check-field-empty"
+import useSaveData from "@/hooks/use-save-data"
 
 //React
 import { useRef, useState } from "react"
 
 //Components
-import Menu from "../../../../components/dashboard/menu"
+import Menu from "@/components/dashboard/menu"
 
 //Interfaces
-import { PermissionGroup } from "../../../../interfaces"
+import { PermissionGroup } from "@/interfaces"
 
 //Styles
 import "tippy.js/dist/tippy.css"
-import handleValueChange from "../../../../lib/ui/handle-value-change"
+import handleValueChange from "@/lib/ui/handle-value-change"
 
 //===============================================
 
-export async function getServerSideProps(req) {
-  const { slug } = req.query
-  const actionURI = `${process.env.BASE_URL}/api/v1/permission-group/${slug}?apikey=${process.env.API_KEY}`
-  const resPermGroup = await axios.get(actionURI)
-  const permGroup: PermissionGroup = await resPermGroup.data
-
-  return {
-    props: {
-      fetchedPermissionGroup: permGroup
-    }
-  }
-}
-
-export default function EditPermissionGroup({ fetchedPermissionGroup }) {
+export default function PermissionGroupsEditPage({
+  fetchedPermissionGroup,
+  slug
+}: {
+  fetchedPermissionGroup: PermissionGroup
+  slug: string
+}) {
   const [formValues, setFormValues] = useState(fetchedPermissionGroup)
   const [formErrors, setFormErrors] = useState({})
   const [showErrors, setShowErrors] = useState(false)
@@ -46,7 +40,6 @@ export default function EditPermissionGroup({ fetchedPermissionGroup }) {
   const saveData = useSaveData("PERM_GROUP", "UPDATE")
   //routing
   const router = useRouter()
-  const { slug } = router.query
 
   //sweetalert
   const resultSwal = withReactContent(Swal)
@@ -65,10 +58,10 @@ export default function EditPermissionGroup({ fetchedPermissionGroup }) {
       formRef.current[formValuesWithErrors[0]].focus()
     } else {
       const result = await saveData({ formValues, slug })
-      if (result.status === "success") {
+      if (result.success) {
         resultSwal
           .fire({
-            title: `${result.message}. Do you want to continue editing it?`,
+            title: `${result.data.message}. Do you want to continue editing it?`,
             icon: "success",
             showDenyButton: true,
             showCancelButton: false,
@@ -78,7 +71,7 @@ export default function EditPermissionGroup({ fetchedPermissionGroup }) {
           })
           .then((result) => {
             if (result.isDenied) {
-              void Router.push("/dashboard/permission-groups")
+              router.push("/dashboard/permission-groups")
             } else {
               setIsUpdateBtnClicked(false)
             }
@@ -86,7 +79,7 @@ export default function EditPermissionGroup({ fetchedPermissionGroup }) {
       } else if (result.status === "failed") {
         resultSwal
           .fire({
-            title: `${result.message}. Do you want to continue editing it?`,
+            title: `${result.data.message}. Do you want to continue editing it?`,
             icon: "error",
             showDenyButton: true,
             showCancelButton: false,
@@ -96,7 +89,7 @@ export default function EditPermissionGroup({ fetchedPermissionGroup }) {
           })
           .then((result) => {
             if (result.isDenied) {
-              Router.push("/dashboard/permission-groups")
+              router.push("/dashboard/permission-groups")
             } else {
               setIsUpdateBtnClicked(false)
             }

@@ -1,9 +1,12 @@
+"use client"
+
 //Utility
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
 import Router from "next/router"
 import { FiLoader } from "react-icons/fi"
 import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
 
 //React
 import { useEffect, useRef, useState } from "react"
@@ -17,7 +20,7 @@ import useSaveData from "../../../hooks/use-save-data"
 
 //===============================================
 
-export default function CreatePermissionGroup() {
+export default function PermissionGroupCreatePage() {
   const [formValues, setFormValues] = useState({})
 
   const [formErrors, setFormErrors] = useState({})
@@ -26,6 +29,10 @@ export default function CreatePermissionGroup() {
   const [showError, setShowError] = useState({})
   const [isCreateBtnClicked, setIsCreateBtnClicked] = useState(false)
   const saveData = useSaveData("PERM_GROUP", "CREATE")
+
+  //router
+  const router = useRouter()
+
   //sweetalert
   const resultSwal = withReactContent(Swal)
 
@@ -59,10 +66,10 @@ export default function CreatePermissionGroup() {
       formRef.current[formValuesWithErrors[0]].focus()
     } else {
       const result = await saveData({ formValues })
-      if (result.status === "success") {
+      if (result.success) {
         resultSwal
           .fire({
-            title: `${result.message} Do you want to create another one?`,
+            title: `${result.data.message} Do you want to create another one?`,
             icon: "success",
             showDenyButton: true,
             showCancelButton: false,
@@ -77,13 +84,13 @@ export default function CreatePermissionGroup() {
               setFormValues({ name: "" })
               setIsCreateBtnClicked(false)
             } else if (result.isDenied) {
-              void Router.push("/dashboard/permission-groups")
+              router.push("/dashboard/permission-groups")
             }
           })
       } else if (result.status === "failed") {
         resultSwal
           .fire({
-            title: `${result.message} Do you want to change values and try again?`,
+            title: `${result.data.message} Do you want to change values and try again?`,
             icon: "error",
             showDenyButton: true,
             showCancelButton: false,

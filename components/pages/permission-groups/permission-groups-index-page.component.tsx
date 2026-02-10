@@ -1,3 +1,4 @@
+"use client"
 //Utility
 import axios, { AxiosResponse } from "axios"
 import { FiEdit, FiPlusCircle, FiTrash2 } from "react-icons/fi"
@@ -13,25 +14,20 @@ import { useEffect, useState } from "react"
 import Menu from "../../../components/dashboard/menu"
 
 //Interfaces
-import { PermissionGroup } from "../../../interfaces"
+import { PermissionGroup } from "@/interfaces"
 
 //Styles
 import "tippy.js/dist/tippy.css"
+import deleteEntryTypeAction from "@/lib/actions/dashboard/entry-types/delete-entry-type"
+import deletePermissionGroupAction from "@/lib/actions/dashboard/permission-groups/delete-permission-group"
 
 //===============================================
 
-export async function getServerSideProps() {
-  const res = await axios.get(`${process.env.BASE_URL}/api/v1/permission-groups?apikey=${process.env.API_KEY}`)
-  const permissionGroups: PermissionGroup = await res.data
-
-  return {
-    props: {
-      fetchedPermissionGroups: permissionGroups
-    }
-  }
-}
-
-export default function PermissionGroups({ fetchedPermissionGroups }) {
+export default function PermissionGroupsIndexPage({
+  fetchedPermissionGroups
+}: {
+  fetchedPermissionGroups: PermissionGroup[]
+}) {
   const [searchKeyword, setSearchKeyword] = useState("")
   const [paginationState, setPaginationState] = useState({
     min: 0,
@@ -69,21 +65,9 @@ export default function PermissionGroups({ fetchedPermissionGroups }) {
   }
 
   const deletePermGroup = async (id: string) => {
-    let result
-    await axios
-      .delete(
-        `${process.env.baseUrl}/api/v1/permission-group/delete/${id}?apikey=${process.env.apiKey}&secretkey=${process.env.secretKey}`
-      )
-      .then((res: AxiosResponse) => {
-        result = res.data
-      })
-      .catch((e: unknown) => {
-        console.log(e)
-      })
-
-    if (result.status === "success") await Swal.fire("Deleted!", "", "success")
-    else if (result.status === "failed") await Swal.fire("Failed to delete!", "", "error")
-    else console.log("Something went wrong! Unexpected result status!")
+    const result = await deletePermissionGroupAction(id)
+    if (result.success) Swal.fire("Deleted!", "", "success")
+    else Swal.fire("Failed to delete!", "", "error")
   }
 
   return (
