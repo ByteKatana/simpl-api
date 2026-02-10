@@ -15,29 +15,13 @@ import { useEffect, useState } from "react"
 import Menu from "../../../components/dashboard/menu"
 
 //Interfaces
-import { EntryType, PermissionGroup } from "../../../interfaces"
+import { EntryType, PermissionGroup } from "@/interfaces"
 
 //Styles
 import "tippy.js/dist/tippy.css"
+import deleteEntryTypeAction from "@/lib/actions/dashboard/entry-types/delete-entry-type"
 
 //===============================================
-
-export async function getServerSideProps() {
-  const res = await axios.get(`${process.env.BASE_URL}/api/v1/entry-types?apikey=${process.env.API_KEY}`)
-  const entryTypes: EntryType = await res.data
-
-  const resPermGroups = await axios.get(
-    `${process.env.BASE_URL}/api/v1/permission-groups/?apikey=${process.env.API_KEY}`
-  )
-  const permGroups = await resPermGroups.data
-
-  return {
-    props: {
-      fetchedEntryTypes: entryTypes,
-      fetchedPermGroups: permGroups
-    }
-  }
-}
 
 export default function EntryTypesIndexPage({
   fetchedEntryTypes,
@@ -97,21 +81,9 @@ export default function EntryTypesIndexPage({
   }
 
   const deleteEntryType = async (id) => {
-    let result
-    await axios
-      .delete(
-        `${process.env.baseUrl}/api/v1/entry-type/delete/${id}?apikey=${process.env.apiKey}&secretkey=${process.env.secretKey}`
-      )
-      .then((res: AxiosResponse) => {
-        result = res.data
-      })
-      .catch((e: unknown) => {
-        console.log(e)
-      })
-
-    if (result.status === "success") Swal.fire("Deleted!", "", "success")
-    else if (result.status === "failed") Swal.fire("Failed to delete!", "", "error")
-    else console.log("Something went wrong! Unexpected result status!")
+    const result = await deleteEntryTypeAction(id)
+    if (result.success) Swal.fire("Deleted!", "", "success")
+    else Swal.fire("Failed to delete!", "", "error")
   }
 
   return (
