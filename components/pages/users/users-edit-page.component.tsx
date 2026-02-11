@@ -1,48 +1,50 @@
+"use client"
+
 //Utility
 import axios from "axios"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
-import Router from "next/router"
+import { useRouter } from "next/navigation"
 import { FiLoader } from "react-icons/fi"
 import { useSession } from "next-auth/react"
-import checkPermGroup from "../../../lib/ui/check-perm-group"
-import checkFieldEmpty from "../../../lib/ui/check-field-empty"
 
 //React
-import { useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
 
 //Components
-import Menu from "../../../components/dashboard/menu"
+import Menu from "@/components/dashboard/menu"
 
 //Interfaces
-import { PermissionGroup } from "../../../interfaces"
-import handleValueChange from "../../../lib/ui/handle-value-change"
-import useSaveData from "../../../hooks/use-save-data"
+import { PermissionGroup, User } from "@/interfaces"
+
+//Styles
+import "tippy.js/dist/tippy.css"
+import checkPermGroup from "@/lib/ui/check-perm-group"
+import checkFieldEmpty from "@/lib/ui/check-field-empty"
+import handleValueChange from "@/lib/ui/handle-value-change"
+import useSaveData from "@/hooks/use-save-data"
 
 //===============================================
 
-export async function getServerSideProps() {
-  const res = await axios.get(`${process.env.BASE_URL}/api/v1/permission-groups?apikey=${process.env.API_KEY}`)
-  const permissionGroups: PermissionGroup = await res.data
-
-  return {
-    props: {
-      fetchedPermissionGroups: permissionGroups
-    }
-  }
-}
-
-export default function CreateUser({ fetchedPermissionGroups }) {
-  const [formValues, setFormValues] = useState({})
-
+export default function UserEditPage({
+  fetchedPermissionGroups,
+  fetchedUser,
+  slug
+}: {
+  fetchedPermissionGroups: PermissionGroup[]
+  fetchedUser: User
+  slug: string
+}) {
+  const [formValues, setFormValues] = useState(fetchedUser)
+  const [currentPw] = useState(fetchedUser[0].password)
   const [formErrors, setFormErrors] = useState({})
-
   const [showErrors, setShowErrors] = useState(false)
   const [showError, setShowError] = useState({})
+  const [isUpdateBtnClicked, setIsUpdateBtnClicked] = useState(false)
+  const saveData = useSaveData("USER", "UPDATE")
 
-  const [isCreateBtnClicked, setIsCreateBtnClicked] = useState(false)
-
-  const saveData = useSaveData("USER", "CREATE")
+  //routing
+  const router = useRouter()
 
   //sweetalert
   const resultSwal = withReactContent(Swal)
@@ -53,92 +55,49 @@ export default function CreateUser({ fetchedPermissionGroups }) {
   //Auth Session
   const { data: session } = useSession()
 
-  useEffect(() => {
-    //Add initial form values at first page render
-    if (Object.keys(formValues).length === 0) {
-      setFormValues({
-        username: "",
-        password: "",
-        email: "",
-        permission_group: ""
-      })
-    }
-
-    //Add initial form errors at first page render
-    if (Object.keys(formErrors).length === 0) {
-      setFormErrors({
-        username: "empty-field",
-        password: "empty-field",
-        email: "empty-field",
-        permission_group: "empty-field"
-      })
-    }
-  }, [])
-
   const submitData = async () => {
     if (Object.keys(formErrors).length > 0) {
       const formValuesWithErrors = Object.keys(formErrors)
       setShowErrors(true)
-      setIsCreateBtnClicked(false)
+      setIsUpdateBtnClicked(false)
       formRef.current[formValuesWithErrors[0]].focus()
     } else {
-      const response = await saveData({ formValues })
-
-      const result = response.result.data
-      const checkEmailExist: boolean = response.isEmailExist
-      const checkUsernameExist: boolean = response.isUsernameExist
-      if (checkEmailExist === false && checkUsernameExist === false) {
-        if (result.status === "success") {
-          resultSwal
-            .fire({
-              title: `${result.message} Do you want to create another one?`,
-              icon: "success",
-              showDenyButton: true,
-              showCancelButton: false,
-              confirmButtonText: "Yes",
-              denyButtonText: "No",
-              confirmButtonColor: "#10B981"
-            })
-            .then((result) => {
-              if (result.isConfirmed) {
-                //Clear form and set default if user want create another one
-                ;(document.getElementById("user_create_form") as HTMLFormElement).reset()
-                setFormValues({ username: "", password: "", email: "", permission_group: "" })
-                setIsCreateBtnClicked(false)
-              } else if (result.isDenied) {
-                void Router.push("/dashboard/users")
-              }
-            })
-        } else if (result.status === "failed") {
-          resultSwal
-            .fire({
-              title: `${result.message} Do you want to change values and try again?`,
-              icon: "error",
-              showDenyButton: true,
-              showCancelButton: false,
-              confirmButtonText: "Yes",
-              denyButtonText: "No",
-              confirmButtonColor: "#10B981"
-            })
-            .then((result) => {
-              if (result.isDenied) {
-                void Router.push("/dashboard/users")
-              }
-            })
-        }
-      } else {
+      const result = await saveData({ formValues, slug, currentPw })
+      if (result.success) {
         resultSwal
           .fire({
-            title: `Already exist:\n ${checkEmailExist ? "Email" : ""}\n ${checkUsernameExist ? "Username" : ""}`,
-            icon: "error",
-            showDenyButton: false,
+            title: `${result.data.message}. Do you want to continue editing it?`,
+            icon: "success",
+            showDenyButton: true,
             showCancelButton: false,
-            confirmButtonText: "OK",
+            confirmButtonText: "Yes",
             denyButtonText: "No",
             confirmButtonColor: "#10B981"
           })
-          .then(() => {
-            setIsCreateBtnClicked(false)
+          .then((result) => {
+            if (result.isDenied) {
+              router.push("/dashboard/users")
+            } else {
+              setIsUpdateBtnClicked(false)
+            }
+          })
+      } else {
+        resultSwal
+          .fire({
+            title: `${result.data.message}. Do you want to continue editing it?`,
+            icon: "error",
+            showDenyButton: true,
+            showCancelButton: false,
+            confirmButtonText: "Yes",
+            denyButtonText: "No",
+            confirmButtonColor: "#10B981"
+          })
+          .then((result) => {
+            if (result.isDenied) {
+              router.push("/dashboard/users")
+            } else {
+              setIsUpdateBtnClicked(false)
+            }
           })
       }
     }
@@ -150,13 +109,13 @@ export default function CreateUser({ fetchedPermissionGroups }) {
         <Menu />
         <div className="grid grid-col-6 ml-10 mt-10 content-start place-content-around w-screen">
           <div className="col-start-1 col-end-2 ">
-            <h1 className="text-6xl font-josefin">New User</h1>
+            <h1 className="text-6xl font-josefin">Edit User </h1>
           </div>
           <div className="col-start-4 col-end-6 "></div>
           <div className="col-start-1 col-end-6 w-10/12 mt-10 ">
             {checkPermGroup(session, "admin") ? (
               <form action="#" id="user_create_form">
-                <div className="flex flex-col block justify-center border-2 border-slate-200 p-10 ">
+                <div className="flex flex-col justify-center border-2 border-slate-200 p-10 ">
                   <div className="w-11/12">
                     <label htmlFor="username" className="form-label inline-block mb-2 text-gray-700 text-xl">
                       Username
@@ -167,7 +126,7 @@ export default function CreateUser({ fetchedPermissionGroups }) {
                       id="username"
                       name="username"
                       ref={(el) => (formRef.current[`username`] = el)}
-                      defaultValue={formValues["username"]}
+                      defaultValue={formValues[0].username}
                       onChange={(e) => {
                         handleValueChange(
                           formValues,
@@ -178,7 +137,7 @@ export default function CreateUser({ fetchedPermissionGroups }) {
                           setShowError,
                           setFormValues,
                           e,
-                          "USER"
+                          "USER_EDIT"
                         )
                       }}
                       onBlur={(e) => {
@@ -202,7 +161,7 @@ export default function CreateUser({ fetchedPermissionGroups }) {
                       id="email"
                       name="email"
                       ref={(el) => (formRef.current[`email`] = el)}
-                      defaultValue={formValues["email"]}
+                      defaultValue={formValues[0].email}
                       onChange={(e) => {
                         handleValueChange(
                           formValues,
@@ -213,7 +172,7 @@ export default function CreateUser({ fetchedPermissionGroups }) {
                           setShowError,
                           setFormValues,
                           e,
-                          "USER"
+                          "USER_EDIT"
                         )
                       }}
                       onBlur={(e) => {
@@ -237,8 +196,7 @@ export default function CreateUser({ fetchedPermissionGroups }) {
                       id="password"
                       name="password"
                       ref={(el) => (formRef.current[`password`] = el)}
-                      defaultValue={formValues["password"]}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         handleValueChange(
                           formValues,
                           formErrors,
@@ -248,19 +206,10 @@ export default function CreateUser({ fetchedPermissionGroups }) {
                           setShowError,
                           setFormValues,
                           e,
-                          "USER"
+                          "USER_EDIT"
                         )
-                      }
-                      onBlur={(e) => {
-                        checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)
                       }}
-                      required
                     />
-                    {(showErrors || showError[`password`]) &&
-                      formErrors[`password`] &&
-                      formErrors[`password`] === "empty-field" && (
-                        <span className="text-red-500 font-bold">This field is required</span>
-                      )}
                   </div>
                   <div className="w-11/12 mt-5">
                     <label htmlFor="permission_group" className="form-label inline-block mb-2 text-gray-700 text-xl">
@@ -270,8 +219,8 @@ export default function CreateUser({ fetchedPermissionGroups }) {
                       id="permission_group"
                       name="permission_group"
                       ref={(el) => (formRef.current[`permission_group`] = el)}
-                      defaultValue={formValues["permission_group"]}
-                      onChange={(e) =>
+                      defaultValue={formValues[0].permission_group}
+                      onChange={(e) => {
                         handleValueChange(
                           formValues,
                           formErrors,
@@ -281,14 +230,13 @@ export default function CreateUser({ fetchedPermissionGroups }) {
                           setShowError,
                           setFormValues,
                           e,
-                          "USER"
+                          "USER_EDIT"
                         )
-                      }
+                      }}
                       onBlur={(e) => {
                         checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)
                       }}
                       className="form-select form-select-lg mb-3 block w-full  px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300  rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none">
-                      <option value="">Please choose a group</option>
                       {fetchedPermissionGroups.map((permissionGroup) => {
                         return <option value={`${permissionGroup.slug}`}>{`${permissionGroup.name}`}</option>
                       })}
@@ -305,21 +253,21 @@ export default function CreateUser({ fetchedPermissionGroups }) {
                   <div className=" w-11/12">
                     <button
                       type="button"
-                      data-testid="create_user_btn"
+                      data-testid="update_user_btn"
                       onClick={() => {
-                        setIsCreateBtnClicked(true)
-                        void submitData()
+                        setIsUpdateBtnClicked(true)
+                        submitData()
                       }}
                       className="mb-2 w-full inline-block px-6 py-2.5 bg-slate-700 text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-slate-800 hover:shadow-lg focus:bg-slate-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-slate-800 active:shadow-lg transition duration-150 ease-in-out">
-                      {isCreateBtnClicked ? (
+                      {isUpdateBtnClicked ? (
                         <span className="flex flex-row justify-center">
                           <FiLoader className="animate-spin text-2xl" />
-                          <span data-testid="create_user_btn_processing" className="mt-1 ml-3">
+                          <span data-testid="update_user_btn_processing" className="mt-1 ml-3">
                             Processing
                           </span>
                         </span>
                       ) : (
-                        "Create"
+                        "Update"
                       )}
                     </button>
                   </div>

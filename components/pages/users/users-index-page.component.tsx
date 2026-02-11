@@ -1,5 +1,6 @@
+"use client"
+
 //Utility
-import axios, { AxiosResponse } from "axios"
 import { FiCheckCircle, FiEdit, FiPlusCircle, FiTrash2 } from "react-icons/fi"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
@@ -10,28 +11,18 @@ import { useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
 
 //Components
-import Menu from "../../../components/dashboard/menu"
+import Menu from "@/components/dashboard/menu"
 
 //Interfaces
-import { User } from "../../../interfaces"
+import { User } from "@/interfaces"
 
 //Styles
 import "tippy.js/dist/tippy.css"
+import deleteUserAction from "@/lib/actions/dashboard/users/delete-user"
 
 //===============================================
 
-export async function getServerSideProps() {
-  const res = await axios.get(`${process.env.BASE_URL}/api/v1/users?apikey=${process.env.API_KEY}`)
-  const users: User = await res.data
-
-  return {
-    props: {
-      fetchedUsers: users
-    }
-  }
-}
-
-export default function Users({ fetchedUsers }) {
+export default function UsersIndexPage({ fetchedUsers }: { fetchedUsers: User[] }) {
   const [searchKeyword, setSearchKeyword] = useState("")
   const [paginationState, setPaginationState] = useState({
     min: 0,
@@ -69,21 +60,9 @@ export default function Users({ fetchedUsers }) {
   }
 
   const deleteUser = async (id) => {
-    let result
-    await axios
-      .delete(
-        `${process.env.baseUrl}/api/v1/user/delete/${id}?apikey=${process.env.apiKey}&secretkey=${process.env.secretKey}`
-      )
-      .then((res: AxiosResponse) => {
-        result = res.data
-      })
-      .catch((e: unknown) => {
-        console.log(e)
-      })
-
-    if (result.status === "success") Swal.fire("Deleted!", "", "success")
-    else if (result.status === "failed") Swal.fire("Failed to delete!", "", "error")
-    else console.log("Something went wrong! Unexpected result status!")
+    const result = await deleteUserAction(id)
+    if (result.success) Swal.fire("Deleted!", "", "success")
+    else Swal.fire("Failed to delete!", "", "error")
   }
 
   return (
