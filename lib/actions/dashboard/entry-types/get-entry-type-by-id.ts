@@ -10,7 +10,7 @@ export default async function getEntryTypeById(id: string) {
     })
     const entryType = await response.json()
     if (response.status !== 200) {
-      const unhandledError = new Error("Failed to fetch entry type")
+      const unhandledError = new Error("Failed to fetch entry type by id")
       return handleError(unhandledError)
     }
     return { success: true, status: 200, data: entryType } as SuccessResponse<EntryType>
