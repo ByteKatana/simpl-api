@@ -1,8 +1,9 @@
+"use client"
 // Utility
 import handleValueChange from "@/lib/ui/handle-value-change"
 import checkFieldEmpty from "@/lib/ui/check-field-empty"
 import useSaveData from "@/hooks/use-save-data"
-import Router, { useRouter } from "next/router"
+import { useRouter } from "next/navigation"
 import withReactContent from "sweetalert2-react-content"
 import Swal from "sweetalert2"
 import { FiLoader } from "react-icons/fi"
@@ -20,12 +21,14 @@ function EntryForm({
   dataType,
   actionType,
   fetchedEntryType,
-  fetchedEntry
+  fetchedEntry,
+  slug
 }: {
   dataType: DataType
   actionType: ActionType
   fetchedEntryType: EntryType
   fetchedEntry?: Entry
+  slug: string
 }) {
   const initialFormValues = actionType === "CREATE" ? { name: "", slug: "", namespace: "" } : fetchedEntry
 
@@ -38,7 +41,6 @@ function EntryForm({
 
   //routing
   const router = useRouter()
-  const { slug } = router.query
 
   //sweetalert
   const resultSwal = withReactContent(Swal)
@@ -83,10 +85,10 @@ function EntryForm({
         default:
           console.log("INVALID_ACTION_TYPE_ENTRY_FORM")
       }
-      if (result && result.status === "success") {
+      if (result.success) {
         resultSwal
           .fire({
-            title: `${result.message} Do you want to create another one?`,
+            title: `${result.data.message} Do you want to create another one?`,
             icon: "success",
             showDenyButton: true,
             showCancelButton: false,
@@ -109,13 +111,13 @@ function EntryForm({
               setFormErrors({ name: "empty-field", ...newErrorFields })
               setIsSubmitClicked(false)
             } else if (result.isDenied) {
-              Router.push("/dashboard/entries")
+              router.push("/dashboard/entries")
             }
           })
-      } else if (result && result.status === "failed") {
+      } else {
         resultSwal
           .fire({
-            title: `${result.message} Do you want to change values and try again?`,
+            title: `${result.data.message} Do you want to change values and try again?`,
             icon: "error",
             showDenyButton: true,
             showCancelButton: false,
@@ -125,7 +127,7 @@ function EntryForm({
           })
           .then((result) => {
             if (result.isDenied) {
-              Router.push("/dashboard/entries")
+              router.push("/dashboard/entries")
             } else {
               setIsSubmitClicked(false)
             }
