@@ -14,14 +14,14 @@
 const USER_EMAIL = Cypress.env("USER_EMAIL") || "test@example.com"
 const USER_PASSWORD = Cypress.env("USER_PASSWORD") || "testpassword"
 
-describe("Auth.js v5 - Complete Authentication Flow", () => {
+describe("Authentication with Auth.js v5", () => {
   // Clear cookies before each test to ensure clean state
   beforeEach(() => {
     cy.clearCookies()
   })
 
   describe("Login Flow", () => {
-    it("should display login page with proper form elements", () => {
+    it("displaying login page", () => {
       cy.visit("/login")
 
       // Verify login form elements exist
@@ -30,7 +30,7 @@ describe("Auth.js v5 - Complete Authentication Flow", () => {
       cy.get('button[type="submit"]').should("be.visible")
     })
 
-    it("should successfully login with valid credentials", () => {
+    it("successful login with valid credentials", () => {
       cy.visit("/login")
 
       // Fill in credentials
@@ -48,7 +48,7 @@ describe("Auth.js v5 - Complete Authentication Flow", () => {
       cy.getCookie("authjs.session-token").should("have.property", "value")
     })
 
-    it("should reject login with invalid credentials", () => {
+    it("failed login with invalid credentials", () => {
       cy.visit("/login")
 
       // Attempt login with invalid credentials
@@ -63,7 +63,7 @@ describe("Auth.js v5 - Complete Authentication Flow", () => {
       cy.getCookie("authjs.session-token").should("not.exist")
     })
 
-    it("should reject login with empty credentials", () => {
+    it("failed login with empty credentials", () => {
       cy.visit("/login")
 
       // Try to submit without filling form
@@ -76,7 +76,7 @@ describe("Auth.js v5 - Complete Authentication Flow", () => {
       cy.getCookie("authjs.session-token").should("not.exist")
     })
 
-    it("should include CSRF token in login request", () => {
+    it("CSRF protection on login page", () => {
       cy.visit("/login")
 
       // Verify CSRF token cookie exists
@@ -96,7 +96,7 @@ describe("Auth.js v5 - Complete Authentication Flow", () => {
       })
     })
 
-    it("should maintain session across page navigation", () => {
+    it("maintaining session across page navigation", () => {
       cy.visit("/dashboard")
 
       // Verify session cookie exists
@@ -113,7 +113,7 @@ describe("Auth.js v5 - Complete Authentication Flow", () => {
       cy.getCookie("authjs.session-token").should("exist")
     })
 
-    it("should persist session after page reload", () => {
+    it("persisting session after page reload", () => {
       cy.visit("/dashboard")
 
       // Get initial session cookie
@@ -129,7 +129,7 @@ describe("Auth.js v5 - Complete Authentication Flow", () => {
       })
     })
 
-    it("should display user information when authenticated", () => {
+    it("displaying user information when authenticated", () => {
       cy.visit("/dashboard")
 
       // Verify navigation menu shows authenticated state
@@ -138,7 +138,7 @@ describe("Auth.js v5 - Complete Authentication Flow", () => {
       cy.getDataTest("login").should("not.exist")
     })
 
-    it("should access session data from API endpoint", () => {
+    it("accessing session data from API endpoint", () => {
       cy.visit("/dashboard")
 
       // Request session endpoint
@@ -156,7 +156,7 @@ describe("Auth.js v5 - Complete Authentication Flow", () => {
   })
 
   describe("Protected Route Access", () => {
-    it("should redirect to login when accessing dashboard without authentication", () => {
+    it("redirecting to login when accessing dashboard without authentication", () => {
       // Clear any existing session
       cy.clearCookies()
 
@@ -168,7 +168,7 @@ describe("Auth.js v5 - Complete Authentication Flow", () => {
       cy.getCookie("authjs.session-token").should("not.exist")
     })
 
-    it("should allow access to dashboard with valid session", () => {
+    it("allowing access to dashboard with valid session", () => {
       // Login first
       cy.session("authenticated-user", () => {
         cy.visit("/api/auth/signin")
@@ -186,7 +186,7 @@ describe("Auth.js v5 - Complete Authentication Flow", () => {
       cy.getDataTest("menu-component").should("be.visible")
     })
 
-    it("should allow access to entries page with valid session", () => {
+    it("allowing access to entries page with valid session", () => {
       cy.session("authenticated-user", () => {
         cy.visit("/api/auth/signin")
         cy.get('input[name="email"]').type(USER_EMAIL)
@@ -200,7 +200,7 @@ describe("Auth.js v5 - Complete Authentication Flow", () => {
       cy.get("table").should("be.visible")
     })
 
-    it("should protect settings page (admin only)", () => {
+    it("protecting settings page for admin only", () => {
       cy.session("authenticated-user", () => {
         cy.visit("/api/auth/signin")
         cy.get('input[name="email"]').type(USER_EMAIL)
@@ -237,14 +237,14 @@ describe("Auth.js v5 - Complete Authentication Flow", () => {
       })
     })
 
-    it("should display logout button when authenticated", () => {
+    it("displaying logout button when authenticated", () => {
       cy.visit("/dashboard")
 
       cy.getDataTest("logout").should("be.visible")
       cy.getDataTest("logout").should("contain.text", "Logout")
     })
 
-    it("should successfully logout and clear session", () => {
+    it("successful logout and clearing session", () => {
       cy.visit("/dashboard")
 
       // Verify user is logged in
@@ -263,7 +263,7 @@ describe("Auth.js v5 - Complete Authentication Flow", () => {
       cy.url().should("match", /(login|signin|^\/$)/)
     })
 
-    it("should not access protected routes after logout", () => {
+    it("preventing access to protected routes after logout", () => {
       cy.visit("/dashboard")
 
       // Logout
@@ -290,7 +290,7 @@ describe("Auth.js v5 - Complete Authentication Flow", () => {
       })
     })
 
-    it("should display menu items based on authentication status", () => {
+    it("displaying menu items based on authentication status", () => {
       cy.visit("/dashboard")
 
       // Authenticated users should see these items
@@ -304,7 +304,7 @@ describe("Auth.js v5 - Complete Authentication Flow", () => {
       cy.get('[data-testid="login"]').should("not.exist")
     })
 
-    it("should include permission_group in session data", () => {
+    it("including permission_group in session data", () => {
       cy.visit("/dashboard")
 
       cy.request("/api/auth/session").then((response) => {
@@ -314,7 +314,7 @@ describe("Auth.js v5 - Complete Authentication Flow", () => {
       })
     })
 
-    it("should respect permission-based UI elements", () => {
+    it("respecting permission-based UI elements", () => {
       cy.visit("/dashboard/entries")
 
       // Check for permission-based buttons (edit, delete)
@@ -335,7 +335,7 @@ describe("Auth.js v5 - Complete Authentication Flow", () => {
   })
 
   describe("Cookie Validation", () => {
-    it("should use Auth.js v5 cookie naming convention", () => {
+    it("using Auth.js v5 cookie naming convention", () => {
       cy.visit("/login")
 
       // Verify CSRF cookie uses new naming
@@ -346,7 +346,7 @@ describe("Auth.js v5 - Complete Authentication Flow", () => {
       cy.getCookie("next-auth.session-token").should("not.exist")
     })
 
-    it("should set session cookie after successful login", () => {
+    it("setting session cookie after successful login", () => {
       cy.visit("/login")
 
       cy.get('input[name="email"]').type(USER_EMAIL)
@@ -365,7 +365,7 @@ describe("Auth.js v5 - Complete Authentication Flow", () => {
       })
     })
 
-    it("should set appropriate cookie attributes", () => {
+    it("setting appropriate cookie attributes", () => {
       cy.visit("/login")
 
       cy.get('input[name="email"]').type(USER_EMAIL)
@@ -382,7 +382,7 @@ describe("Auth.js v5 - Complete Authentication Flow", () => {
   })
 
   describe("Error Handling", () => {
-    it("should handle network errors gracefully during login", () => {
+    it("handling network errors gracefully during login", () => {
       // Intercept and fail the signin request
       cy.intercept("POST", "/api/auth/callback/credentials", {
         statusCode: 500,
@@ -398,7 +398,7 @@ describe("Auth.js v5 - Complete Authentication Flow", () => {
       cy.url().should("include", "login")
     })
 
-    it("should handle expired session gracefully", () => {
+    it("handling expired session gracefully", () => {
       // Set an expired/invalid session cookie
       cy.setCookie("authjs.session-token", "expired-or-invalid-token")
 
