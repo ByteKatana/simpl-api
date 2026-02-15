@@ -1,4 +1,4 @@
-import { NextResponse } from "next/dist/server/web/spec-extension/response"
+import { NextResponse } from "next/server"
 import { ResponseType } from "@/interfaces"
 import { RequestError } from "@/lib/http-errors"
 function formatResponse(

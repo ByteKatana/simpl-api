@@ -23,17 +23,6 @@ import useSaveData from "../../../hooks/use-save-data"
 
 //===============================================
 
-export async function getServerSideProps() {
-  const res = await axios.get(`${process.env.BASE_URL}/api/v1/permission-groups?apikey=${process.env.API_KEY}`)
-  const permissionGroups: PermissionGroup = await res.data
-
-  return {
-    props: {
-      fetchedPermissionGroups: permissionGroups
-    }
-  }
-}
-
 export default function UsersCreatePage({ fetchedPermissionGroups }: { fetchedPermissionGroups: PermissionGroup[] }) {
   const [formValues, setFormValues] = useState({})
 

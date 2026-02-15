@@ -25,7 +25,7 @@ When("I visit entries page.", () => {
     {
       validate: () => {
         // Check if user is authenticated
-        cy.getCookie("next-auth.session-token").should("exist")
+        cy.getCookie("authjs.session-token").should("exist")
       }
     }
   )*/

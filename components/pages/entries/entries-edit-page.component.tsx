@@ -13,35 +13,6 @@ import { Entry, EntryType, PermissionGroup } from "@/interfaces"
 
 //===============================================
 
-export async function getServerSideProps(req) {
-  const { slug } = req.query
-
-  const res = await axios.get(`${process.env.BASE_URL}/api/v1/entry/_id/${slug}/first_1?apikey=${process.env.API_KEY}`)
-  const entry: Entry = await res.data
-
-  const entryTypeSlug = entry[0].namespace.split(".")
-
-  const resEntryType = await axios.get(
-    `${process.env.BASE_URL}/api/v1/entry-type/slug/${entryTypeSlug[entryTypeSlug.length - 1]}?apikey=${
-      process.env.API_KEY
-    }`
-  )
-  const entryType: EntryType = await resEntryType.data
-
-  const resPermGroups = await axios.get(
-    `${process.env.BASE_URL}/api/v1/permission-groups/?apikey=${process.env.API_KEY}`
-  )
-  const permGroups: PermissionGroup[] = await resPermGroups.data
-
-  return {
-    props: {
-      fetchedEntry: entry,
-      fetchedEntryType: entryType,
-      fetchedPermGroups: permGroups
-    }
-  }
-}
-
 export default function EntryEditPage({
   fetchedEntry,
   fetchedEntryType,

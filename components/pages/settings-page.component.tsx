@@ -17,32 +17,9 @@ import Menu from "../../components/dashboard/menu"
 import { ActionResponse, ApiKey, EntryType, ErrorResponse, PermissionGroup, SuccessResponse } from "../../interfaces"
 import checkPermGroup from "../../lib/ui/check-perm-group"
 import generateApiKeyAction from "@/lib/actions/dashboard/settings/generate-api-key.action"
-import { NextResponse } from "next/dist/server/web/spec-extension/response"
+import { NextResponse } from "next/server"
 import removeApiKeyAction from "@/lib/actions/dashboard/settings/remove-api-key.action"
 import updatePermissionsAction from "@/lib/actions/dashboard/settings/updatePermissionsAction"
-
-export async function getServerSideProps() {
-  const resPermissionGroup = await axios.get(
-    `${process.env.BASE_URL}/api/v1/permission-groups?apikey=${process.env.API_KEY}`
-  )
-  const permissionGroups: PermissionGroup = await resPermissionGroup.data
-
-  const resNamespace = await axios.get(`${process.env.BASE_URL}/api/v1/entry-types?apikey=${process.env.API_KEY}`)
-  const namespaces: EntryType = await resNamespace.data
-
-  const resApiKey = await axios.get(
-    `${process.env.BASE_URL}/api/v1/key/list-all?apikey=${process.env.API_KEY}&secretkey=${process.env.SECRET_KEY}`
-  )
-  const apiKeys: ApiKey = await resApiKey.data
-
-  return {
-    props: {
-      fetchedPermissionGroups: permissionGroups,
-      fetchedNamespaces: namespaces,
-      fetchedApiKeys: apiKeys
-    }
-  }
-}
 
 export default function SettingsPage({
   fetchedPermissionGroups,
@@ -180,17 +157,7 @@ export default function SettingsPage({
   }
 
   const generateApiKey = async () => {
-    /*let result
-    await axios
-      .get(`${process.env.baseUrl}/api/v1/key/generate?secretkey=${process.env.secretKey}`)
-      .then((res) => {
-        result = res.data
-      })
-      .catch((e: unknown) => {
-        console.log(e)
-      })*/
     const response = await generateApiKeyAction()
-    console.log(fetchedRes)
     const result = await response.data
     if (response.success) {
       resultSwal.fire({
@@ -216,19 +183,7 @@ export default function SettingsPage({
   }
 
   const removeApiKey = async (id: string) => {
-    /*let result
-    await axios
-      .delete(
-        `${process.env.baseUrl}/api/v1/key/remove/${id}?apikey=${process.env.apiKey}&secretkey=${process.env.secretKey}`
-      )
-      .then((res) => {
-        result = res.data
-      })
-      .catch((e: unknown) => {
-        console.log(e)
-      })*/
     const response = await removeApiKeyAction(id)
-    console.log("DEL_RESPONSE:", response)
     const result = response.data
     if (response.success) {
       resultSwal.fire({
