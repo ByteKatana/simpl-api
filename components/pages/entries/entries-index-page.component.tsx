@@ -1,5 +1,6 @@
+"use client"
+
 //Utility
-import axios, { AxiosResponse } from "axios"
 import { FiEdit, FiTrash2 } from "react-icons/fi"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
@@ -10,34 +11,25 @@ import { useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
 
 //Components
-import Menu from "../../../components/dashboard/menu"
+import Menu from "@/components/dashboard/menu"
 
 //Interfaces
-import { Entry } from "../../../interfaces"
+import { Entry, PermissionGroup } from "@/interfaces"
 
 //Styles
 import "tippy.js/dist/tippy.css"
+import deleteEntryTypeAction from "@/lib/actions/dashboard/entry-types/delete-entry-type"
+import deleteEntryAction from "@/lib/actions/dashboard/entries/delete-entry"
 
 //===============================================
 
-export async function getServerSideProps() {
-  const res = await axios.get(`${process.env.BASE_URL}/api/v1/entries?apikey=${process.env.API_KEY}`)
-  const entries: Entry = await res.data
-
-  const resPermGroups = await axios.get(
-    `${process.env.BASE_URL}/api/v1/permission-groups/?apikey=${process.env.API_KEY}`
-  )
-  const permGroups = await resPermGroups.data
-
-  return {
-    props: {
-      fetchedEntries: entries,
-      fetchedPermGroups: permGroups
-    }
-  }
-}
-
-export default function Entries({ fetchedEntries, fetchedPermGroups }) {
+export default function EntriesIndexPage({
+  fetchedEntries,
+  fetchedPermGroups
+}: {
+  fetchedEntries: Entry[]
+  fetchedPermGroups: PermissionGroup[]
+}) {
   const [searchKeyword, setSearchKeyword] = useState("")
   const [paginationState, setPaginationState] = useState({
     min: 0,
@@ -82,19 +74,9 @@ export default function Entries({ fetchedEntries, fetchedPermGroups }) {
   }
 
   const deleteEntry = async (id) => {
-    let result
-    await axios
-      .delete(
-        `${process.env.baseUrl}/api/v1/entry/delete/${id}?apikey=${process.env.apiKey}&secretkey=${process.env.secretKey}`
-      )
-      .then((res: AxiosResponse) => (result = res.data))
-      .catch((e: unknown) => {
-        console.log(e)
-      })
-
-    if (result.status === "success") Swal.fire("Deleted!", "", "success")
-    else if (result.status === "failed") Swal.fire("Failed to delete!", "", "error")
-    else console.log("Something went wrong! Unexpected result status!")
+    const result = await deleteEntryAction(id)
+    if (result.success) Swal.fire("Deleted!", "", "success")
+    else Swal.fire("Failed to delete!", "", "error")
   }
 
   return (

@@ -1,14 +1,15 @@
+"use client"
 //Utility
 import axios from "axios"
 import { useSession } from "next-auth/react"
-import checkPermission from "../../../../lib/ui/check-permission"
+import checkPermission from "@/lib/ui/check-permission"
 
 //Components
-import Menu from "../../../../components/dashboard/menu"
-import EntryForm from "../../../../components/dashboard/entry-form"
+import Menu from "@/components/dashboard/menu"
+import EntryForm from "@/components/dashboard/entry-form"
 
 //Interfaces
-import { Entry, EntryType, PermissionGroup } from "../../../../interfaces"
+import { Entry, EntryType, PermissionGroup } from "@/interfaces"
 
 //===============================================
 
@@ -41,14 +42,16 @@ export async function getServerSideProps(req) {
   }
 }
 
-export default function EditEntry({
+export default function EntryEditPage({
   fetchedEntry,
   fetchedEntryType,
-  fetchedPermGroups
+  fetchedPermGroups,
+  slug
 }: {
   fetchedEntry: Entry
   fetchedEntryType: EntryType
   fetchedPermGroups: PermissionGroup[]
+  slug: string
 }) {
   //Auth Session
   const { data: session } = useSession()
@@ -69,6 +72,7 @@ export default function EditEntry({
                 actionType="UPDATE"
                 fetchedEntryType={fetchedEntryType[0]}
                 fetchedEntry={fetchedEntry[0]}
+                slug={slug}
               />
             ) : (
               "You don't have permission to do this"
