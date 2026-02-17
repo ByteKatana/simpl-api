@@ -1,5 +1,3 @@
-import { AxiosResponse } from "axios"
-
 enum FindLike {
   StartsWith,
   EndsWith,
@@ -85,7 +83,7 @@ export interface UserCreateResponse {
   data: {
     isEmailExist: boolean
     isUsernameExist: boolean
-    result: AxiosResponse
+    result: Response
   }
   status: number
 }

@@ -1,7 +1,6 @@
 "use client"
 
 //Utility
-import axios, { AxiosResponse } from "axios"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
 import { FiPlusCircle, FiTrash2 } from "react-icons/fi"
@@ -11,13 +10,12 @@ import { useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
 
 //Components
-import Menu from "../../components/dashboard/menu"
+import Menu from "@/components/dashboard/menu"
 
 //Interfaces
-import { ActionResponse, ApiKey, EntryType, ErrorResponse, PermissionGroup, SuccessResponse } from "../../interfaces"
-import checkPermGroup from "../../lib/ui/check-perm-group"
+import { ApiKey, EntryType, PermissionGroup } from "@/interfaces"
+import checkPermGroup from "@/lib/ui/check-perm-group"
 import generateApiKeyAction from "@/lib/actions/dashboard/settings/generate-api-key.action"
-import { NextResponse } from "next/server"
 import removeApiKeyAction from "@/lib/actions/dashboard/settings/remove-api-key.action"
 import updatePermissionsAction from "@/lib/actions/dashboard/settings/updatePermissionsAction"
 

@@ -1,7 +1,6 @@
 "use client"
 
 //Utility
-import axios, { AxiosResponse } from "axios"
 import { FiEdit, FiFileText, FiPlusCircle, FiTrash2 } from "react-icons/fi"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"

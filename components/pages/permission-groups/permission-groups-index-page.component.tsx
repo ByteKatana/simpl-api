@@ -1,6 +1,5 @@
 "use client"
 //Utility
-import axios, { AxiosResponse } from "axios"
 import { FiEdit, FiPlusCircle, FiTrash2 } from "react-icons/fi"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
@@ -198,7 +197,9 @@ export default function PermissionGroupsIndexPage({
                   <ul className="flex list-style-none">
                     {paginationState.pages.map((page, idx) => {
                       return (
-                        <li key={idx} className={`page-item ${paginationState.currentPage === page ? "active" : null}  `}>
+                        <li
+                          key={idx}
+                          className={`page-item ${paginationState.currentPage === page ? "active" : null}  `}>
                           <a
                             className={`page-link relative block py-1.5 px-3 rounded border-0 ${
                               paginationState.currentPage === page
