@@ -1,5 +1,3 @@
-import { AxiosResponse } from "axios"
-
 enum FindLike {
   StartsWith,
   EndsWith,
@@ -36,6 +34,27 @@ export type FindType = keyof typeof FindLike
 
 export type ContentType = keyof typeof ContentTypes
 
+export type ResponseType = "api" | "server"
+
+export type ActionResponse<T = null> = {
+  success: boolean
+  status?: number
+  data?: T
+  error?: {
+    message: string
+    details?: Record<string, string[]>
+  }
+}
+
+export type SuccessResponse<T = null> = ActionResponse<T> & { success: true }
+export type ErrorResponse = ActionResponse<undefined> & { success: false }
+
+export type SettingsData = {
+  permissionGroups: PermissionGroup
+  namespaces: EntryType
+  apiKeys: ApiKey[]
+}
+
 export interface EntryType {
   _id?: string
   name: string
@@ -64,7 +83,7 @@ export interface UserCreateResponse {
   data: {
     isEmailExist: boolean
     isUsernameExist: boolean
-    result: AxiosResponse
+    result: Response
   }
   status: number
 }
@@ -82,4 +101,32 @@ export interface ApiKey {
 
 export interface DOMEvent<T extends EventTarget> extends Event {
   readonly target: T
+}
+
+export interface FormField {
+  field_name: string
+  field_value_type: string
+  field_form_type: string
+  field_length: number | string
+  field_accepted_types?: string[]
+}
+
+export interface FormattedEntryType {
+  name: string
+  namespace: string
+  createdBy?: string
+}
+
+export interface UserCreateActionResponse {
+  success: boolean
+  status?: number
+  data?: {
+    isEmailExist: boolean
+    isUsernameExist: boolean
+    result: any
+  }
+  error?: {
+    message: string
+    details?: Record<string, string[]>
+  }
 }

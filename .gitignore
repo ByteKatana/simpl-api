@@ -40,4 +40,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 
+#codacy
+.codacy
+
+# ai
+.ai
+
 
