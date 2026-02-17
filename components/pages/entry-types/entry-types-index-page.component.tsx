@@ -234,9 +234,9 @@ export default function EntryTypesIndexPage({
             <div className="flex justify-center">
               <nav aria-label="Page navigation example">
                 <ul className="flex list-style-none">
-                  {paginationState.pages.map((page) => {
+                  {paginationState.pages.map((page, idx) => {
                     return (
-                      <li className={`page-item ${paginationState.currentPage === page ? "active" : null}  `}>
+                      <li key={idx} className={`page-item ${paginationState.currentPage === page ? "active" : null}  `}>
                         <a
                           className={`page-link relative block py-1.5 px-3 rounded border-0 ${
                             paginationState.currentPage === page

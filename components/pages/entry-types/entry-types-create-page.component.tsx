@@ -198,10 +198,13 @@ export default function EntryTypesCreatePage({ fetchedEntryTypes }: { fetchedEnt
                         checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, 0)
                       }}
                       className="form-select form-select-lg mb-3 block w-full  px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300  rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none">
-                      <option value="itself"> Itself</option>
-                      {fetchedEntryTypes.map((entry_type) => {
+                      <option key={"namespace_itself"} value="itself">
+                        Itself
+                      </option>
+                      {fetchedEntryTypes.map((entry_type: EntryType, idx: number) => {
                         return (
                           <option
+                            key={idx}
                             value={`${entry_type.namespace}`}>{`${entry_type.name} (${entry_type.namespace})`}</option>
                         )
                       })}
@@ -340,11 +343,21 @@ export default function EntryTypesCreatePage({ fetchedEntryTypes }: { fetchedEnt
                             defaultValue={field.field_value_type}
                             className="form-select form-select-lg mb-3 block w-full  px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300  rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none"
                             required>
-                            <option value="">Please select one</option>
-                            <option value="string">String</option>
-                            <option value="integer">Integer</option>
-                            <option value="double">Double</option>
-                            <option value="boolean">Boolean</option>
+                            <option key={"val_type_0"} value="">
+                              Please select one
+                            </option>
+                            <option key={"val_type_1"} value="string">
+                              String
+                            </option>
+                            <option key={"val_type_2"} value="integer">
+                              Integer
+                            </option>
+                            <option key={"val_type_2"} value="double">
+                              Double
+                            </option>
+                            <option key={"val_type_2"} value="boolean">
+                              Boolean
+                            </option>
                           </select>
                           {(showErrors || showError[`field_value_type_${index}`]) &&
                             formErrors[`field_value_type_${index}`] &&
@@ -385,9 +398,15 @@ export default function EntryTypesCreatePage({ fetchedEntryTypes }: { fetchedEnt
                             }
                             className="form-select form-select-lg mb-3 block w-full  px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300  rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none"
                             required>
-                            <option value="">Please select one</option>
-                            <option value="input">Input Field</option>
-                            <option value="textarea">Textarea</option>
+                            <option key={"field_type_0"} value="">
+                              Please select one
+                            </option>
+                            <option key={"field_type_1"} value="input">
+                              Input Field
+                            </option>
+                            <option key={"field_type_2"} value="textarea">
+                              Textarea
+                            </option>
                           </select>
                           {(showErrors || showError[`field_form_type_${index}`]) &&
                             formErrors[`field_form_type_${index}`] &&

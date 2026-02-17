@@ -342,11 +342,11 @@ export default function EntryTypesEditPage({
                               checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, index)
                             }}
                             required>
-                            <option value="">Please select one</option>
-                            <option value="string">String</option>
-                            <option value="integer">Integer</option>
-                            <option value="double">Double</option>
-                            <option value="boolean">Boolean</option>
+                            <option key="val_type_empty" value="">Please select one</option>
+                            <option key="val_type_string" value="string">String</option>
+                            <option key="val_type_integer" value="integer">Integer</option>
+                            <option key="val_type_double" value="double">Double</option>
+                            <option key="val_type_boolean" value="boolean">Boolean</option>
                           </select>
                           {(showErrors || showError[`field_value_type_${index}`]) &&
                             formErrors[`field_value_type_${index}`] &&
@@ -375,9 +375,9 @@ export default function EntryTypesEditPage({
                               checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, index)
                             }}
                             required>
-                            <option value="">Please select one</option>
-                            <option value="input">Input Field</option>
-                            <option value="textarea">Textarea</option>
+                            <option key="form_type_empty" value="">Please select one</option>
+                            <option key="form_type_input" value="input">Input Field</option>
+                            <option key="form_type_textarea" value="textarea">Textarea</option>
                           </select>
                           {(showErrors || showError[`field_form_type_${index}`]) &&
                             formErrors[`field_form_type_${index}`] &&
