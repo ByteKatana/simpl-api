@@ -354,7 +354,7 @@ export default function EntryTypesCreatePage({ fetchedEntryTypes }: { fetchedEnt
                             <option key={"val_type_2"} value="double">
                               Double
                             </option>
-                            <option key={"val_type_2"} value="boolean">
+                            <option key={"val_type_3"} value="boolean">
                               Boolean
                             </option>
                           </select>
