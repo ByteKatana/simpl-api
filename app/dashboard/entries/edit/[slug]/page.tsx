@@ -17,7 +17,6 @@ export default async function Page({ params }: { params: { slug: string } }) {
 
   const fetchedEntryType = await getEntryTypeBySlug(entryTypeSlug)
   const fetchedPermGroups = await getPermissionGroups()
-  console.log("SLUG_DEBUG:", fetchedEntry)
   return (
     <EntryEditPage
       fetchedEntry={fetchedEntry.data}
