@@ -6,7 +6,7 @@ import getPermissionGroups from "@/lib/actions/dashboard/permission-groups/get-p
 import { EntryType } from "@/interfaces"
 
 export default async function Page({ params }: { params: { slug: string } }) {
-  const { slug } = params
+  const { slug } = await params
 
   // Fetch all entry types
   const fetchedEntryTypes = await getEntryTypes()

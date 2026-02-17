@@ -7,7 +7,7 @@ import EntryEditPage from "@/components/pages/entries/entries-edit-page.componen
 import getEntryById from "@/lib/actions/dashboard/entries/get-entry-by-id"
 
 export default async function Page({ params }: { params: { slug: string } }) {
-  const { slug } = params
+  const { slug } = await params
 
   const fetchedEntry = await getEntryById(slug)
 

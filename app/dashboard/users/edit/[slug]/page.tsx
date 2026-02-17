@@ -6,7 +6,7 @@ import getPermissionGroups from "@/lib/actions/dashboard/permission-groups/get-p
 import UserEditPage from "@/components/pages/users/users-edit-page.component"
 
 export default async function Page({ params }: { params: { slug: string } }) {
-  const { slug } = params
+  const { slug } = await params
   const fetchedUser = await getUserById(slug)
   const fetchedPermGroups = await getPermissionGroups()
   return <UserEditPage fetchedPermissionGroups={fetchedPermGroups.data} fetchedUser={fetchedUser.data} slug={slug} />

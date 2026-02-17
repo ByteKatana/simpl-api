@@ -4,7 +4,7 @@ import EntryCreatePage from "@/components/pages/entries/entries-create-page.comp
 import getEntryTypeBySlug from "@/lib/actions/dashboard/entry-types/get-entry-type-by-slug"
 
 export default async function Page({ params }: { params: { slug: string } }) {
-  const { slug } = params
+  const { slug } = await params
   const fetchedEntryType = await getEntryTypeBySlug(slug)
   const fetchedPermGroups = await getPermissionGroups()
   return (

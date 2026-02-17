@@ -3,7 +3,7 @@ import PermissionGroupsEditPage from "@/components/pages/permission-groups/permi
 import getPermissionGroupBySlug from "@/lib/actions/dashboard/permission-groups/get-permission-group-by-slug"
 
 export default async function Page({ params }: { params: { slug: string } }) {
-  const { slug } = params
+  const { slug } = await params
   const fetchedPermGroup = await getPermissionGroupBySlug(slug)
   return <PermissionGroupsEditPage fetchedPermissionGroup={fetchedPermGroup.data} slug={slug} />
 }
