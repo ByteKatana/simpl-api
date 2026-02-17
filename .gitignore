@@ -43,4 +43,7 @@ yarn-error.log*
 #codacy
 .codacy
 
+# ai
+.ai
+
 
