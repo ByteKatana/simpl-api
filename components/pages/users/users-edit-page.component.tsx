@@ -237,8 +237,8 @@ export default function UserEditPage({
                         checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)
                       }}
                       className="form-select form-select-lg mb-3 block w-full  px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300  rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none">
-                      {fetchedPermissionGroups.map((permissionGroup) => {
-                        return <option value={`${permissionGroup.slug}`}>{`${permissionGroup.name}`}</option>
+                      {fetchedPermissionGroups.map((permissionGroup, idx) => {
+                        return <option key={idx} value={`${permissionGroup.slug}`}>{`${permissionGroup.name}`}</option>
                       })}
                     </select>
                     {(showErrors || showError[`permission_group`]) &&

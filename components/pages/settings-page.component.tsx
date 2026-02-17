@@ -250,9 +250,10 @@ export default function SettingsPage({
                         })}
                     </ul>
                     <ul className="flex list-style-none justify-center mt-5">
-                      {paginationPermissionGroupState.pages.map((page) => {
+                      {paginationPermissionGroupState.pages.map((page, idx) => {
                         return (
                           <li
+                            key={idx}
                             className={`page-item ${
                               paginationPermissionGroupState.currentPage === page ? "active" : null
                             }  `}>
@@ -301,9 +302,10 @@ export default function SettingsPage({
                         })}
                     </ul>
                     <ul className="flex list-style-none justify-center mt-5">
-                      {paginationNamespaceState.pages.map((page) => {
+                      {paginationNamespaceState.pages.map((page, idx) => {
                         return (
                           <li
+                            key={idx}
                             className={`page-item ${
                               paginationNamespaceState.currentPage === page ? "active" : null
                             }  `}>
