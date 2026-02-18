@@ -141,7 +141,7 @@ export default function EntryTypesCreatePage({ fetchedEntryTypes }: { fetchedEnt
                     </label>
                     <input
                       type="text"
-                      className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none"
+                      className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded-sm transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-hidden"
                       id="name"
                       name="name"
                       ref={(el) => (formRef.current[`name`] = el)}
@@ -196,7 +196,7 @@ export default function EntryTypesCreatePage({ fetchedEntryTypes }: { fetchedEnt
                       onBlur={(e) => {
                         checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, 0)
                       }}
-                      className="form-select form-select-lg mb-3 block w-full  px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300  rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none">
+                      className="form-select form-select-lg mb-3 block w-full  px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300  rounded-sm transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-hidden">
                       <option key={"namespace_itself"} value="itself">
                         Itself
                       </option>
@@ -239,7 +239,7 @@ export default function EntryTypesCreatePage({ fetchedEntryTypes }: { fetchedEnt
                             data-testid={`input_field_name_${index}`}
                             ref={(el) => (formRef.current[`field_name_${index}`] = el)}
                             type="text"
-                            className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none"
+                            className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded-sm transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-hidden"
                             id="field_name"
                             placeholder="Eg: Title"
                             defaultValue={field.field_name}
@@ -280,7 +280,7 @@ export default function EntryTypesCreatePage({ fetchedEntryTypes }: { fetchedEnt
                             data-testid={`input_field_length_${index}`}
                             id="field_length"
                             type="number"
-                            className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none"
+                            className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded-sm transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-hidden"
                             placeholder="Eg: 100"
                             defaultValue={field.field_length}
                             onChange={(e) => {
@@ -340,7 +340,7 @@ export default function EntryTypesCreatePage({ fetchedEntryTypes }: { fetchedEnt
                               checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, index)
                             }
                             defaultValue={field.field_value_type}
-                            className="form-select form-select-lg mb-3 block w-full  px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300  rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none"
+                            className="form-select form-select-lg mb-3 block w-full  px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300  rounded-sm transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-hidden"
                             required>
                             <option key={"val_type_0"} value="">
                               Please select one
@@ -395,7 +395,7 @@ export default function EntryTypesCreatePage({ fetchedEntryTypes }: { fetchedEnt
                             onBlur={(e) =>
                               checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e, index)
                             }
-                            className="form-select form-select-lg mb-3 block w-full  px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300  rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none"
+                            className="form-select form-select-lg mb-3 block w-full  px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300  rounded-sm transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-hidden"
                             required>
                             <option key={"field_type_0"} value="">
                               Please select one
@@ -454,7 +454,7 @@ export default function EntryTypesCreatePage({ fetchedEntryTypes }: { fetchedEnt
                         setIsCreateBtnClicked(true)
                         void submitData()
                       }}
-                      className="mb-2 w-full inline-block px-6 py-2.5 bg-slate-700 text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-slate-800 hover:shadow-lg focus:bg-slate-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-slate-800 active:shadow-lg transition duration-150 ease-in-out">
+                      className="mb-2 w-full inline-block px-6 py-2.5 bg-slate-700 text-white font-medium text-xs leading-normal uppercase rounded-sm shadow-md hover:bg-slate-800 hover:shadow-lg focus:bg-slate-700 focus:shadow-lg focus:outline-hidden focus:ring-0 active:bg-slate-800 active:shadow-lg transition duration-150 ease-in-out">
                       {isCreateBtnClicked ? (
                         <span className="flex flex-row justify-center">
                           <FiLoader className="animate-spin text-2xl" />

@@ -17,7 +17,7 @@ export default function Menu() {
   return (
     <div
       data-testid="menu-component"
-      className="flex flex-nowrap flex-col w-64 font-josefin bg-gradient-to-t from-slate-900 to-slate-700 ">
+      className="flex flex-nowrap flex-col w-64 font-josefin bg-linear-to-t from-slate-900 to-slate-700 ">
       <div data-testid="menu-logo" className="text-white hover:text-yellow-500 h-24 font-raleway text-5xl pl-5 pt-5">
         <a href="#">simpl:api</a>
       </div>
@@ -26,7 +26,7 @@ export default function Menu() {
           <a
             href="/dashboard"
             data-testid={"dashboard"}
-            className="flex flex-row py-5 px-5 w-48 hover:transition  hover:bg-gray-900 hover:rounded-2xl hover:bg-gradient-to-tl from-neutral-200 to-neutral-50 hover:text-slate-900 ">
+            className="flex flex-row py-5 px-5 w-48 hover:transition  hover:bg-gray-900 hover:rounded-2xl hover:bg-linear-to-tl from-neutral-200 to-neutral-50 hover:text-slate-900 ">
             <FiHome /> <span className="ml-2">Dasboard</span>
           </a>
         </li>
@@ -34,7 +34,7 @@ export default function Menu() {
           <a
             href="/dashboard/entry-types"
             data-testid={"entryTypes"}
-            className="flex flex-row py-5 px-5 w-52 hover:transition hover:bg-gray-900 hover:rounded-2xl hover:bg-gradient-to-tl from-neutral-200 to-neutral-50 hover:text-slate-900 ">
+            className="flex flex-row py-5 px-5 w-52 hover:transition hover:bg-gray-900 hover:rounded-2xl hover:bg-linear-to-tl from-neutral-200 to-neutral-50 hover:text-slate-900 ">
             <FiBox /> <span className="ml-2">Entry Types</span>
           </a>
         </li>
@@ -42,7 +42,7 @@ export default function Menu() {
           <a
             href="/dashboard/entries"
             data-testid={"entries"}
-            className="flex flex-row py-5 px-5 w-48 hover:transition hover:bg-gray-900 hover:rounded-2xl hover:bg-gradient-to-tl from-neutral-200 to-neutral-50 hover:text-slate-900 ">
+            className="flex flex-row py-5 px-5 w-48 hover:transition hover:bg-gray-900 hover:rounded-2xl hover:bg-linear-to-tl from-neutral-200 to-neutral-50 hover:text-slate-900 ">
             <FiFileText /> <span className="ml-2">Entries</span>
           </a>
         </li>
@@ -50,7 +50,7 @@ export default function Menu() {
           <a
             href="/dashboard/users"
             data-testid={"users"}
-            className="flex flex-row py-5 px-5 w-48 hover:transition hover:bg-gray-900 hover:rounded-2xl hover:bg-gradient-to-tl from-neutral-200 to-neutral-50 hover:text-slate-900 ">
+            className="flex flex-row py-5 px-5 w-48 hover:transition hover:bg-gray-900 hover:rounded-2xl hover:bg-linear-to-tl from-neutral-200 to-neutral-50 hover:text-slate-900 ">
             <FiUsers /> <span className="ml-2">Users</span>
           </a>
         </li>
@@ -59,7 +59,7 @@ export default function Menu() {
             <a
               href="/dashboard/settings"
               data-testid={"settings"}
-              className="flex flex-row py-5 px-5 w-48 hover:transition hover:bg-gray-900 hover:rounded-2xl hover:bg-gradient-to-tl from-neutral-200 to-neutral-50 hover:text-slate-900 ">
+              className="flex flex-row py-5 px-5 w-48 hover:transition hover:bg-gray-900 hover:rounded-2xl hover:bg-linear-to-tl from-neutral-200 to-neutral-50 hover:text-slate-900 ">
               <FiSettings /> <span className="ml-2">Settings</span>
             </a>
           </li>

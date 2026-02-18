@@ -104,7 +104,7 @@ export default function UsersIndexPage({ fetchedUsers }: { fetchedUsers: User[] 
               <div className="">
                 <input
                   type="text"
-                  className="form-control block w-full px-3 py-1.5 text-basefont-normaltext-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none"
+                  className="form-control block w-full px-3 py-1.5 text-basefont-normaltext-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded-sm transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-hidden"
                   id="search"
                   placeholder="Search"
                   onChange={(e) => {
@@ -224,8 +224,8 @@ export default function UsersIndexPage({ fetchedUsers }: { fetchedUsers: User[] 
                         <a
                           className={`page-link relative block py-1.5 px-3 rounded border-0 ${
                             paginationState.currentPage === page
-                              ? "bg-slate-900 text-white outline-none transition-all duration-300 rounded  hover:text-white hover:bg-slate-600"
-                              : "bg-transparent text-gray-800  outline-none transition-all duration-300 hover:text-gray-800 hover:bg-gray-200 focus:shadow-none"
+                              ? "bg-slate-900 text-white outline-hidden transition-all duration-300 rounded-sm  hover:text-white hover:bg-slate-600"
+                              : "bg-transparent text-gray-800  outline-hidden transition-all duration-300 hover:text-gray-800 hover:bg-gray-200 focus:shadow-none"
                           }  `}
                           href="#"
                           onClick={() => {

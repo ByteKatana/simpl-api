@@ -155,7 +155,7 @@ export default function UsersCreatePage({ fetchedPermissionGroups }: { fetchedPe
                     </label>
                     <input
                       type="text"
-                      className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                      className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded-sm transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-hidden"
                       id="username"
                       name="username"
                       ref={(el) => (formRef.current[`username`] = el)}
@@ -190,7 +190,7 @@ export default function UsersCreatePage({ fetchedPermissionGroups }: { fetchedPe
                     </label>
                     <input
                       type="text"
-                      className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                      className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded-sm transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-hidden"
                       id="email"
                       name="email"
                       ref={(el) => (formRef.current[`email`] = el)}
@@ -225,7 +225,7 @@ export default function UsersCreatePage({ fetchedPermissionGroups }: { fetchedPe
                     </label>
                     <input
                       type="password"
-                      className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                      className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded-sm transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-hidden"
                       id="password"
                       name="password"
                       ref={(el) => (formRef.current[`password`] = el)}
@@ -279,7 +279,7 @@ export default function UsersCreatePage({ fetchedPermissionGroups }: { fetchedPe
                       onBlur={(e) => {
                         checkFieldEmpty(formErrors, showError, setFormErrors, setShowError, e)
                       }}
-                      className="form-select form-select-lg mb-3 block w-full  px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300  rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-none">
+                      className="form-select form-select-lg mb-3 block w-full  px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300  rounded-sm transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-hidden">
                       <option key="permission_group_empty" value="">
                         Please choose a group
                       </option>
@@ -304,7 +304,7 @@ export default function UsersCreatePage({ fetchedPermissionGroups }: { fetchedPe
                         setIsCreateBtnClicked(true)
                         void submitData()
                       }}
-                      className="mb-2 w-full inline-block px-6 py-2.5 bg-slate-700 text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-slate-800 hover:shadow-lg focus:bg-slate-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-slate-800 active:shadow-lg transition duration-150 ease-in-out">
+                      className="mb-2 w-full inline-block px-6 py-2.5 bg-slate-700 text-white font-medium text-xs leading-normal uppercase rounded-sm shadow-md hover:bg-slate-800 hover:shadow-lg focus:bg-slate-700 focus:shadow-lg focus:outline-hidden focus:ring-0 active:bg-slate-800 active:shadow-lg transition duration-150 ease-in-out">
                       {isCreateBtnClicked ? (
                         <span className="flex flex-row justify-center">
                           <FiLoader className="animate-spin text-2xl" />

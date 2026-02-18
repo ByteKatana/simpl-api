@@ -23,7 +23,7 @@ export default function IndexPage() {
                   <a href="/dashboard">
                     <button
                       type="button"
-                      className="flex flex-row items-center justify-center mb-2 w-full p-6 bg-slate-700 text-white font-josefin text-xl leading-normal uppercase rounded shadow-md hover:bg-white hover:border-2 hover:border-slate-800 hover:text-slate-800 transition duration-150 ease-in-out">
+                      className="flex flex-row items-center justify-center mb-2 w-full p-6 bg-slate-700 text-white font-josefin text-xl leading-normal uppercase rounded-sm shadow-md hover:bg-white hover:border-2 hover:border-slate-800 hover:text-slate-800 transition duration-150 ease-in-out">
                       <FiChevronLeft className="text-2xl" />
                       <span className="ml-3">Dashboard</span>
                     </button>
@@ -35,7 +35,7 @@ export default function IndexPage() {
                   <a href="https://bytekatana.github.io/simpl-api-doc/">
                     <button
                       type="button"
-                      className="flex flex-row items-center justify-center mb-2 w-full p-6 bg-slate-700 text-white font-josefin text-xl leading-normal uppercase rounded shadow-md hover:bg-white hover:border-2 hover:border-slate-800 hover:text-slate-800 transition duration-150 ease-in-out">
+                      className="flex flex-row items-center justify-center mb-2 w-full p-6 bg-slate-700 text-white font-josefin text-xl leading-normal uppercase rounded-sm shadow-md hover:bg-white hover:border-2 hover:border-slate-800 hover:text-slate-800 transition duration-150 ease-in-out">
                       <span className="mr-3">Doc</span> <FiChevronRight className="text-2xl" />
                     </button>
                   </a>
@@ -48,7 +48,7 @@ export default function IndexPage() {
                 <button
                   type="button"
                   onClick={() => signIn()}
-                  className="flex flex-row items-center justify-center mb-2 w-full p-6 bg-slate-700 text-white font-josefin text-xl leading-normal uppercase rounded shadow-md hover:bg-white hover:border-2 hover:border-slate-800 hover:text-slate-800 transition duration-150 ease-in-out">
+                  className="flex flex-row items-center justify-center mb-2 w-full p-6 bg-slate-700 text-white font-josefin text-xl leading-normal uppercase rounded-sm shadow-md hover:bg-white hover:border-2 hover:border-slate-800 hover:text-slate-800 transition duration-150 ease-in-out">
                   <span className="mr-3">Login</span> <FiChevronRight className="text-2xl" />
                 </button>
               </div>

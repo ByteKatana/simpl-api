@@ -258,8 +258,8 @@ export default function SettingsPage({
                             <a
                               className={`page-link relative block py-1.5 px-3 rounded border-0 ${
                                 paginationPermissionGroupState.currentPage === page
-                                  ? "bg-slate-900 text-white outline-none transition-all duration-300 rounded  hover:text-white hover:bg-slate-600"
-                                  : "bg-transparent text-gray-800  outline-none transition-all duration-300 hover:text-gray-800 hover:bg-gray-200 focus:shadow-none"
+                                  ? "bg-slate-900 text-white outline-hidden transition-all duration-300 rounded-sm  hover:text-white hover:bg-slate-600"
+                                  : "bg-transparent text-gray-800  outline-hidden transition-all duration-300 hover:text-gray-800 hover:bg-gray-200 focus:shadow-none"
                               }  `}
                               href="#"
                               onClick={() => {
@@ -310,8 +310,8 @@ export default function SettingsPage({
                             <a
                               className={`page-link relative block py-1.5 px-3 rounded border-0 ${
                                 paginationNamespaceState.currentPage === page
-                                  ? "bg-slate-900 text-white outline-none transition-all duration-300 rounded  hover:text-white hover:bg-slate-600"
-                                  : "bg-transparent text-gray-800  outline-none transition-all duration-300 hover:text-gray-800 hover:bg-gray-200 focus:shadow-none"
+                                  ? "bg-slate-900 text-white outline-hidden transition-all duration-300 rounded-sm  hover:text-white hover:bg-slate-600"
+                                  : "bg-transparent text-gray-800  outline-hidden transition-all duration-300 hover:text-gray-800 hover:bg-gray-200 focus:shadow-none"
                               }  `}
                               href="#"
                               onClick={() => {
@@ -336,7 +336,7 @@ export default function SettingsPage({
                         <div className="form-check py-2">
                           <input
                             checked={activePermissions.includes("read") ? true : false}
-                            className="form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer"
+                            className="form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-xs bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-hidden transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer"
                             type="checkbox"
                             value="read"
                             id="permissionRead"
@@ -352,7 +352,7 @@ export default function SettingsPage({
                         <div className="form-check py-2">
                           <input
                             checked={activePermissions.includes("create") ? true : false}
-                            className="form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer"
+                            className="form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-xs bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-hidden transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer"
                             type="checkbox"
                             value="create"
                             id="permissionCreate"
@@ -368,7 +368,7 @@ export default function SettingsPage({
                         <div className="form-check py-2">
                           <input
                             checked={activePermissions.includes("update") ? true : false}
-                            className="form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer"
+                            className="form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-xs bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-hidden transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer"
                             type="checkbox"
                             value="update"
                             id="permissionUpdate"
@@ -384,7 +384,7 @@ export default function SettingsPage({
                         <div className="form-check py-2">
                           <input
                             checked={activePermissions.includes("delete") ? true : false}
-                            className="form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer"
+                            className="form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-xs bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-hidden transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer"
                             type="checkbox"
                             value="delete"
                             id="permissionDelete"
@@ -405,7 +405,7 @@ export default function SettingsPage({
                               }}
                               type="button"
                               data-testid="update_permission_btn"
-                              className="mb-2 w-full inline-block px-6 py-2.5 bg-slate-700 text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-slate-800 hover:shadow-lg focus:bg-slate-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-slate-800 active:shadow-lg transition duration-150 ease-in-out">
+                              className="mb-2 w-full inline-block px-6 py-2.5 bg-slate-700 text-white font-medium text-xs leading-normal uppercase rounded-sm shadow-md hover:bg-slate-800 hover:shadow-lg focus:bg-slate-700 focus:shadow-lg focus:outline-hidden focus:ring-0 active:bg-slate-800 active:shadow-lg transition duration-150 ease-in-out">
                               Update
                             </button>
                           </div>

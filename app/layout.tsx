@@ -2,7 +2,6 @@ import { Providers } from "./providers"
 
 // Styles
 import "@/styles/globals.css"
-import "tailwindcss/tailwind.css"
 
 export const metadata = {
   title: "simpl:api",
