@@ -27,6 +27,11 @@ enum ActionTypes {
   UPDATE
 }
 
+enum PublishStatus {
+  Draft,
+  Published
+}
+
 export type DataType = keyof typeof DataTypes
 export type ActionType = keyof typeof ActionTypes
 
@@ -59,6 +64,8 @@ export interface EntryType {
   _id?: string
   name: string
   namespace: string
+  status: PublishStatus
+  entries: number
   fields: object[]
   createdBy?: string
 }
@@ -66,8 +73,13 @@ export interface EntryType {
 export interface Entry {
   _id?: string
   name: string
-  namespace: string
+  entry_type: {
+    _id: string
+    name: string
+    namespace: string
+  }
   slug: string
+  status: PublishStatus
 }
 
 export interface User {
