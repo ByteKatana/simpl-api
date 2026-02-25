@@ -27,9 +27,16 @@ enum ActionTypes {
   UPDATE
 }
 
-enum PublishStatus {
+export enum PublishStatus {
   Draft,
-  Published
+  Published,
+  Archived
+}
+
+export enum UserStatus {
+  Active,
+  Inactive,
+  Disabled
 }
 
 export type DataType = keyof typeof DataTypes
@@ -84,10 +91,17 @@ export interface Entry {
 
 export interface User {
   _id?: string
+  fullname?: string
   username: string
   password: string
   email: string
   permission_group: string
+  profile_img?: string
+  status: UserStatus
+  created_at?: string
+  updated_at?: string
+  created_by?: string
+  updated_by?: string
   pwchanged?: boolean
 }
 
@@ -103,6 +117,7 @@ export interface UserCreateResponse {
 export interface PermissionGroup {
   _id?: string
   name: string
+  icon?: string
   slug: string
   privileges: any[]
 }
