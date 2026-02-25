@@ -5,6 +5,7 @@ import type { ColumnDef } from "@tanstack/react-table"
 import { Checkbox } from "@/components/ui/checkbox"
 import { DataTableRowActions } from "./data-table/data-table-row-actions"
 import { PermissionGroup } from "@/interfaces"
+import { AvatarGroup, AvatarGroupCount } from "@/components/ui/avatar"
 
 const columns: ColumnDef<PermissionGroup>[] = [
   {
@@ -26,7 +27,26 @@ const columns: ColumnDef<PermissionGroup>[] = [
     enableSorting: false,
     enableHiding: false
   },
-  { accessorKey: "name", header: "Name" },
+  {
+    accessorKey: "name",
+    header: "Name",
+    meta: {
+      style: {
+        textAlign: "center"
+      }
+    },
+    cell: ({ row }) => {
+      const permGroup = row.original
+      return (
+        <div className="flex items-center gap-3">
+          <AvatarGroup>
+            <AvatarGroupCount>{permGroup.icon}</AvatarGroupCount>
+          </AvatarGroup>
+          <span className="mt-2.5 font-medium text-sm">{permGroup.name}</span>
+        </div>
+      )
+    }
+  },
   { accessorKey: "users", header: "Number of Users" },
   {
     id: "actions",
