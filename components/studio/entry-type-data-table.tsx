@@ -5,7 +5,34 @@ import type { ColumnDef } from "@tanstack/react-table"
 import { Checkbox } from "@/components/ui/checkbox"
 import { DataTableRowActions } from "./data-table/data-table-row-actions"
 import { Entry, EntryType } from "@/interfaces"
-import { Check, CircleDotDashed } from "lucide-react"
+import { Archive, Box, Check, CircleDotDashed } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+
+const getLabelForStatus = (status: string) => {
+  switch (status.toLowerCase()) {
+    case "published":
+      return (
+        <Badge variant={"secondary"} className="bg-emerald-400 text-white">
+          <Check data-icon="inline-start" />
+          <span className="text-sm">Published</span>
+        </Badge>
+      )
+    case "archived":
+      return (
+        <Badge variant={"secondary"} className="bg-gray-400 text-white">
+          <Archive data-icon="inline-start" />
+          <span className="text-sm">Archived</span>
+        </Badge>
+      )
+    case "draft":
+      return (
+        <Badge variant={"secondary"} className="bg-amber-400 text-white">
+          <CircleDotDashed data-icon="inline-start" />
+          <span className="text-sm">Draft</span>
+        </Badge>
+      )
+  }
+}
 
 const columns: ColumnDef<EntryType>[] = [
   {
@@ -30,7 +57,14 @@ const columns: ColumnDef<EntryType>[] = [
   { accessorKey: "name", header: "Name" },
   { accessorKey: "namespace", header: "Namespace" },
   { accessorKey: "entries", header: "Number of Entries" },
-  { accessorKey: "status", header: "Status" },
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => {
+      const entryType = row.original
+      return <div className="flex items-center gap-2">{getLabelForStatus(entryType.status)}</div>
+    }
+  },
   {
     id: "actions",
     cell: ({ row }) => (
@@ -92,6 +126,11 @@ export default function EntryTypeDataTable({ data }: { data: EntryType[] }) {
           icon: CircleDotDashed,
           label: "Draft",
           value: "Draft"
+        },
+        {
+          icon: Archive,
+          label: "Archived",
+          value: "Archived"
         }
       ]
     }

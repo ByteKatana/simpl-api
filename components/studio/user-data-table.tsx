@@ -4,7 +4,58 @@ import { DataTable } from "@/components/studio/data-table/data-table"
 import type { ColumnDef } from "@tanstack/react-table"
 import { Checkbox } from "@/components/ui/checkbox"
 import { DataTableRowActions } from "./data-table/data-table-row-actions"
-import { EntryType, User } from "@/interfaces"
+import { User } from "@/interfaces"
+import { Avatar, AvatarBadge, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { ShieldCheck, Star, User as UserIcon } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+
+const getBadgeForPermissionGroup = (permissionGroup: string) => {
+  switch (permissionGroup.toLowerCase()) {
+    case "admin":
+      return (
+        <AvatarBadge className="bg-amber-400 border-white">
+          <Star className="text-white" />
+        </AvatarBadge>
+      )
+    case "editor":
+      return (
+        <AvatarBadge className="bg-blue-500 border-white">
+          <ShieldCheck className="text-white" />
+        </AvatarBadge>
+      )
+    case "viewer":
+      return (
+        <AvatarBadge className="w-10 h-10 bg-green-500 border-white">
+          <UserIcon size={24} className="text-white" />
+        </AvatarBadge>
+      )
+    default:
+      return null
+  }
+}
+
+const getLabelForStatus = (status: string) => {
+  switch (status.toLowerCase()) {
+    case "active":
+      return (
+        <Badge variant={"secondary"} className="bg-emerald-400 text-white">
+          <span className="text-sm">Active</span>
+        </Badge>
+      )
+    case "inactive":
+      return (
+        <Badge variant={"secondary"} className="bg-amber-400 text-white">
+          <span className="text-sm">Inactive</span>
+        </Badge>
+      )
+    case "disabled":
+      return (
+        <Badge variant={"secondary"} className="bg-red-400 text-white">
+          <span className="text-sm">Disabled</span>
+        </Badge>
+      )
+  }
+}
 
 const columns: ColumnDef<User>[] = [
   {
@@ -26,9 +77,34 @@ const columns: ColumnDef<User>[] = [
     enableSorting: false,
     enableHiding: false
   },
+  {
+    accessorKey: "fullname",
+    header: "Name",
+    cell: ({ row }) => {
+      const user = row.original
+      return (
+        <div className="flex items-center gap-3">
+          <Avatar size="lg" className="overflow-visible">
+            <AvatarImage src={user.profile_img} alt={user.username} />
+            <AvatarFallback>{user.username.substring(0, 2).toUpperCase()}</AvatarFallback>
+            {getBadgeForPermissionGroup(user.permission_group)}
+          </Avatar>
+          <span className="mt-2.5 font-medium text-sm">{user.fullname || user.username}</span>
+        </div>
+      )
+    }
+  },
   { accessorKey: "username", header: "Username" },
   { accessorKey: "email", header: "Email" },
   { accessorKey: "permission_group", header: "Role" },
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => {
+      const user = row.original
+      return <div className="flex items-center gap-2">{getLabelForStatus(user.status)}</div>
+    }
+  },
   {
     id: "actions",
     cell: ({ row }) => (
@@ -57,7 +133,7 @@ type DataTableFilterObject = {
 }
 
 export default function UserDataTable({ data }: { data: User[] }) {
-  const getPermGroupFilterOptions = () => {
+  const getPermGroupRoleFilterOptions = () => {
     return data
       .filter(
         (user: User, index: number) =>
@@ -70,12 +146,26 @@ export default function UserDataTable({ data }: { data: User[] }) {
         }
       })
   }
-
+  const getPermGroupStatusFilterOptions = () => {
+    return data
+      .filter((user: User, index: number) => data.findIndex((user2: User) => user2.status === user.status) === index)
+      .map((user: User) => {
+        return {
+          label: user.status.charAt(0).toUpperCase() + user.status.slice(1),
+          value: user.status
+        }
+      })
+  }
   const filters: DataTableFilters = [
     {
       columnId: "permission_group",
       title: "Role",
-      options: getPermGroupFilterOptions()
+      options: getPermGroupRoleFilterOptions()
+    },
+    {
+      columnId: "status",
+      title: "Status",
+      options: getPermGroupStatusFilterOptions()
     }
   ]
 
