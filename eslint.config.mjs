@@ -34,7 +34,13 @@ export default [
     rules: {
       "react/jsx-uses-react": "off",
       "react/react-in-jsx-scope": "off",
-      "@typescript-eslint/no-unused-vars": "off"
+      "@typescript-eslint/no-unused-vars": "off",
+      "react/no-children-prop": [
+        true,
+        {
+          allowFunctions: true
+        }
+      ]
     }
   }
 ]
