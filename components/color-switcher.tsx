@@ -1,5 +1,5 @@
 "use client"
-import * as React from "react"
+
 import { Check, Palette } from "lucide-react"
 import { useAppStore, primaryColors, PrimaryColor } from "@/hooks/use-app-store"
 import { Button } from "@/components/ui/button"

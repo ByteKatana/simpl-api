@@ -3,8 +3,9 @@ import { getServerSession } from "@/lib/auth/get-session"
 import { redirect } from "next/navigation"
 import { checkRegisterOpen } from "@/lib/actions/studio/settings/check-register-open"
 import { getSettingsValue } from "@/lib/actions/studio/settings/get-settings-value"
+import { Metadata } from "next"
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Register | simpl:api"
 }
 

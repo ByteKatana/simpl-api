@@ -1,4 +1,4 @@
-import { CirclePlus, Eye, Pencil, Star } from "lucide-react"
+import { CirclePlus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Metadata } from "next"
 import PermissionGroupDataTable from "@/components/studio/permission-group-data-table"
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 const PermissionGroupsStudioPage = async () => {
   const response = await getPermissionGroups()
-  const permGroups = response.data
+  const permGroups = response.success ? response.data : []
   return (
     <PermissionGuard reqPermission={["system.permission_groups.list"]} isPage={true}>
       <div className="flex flex-col gap-y-10 ">

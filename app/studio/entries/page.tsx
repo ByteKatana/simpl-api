@@ -1,8 +1,5 @@
-import { CirclePlus } from "lucide-react"
-import { Button } from "@/components/ui/button"
 import { Metadata } from "next"
 import EntryDataTable from "@/components/studio/entry-data-table"
-import Link from "next/link"
 import getEntries from "@/lib/actions/studio/entry/get-entries"
 import getEntryTypes from "@/lib/actions/studio/entry-types/get-entry-types"
 import { Entry } from "@/interfaces/entry"
@@ -17,7 +14,7 @@ export const metadata: Metadata = {
 
 const EntriesStudioPage = async () => {
   const response = await getEntries()
-  const entries: Entry[] = response.data
+  const entries: Entry[] = response.success ? response.data : []
 
   const entryTypesResponse = await getEntryTypes()
   const entryTypes = entryTypesResponse.success ? entryTypesResponse.data : []

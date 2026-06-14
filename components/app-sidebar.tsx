@@ -14,7 +14,7 @@ import { auth } from "@/auth"
 import { Session } from "next-auth"
 
 export async function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const session: Session = await auth()
+  const session: Session | null = await auth()
 
   return (
     <Sidebar collapsible="icon" {...props}>

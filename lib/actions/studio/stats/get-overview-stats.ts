@@ -57,7 +57,7 @@ export default async function getOverviewStats() {
 
     console.log("HOURLY_DATA", hourlyData)
 
-    let recentRequests = []
+    let recentRequests: object[] = []
     try {
       recentRequests = await prisma.apiRequestLog.findMany({
         orderBy: { timestamp: "desc" },
@@ -87,6 +87,6 @@ export default async function getOverviewStats() {
       recentRequests: formattedRecentRequests
     }
   } catch (e) {
-    return handleError(new Error("Failed to fetch dashboard stats:", e))
+    return handleError(new Error("Failed to fetch overview stats:"), "server")
   }
 }

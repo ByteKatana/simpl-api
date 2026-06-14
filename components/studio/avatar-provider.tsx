@@ -1,11 +1,9 @@
 "use client"
 
-import React from "react"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { User, Mail, Bot, Box } from "lucide-react"
-import { SiGravatar } from "react-icons/si"
 
 const PROVIDERS = [
   { id: "monogram", name: "Monogram", icon: User, preview: "" },

@@ -17,11 +17,11 @@ export default async function createUser(
       const perm_group = await getPermissionGroup()
 
       if (!perm_group) {
-        return handleError(new Error("Unauthorized to create user"))
+        return handleError(new Error("Unauthorized to create user"), "server")
       }
 
       if (perm_group !== "root" && formValues.permission_group === "root") {
-        return handleError(new Error("Unauthorized to create this user"))
+        return handleError(new Error("Unauthorized to create this user"), "server")
       }
     }
 
@@ -49,7 +49,7 @@ export default async function createUser(
 
       if (!response.ok) {
         const unhandledError = new Error(data?.message || "Failed to create user")
-        return handleError(unhandledError)
+        return handleError(unhandledError, "server")
       }
 
       result = { data, status: response.status }

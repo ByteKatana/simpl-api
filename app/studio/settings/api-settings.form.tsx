@@ -42,7 +42,7 @@ const ApiSettingsForm = ({
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [permGroups, setPermGroups] = useState<{ name: string; slug: string }[]>([])
 
-  const { id, settings, ...rest } = formValues
+  const { id, settings } = formValues
 
   const form = useForm({
     defaultValues: settings,
@@ -53,7 +53,7 @@ const ApiSettingsForm = ({
     },
     onSubmit: async ({ value }) => {
       try {
-        let response = await updateApiSettings(value, id)
+        let response = await updateApiSettings(value, id?.toString() || "")
         if (response.success) {
           toast.success("Successful!", {
             description: `API Settings has been updated successfully!`,
@@ -147,7 +147,7 @@ const ApiSettingsForm = ({
           <span className="text-xs text-muted-foreground mt-1 mb-2">Manage REST and GrapQL API services.</span>
           <Field orientation="horizontal" className="max-w-sm">
             <form.Field name="service_rest_api">
-              {(field) => (
+              {(field: any) => (
                 <div className="flex items-center gap-5">
                   <FieldContent>
                     <FieldLabel htmlFor="service_rest_api">REST API</FieldLabel>
@@ -165,7 +165,7 @@ const ApiSettingsForm = ({
           </Field>
           <Field orientation="horizontal" className="max-w-sm">
             <form.Field name="service_graphql">
-              {(field) => (
+              {(field: any) => (
                 <div className="flex items-center gap-5">
                   <FieldContent>
                     <FieldLabel htmlFor="service_graphql">GraphQL</FieldLabel>
@@ -189,7 +189,7 @@ const ApiSettingsForm = ({
             <FieldLabel htmlFor="rate_limits.time_window">API Limit Time Window</FieldLabel>
             <FieldDescription>Time window in minutes for API request limit</FieldDescription>
             <form.Field name="rate_limits.time_window">
-              {(field) => (
+              {(field: any) => (
                 <Input
                   id={field.name}
                   name={field.name}
@@ -207,7 +207,7 @@ const ApiSettingsForm = ({
             <FieldLabel htmlFor="rate_limits.req_per_window">Number of Request per Time Window</FieldLabel>
             <FieldDescription>Number of requests allowed per time window</FieldDescription>
             <form.Field name="rate_limits.req_per_window">
-              {(field) => (
+              {(field: any) => (
                 <Input
                   id={field.name}
                   name={field.name}
@@ -225,7 +225,7 @@ const ApiSettingsForm = ({
             <FieldLabel htmlFor="rate_limits.time_interval">Time Interval per Request</FieldLabel>
             <FieldDescription>Time interval in milliseconds between each request</FieldDescription>
             <form.Field name="rate_limits.time_interval">
-              {(field) => (
+              {(field: any) => (
                 <Input
                   id={field.name}
                   name={field.name}
@@ -268,7 +268,7 @@ const ApiSettingsForm = ({
                   }}
                   className="space-y-4">
                   <generateKeyForm.Field name="description">
-                    {(field) => (
+                    {(field: any) => (
                       <Field>
                         <FieldLabel>Description</FieldLabel>
                         <Input
@@ -282,7 +282,7 @@ const ApiSettingsForm = ({
                   </generateKeyForm.Field>
 
                   <generateKeyForm.Field name="permission_group">
-                    {(field) => (
+                    {(field: any) => (
                       <Field>
                         <FieldLabel>Permission Group</FieldLabel>
                         <Select onValueChange={field.handleChange} value={field.state.value}>
@@ -306,7 +306,7 @@ const ApiSettingsForm = ({
 
                   <div className="grid grid-cols-3 gap-2">
                     <generateKeyForm.Field name="rate_limits.time_window">
-                      {(field) => (
+                      {(field: any) => (
                         <Field>
                           <FieldLabel>Window (min)</FieldLabel>
                           <Input
@@ -319,7 +319,7 @@ const ApiSettingsForm = ({
                       )}
                     </generateKeyForm.Field>
                     <generateKeyForm.Field name="rate_limits.req_per_window">
-                      {(field) => (
+                      {(field: any) => (
                         <Field>
                           <FieldLabel>Requests</FieldLabel>
                           <Input
@@ -332,7 +332,7 @@ const ApiSettingsForm = ({
                       )}
                     </generateKeyForm.Field>
                     <generateKeyForm.Field name="rate_limits.time_interval">
-                      {(field) => (
+                      {(field: any) => (
                         <Field>
                           <FieldLabel>Interval (ms)</FieldLabel>
                           <Input
@@ -396,7 +396,7 @@ const ApiSettingsForm = ({
                       <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
                         <AlertDialogAction
-                          onClick={() => handleDeleteKey(apiKey._id)}
+                          onClick={() => handleDeleteKey(apiKey._id.toString())}
                           className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
                           Delete
                         </AlertDialogAction>

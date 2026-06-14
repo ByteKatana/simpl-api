@@ -5,13 +5,13 @@ import { ArrowBigRightDash, Pencil, RefreshCcw, Trash2, TriangleAlert } from "lu
 import { Field, FieldContent, FieldDescription, FieldLabel, FieldTitle } from "@/components/ui/field"
 import { EyeOpenIcon } from "@radix-ui/react-icons"
 import { Switch } from "@/components/ui/switch"
-import FormSubmitResetBtn from "@/components/studio/form-submit-reset-btn"
 import { ReactFormExtendedApi, useStore } from "@tanstack/react-form"
 import { FormMode } from "@/interfaces"
 import { PermissionGroup } from "@/interfaces/permission_group"
-import { useState, useMemo, useEffect } from "react"
+import { useState, useMemo, useEffect, useRef } from "react"
 import { SYSTEM_FEATURES } from "@/lib/schemas/constants"
 import { EntryType } from "@/interfaces/entry_type"
+import { slugifyName } from "@/lib/slugify"
 
 type Props = {
   form: ReactFormExtendedApi<any, any, any, any, any, any, any, any, any, any, any, any>
@@ -21,17 +21,21 @@ type Props = {
 }
 
 const PrivilegesSettings = ({ form, mode, namespaces, permGroups }: Props) => {
+  const initialSlug =
+    slugifyName(form.state.values.name) || (permGroups && permGroups.length > 0 ? permGroups[0].slug : "")
+
   const [selected, setSelected] = useState({
-    permission_group_sys:
-      form.state.values.name?.split(" ").join("-") || (permGroups && permGroups.length > 0 ? permGroups[0].slug : ""),
-    permission_group_ns:
-      form.state.values.name?.split(" ").join("-") || (permGroups && permGroups.length > 0 ? permGroups[0].slug : ""),
+    permission_group_sys: initialSlug,
+    permission_group_ns: initialSlug,
     feature: "Entry Types",
     namespace: namespaces && namespaces.length > 0 ? namespaces[0].namespace : ""
   })
 
+
+  const prevSlugRef = useRef<string>(initialSlug)
+
   //Watch changes of Permission group name and update selected values
-  const permGroupName = useStore(form.store, (state) => state.values.name?.split(" ").join("-"))
+  const permGroupName = useStore(form.store, (state) => slugifyName(state.values.name))
 
   const nsEnabled = useStore(form.store, (state) => {
     const pg = selected.permission_group_ns
@@ -42,26 +46,35 @@ const PrivilegesSettings = ({ form, mode, namespaces, permGroups }: Props) => {
   })
 
   useEffect(() => {
-    if (permGroupName) {
-      const oldKeySys = selected.permission_group_sys
+    if (!permGroupName) return
 
-      //Rename the key in form values if old key exists and differs from new key
-      if (oldKeySys && oldKeySys !== permGroupName) {
-        const currVals = form.state.values.privileges?.[oldKeySys]
-        if (currVals) {
-          form.setFieldValue(`privileges.${permGroupName}`, currVals)
-          form.deleteField(`privileges.${oldKeySys}`)
+    const oldKey = prevSlugRef.current
+
+    if (oldKey && oldKey !== permGroupName) {
+      const currentPrivileges = form.state.values.privileges ?? {}
+      const carried = currentPrivileges[oldKey] ??
+        currentPrivileges[permGroupName] ?? {
+          system: {},
+          namespaces: {}
         }
-      }
 
-      if (permGroupName) {
-        setSelected({
-          ...selected,
-          permission_group_sys: permGroupName,
-          permission_group_ns: permGroupName
-        })
+      // Build the next privileges object atomically: drop old key, write new key.
+      const next: Record<string, any> = {}
+      for (const [k, v] of Object.entries(currentPrivileges)) {
+        if (k === oldKey) continue
+        next[k] = v
       }
+      next[permGroupName] = carried
+      form.setFieldValue("privileges", next)
     }
+
+    prevSlugRef.current = permGroupName
+
+    setSelected((prev) => ({
+      ...prev,
+      permission_group_sys: permGroupName,
+      permission_group_ns: permGroupName
+    }))
   }, [permGroupName])
 
   useEffect(() => {
@@ -598,9 +611,6 @@ const PrivilegesSettings = ({ form, mode, namespaces, permGroups }: Props) => {
           </form.Field>
         </fieldset>
       </div>
-
-      {/* @ts-ignore */}
-      <FormSubmitResetBtn form={form} />
     </div>
   )
 }

@@ -6,7 +6,7 @@ import { Entry } from "@/interfaces/entry"
 import { revalidatePath } from "next/cache"
 import { getPermissionGroup } from "@/lib/auth/get-session"
 
-export default async function deleteEntryAction(id: string) {
+export default async function deleteEntryAction(id: string): Promise<ActionResponse<Entry>> {
   try {
     // Check permission first.
     const perm_group = await getPermissionGroup()

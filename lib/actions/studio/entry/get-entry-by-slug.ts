@@ -1,11 +1,11 @@
 "use server"
 
 import handleError from "@/lib/handlers/error"
-import { ErrorResponse, SuccessResponse } from "@/interfaces"
+import { ActionResponse, ErrorResponse, SuccessResponse } from "@/interfaces"
 import { Entry } from "@/interfaces/entry"
 import { getPermissionGroup } from "@/lib/auth/get-session"
 
-export default async function getEntryBySlug(slug: string) {
+export default async function getEntryBySlug(slug: string): Promise<ActionResponse<Entry>> {
   try {
     // Check permission first.
     const perm_group = await getPermissionGroup()
@@ -22,7 +22,8 @@ export default async function getEntryBySlug(slug: string) {
       const unhandledError = new Error("Failed to fetch entry by slug")
       return handleError(unhandledError)
     }
-    return { success: true, status: 200, data: entry } as SuccessResponse<Entry>
+    const data = Array.isArray(entry) ? entry[0] : entry
+    return { success: true, status: 200, data } as SuccessResponse<Entry>
   } catch (error) {
     return handleError(error) as ErrorResponse
   }

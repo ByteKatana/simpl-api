@@ -16,30 +16,32 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger
+  AlertDialogTitle
 } from "@/components/ui/alert-dialog"
 import { useState } from "react"
 import createPermissionGroup from "@/lib/actions/studio/permission-groups/create-permission-group"
-import { NextResponse } from "next/server"
 import { toast } from "sonner"
 import { Undo2Icon } from "lucide-react"
 import { z } from "zod"
 import { permGroupDbToForm } from "@/lib/db-to-form"
 import updatePermissionGroup from "@/lib/actions/studio/permission-groups/update-permission-group"
+import FormSubmitResetBtn from "@/components/studio/form-submit-reset-btn"
+import { PermissionGroup } from "@/interfaces/permission_group"
+import { slugifyName } from "@/lib/slugify"
 
 type Props = {
   namespaces: EntryType[]
+  permGroups: PermissionGroup[]
   mode: FormMode
-  formPayload?: {
-    _id: string
+  formPayload: {
+    _id: any
     name: string
     slug: string
     privileges: DbPrivilege[]
   }
 }
 
-const PermissionGroupForm = ({ namespaces, mode, formPayload }: Props) => {
+const PermissionGroupForm = ({ namespaces, mode, permGroups, formPayload }: Props) => {
   const router = useRouter()
   const [showEmptyWarning, setShowEmptyWarning] = useState(false)
   const [pendingValue, setPendingValue] = useState<any>(null)
@@ -101,7 +103,7 @@ const PermissionGroupForm = ({ namespaces, mode, formPayload }: Props) => {
       onSubmit: PermissionGroupFormSchema
     },
     onSubmit: async ({ value }) => {
-      const slug = value.name?.split(" ").join("-")
+      const slug = slugifyName(value.name)
       const privileges = value.privileges?.[slug]
 
       const hasAnyTrueAction = (resources: Record<string, Record<string, boolean>> | undefined) => {
@@ -154,8 +156,13 @@ const PermissionGroupForm = ({ namespaces, mode, formPayload }: Props) => {
           />
         </Field>
         <Field>
-          <PrivilegesSettings form={form} mode={mode} namespaces={namespaces} />
+          <PrivilegesSettings form={form} mode={mode} permGroups={permGroups} namespaces={namespaces} />
         </Field>
+
+        {/* Actions */}
+        <div className="flex gap-x-4 items-center justify-start">
+          <FormSubmitResetBtn form={form} />
+        </div>
       </form>
       <AlertDialog open={showEmptyWarning} onOpenChange={setShowEmptyWarning}>
         <AlertDialogContent>

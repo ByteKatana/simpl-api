@@ -1,21 +1,22 @@
 "use server"
 
 import handleError from "@/lib/handlers/error"
-import { ErrorResponse, SuccessResponse } from "@/interfaces"
+import { ActionResponse, ErrorResponse, SuccessResponse } from "@/interfaces"
 import { EntryTypeFormSchema } from "@/lib/schemas/client/form-schemas"
 import { getPermissionGroup } from "@/lib/auth/get-session"
 import { z } from "zod"
-import { EntryTypeSchema } from "@/lib/schemas/server/server-schemas"
 import { EntryType } from "@/interfaces/entry_type"
 
 //TODO: Fix Errors (TS2339)
-export default async function createEntryType(formValues: z.infer<typeof EntryTypeFormSchema>) {
+export default async function createEntryType(
+  formValues: z.infer<typeof EntryTypeFormSchema>
+): Promise<ActionResponse<EntryType>> {
   try {
     // Check permission first.
     const perm_group = await getPermissionGroup()
 
     if (!perm_group) {
-      return handleError(new Error("Unauthorized to create entry type"))
+      return handleError(new Error("Unauthorized to create entry type"), "server")
     }
 
     // Get form values
@@ -60,13 +61,11 @@ export default async function createEntryType(formValues: z.infer<typeof EntryTy
       }))
     }
 
-    // Validate the form input against EntryTypeSchema
-    // EntryTypeSchema is a transform of EntryTypeFormSchema — safeParse runs
-    // EntryTypeFormSchema validation first. If it fails, we return early.
-    const validated = EntryTypeSchema.safeParse(formValues)
+    // Validate the form input against EntryTypeFormSchema
+    const validated = EntryTypeFormSchema.safeParse(formValues)
 
     if (!validated.success) {
-      return handleError(new Error(validated.error.errors.map((e: Error) => e.message).join(", ")))
+      return handleError(new Error(validated.error.issues.map((e) => e.message).join(", ")), "server")
     }
 
     // Send the validated (merged) data to the API
@@ -84,7 +83,7 @@ export default async function createEntryType(formValues: z.infer<typeof EntryTy
 
     if (!response.ok) {
       const error = new Error(data?.message || "Failed to create entry type")
-      return handleError(error)
+      return handleError(error, "server")
     }
 
     return { success: true, status: response.status, data } as SuccessResponse<EntryType>

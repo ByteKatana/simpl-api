@@ -35,7 +35,6 @@ const UserCreateForm = () => {
     },
     onSubmit: async ({ value }) => {
       try {
-        //TODO: Fix type missmatch (TS2339) on response variable
         const response = await createUser(value)
         if (response.success) {
           toast.success("Successful!", {
@@ -52,7 +51,7 @@ const UserCreateForm = () => {
             }
           })
         } else {
-          toast.error(response.message, { position: "top-center" })
+          toast.error(response.error?.message || "Failed to create user", { position: "top-center" })
         }
       } catch (error) {
         toast.error("An error occurred while creating the user", { position: "top-center" })

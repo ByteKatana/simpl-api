@@ -2,7 +2,8 @@
 
 import getPermissionGroups from "@/lib/actions/studio/permission-groups/get-permission-groups"
 import { getApiKeyInfo } from "@/lib/actions/studio/settings/get-api-key-info"
-import { ApiKey } from "@/interfaces"
+import { ApiKey, DbPrivilege } from "@/interfaces"
+import { PermissionGroup } from "@/interfaces/permission_group"
 import { z, ZodString } from "zod"
 
 /**
@@ -27,7 +28,7 @@ export async function hasPermissionApi(apiKey: Pick<ApiKey, "key">, requiredPerm
   console.log("apiGroupName", apiGroupName)
   try {
     const groups = await getPermissionGroups(true)
-    const group = groups.data.find((g: object) => g.slug === apiGroupName) //TODO: Fix TS2339
+    const group = groups.data?.find((g: PermissionGroup) => g.slug === apiGroupName)
 
     if (!group || !group.privileges) {
       return false
@@ -35,13 +36,12 @@ export async function hasPermissionApi(apiKey: Pick<ApiKey, "key">, requiredPerm
 
     const reqPerm = requiredPermission.split(".").slice(-1)[0]
     const namespace = requiredPermission.split(".").slice(0, -1).join(".")
-    const privileges = group.privileges as object[]
+    const privileges = group.privileges as unknown as DbPrivilege[]
 
-    const privilege = privileges.find((privilege: any) => privilege[namespace])
+    const privilege = privileges.find((p: DbPrivilege) => p[namespace])
 
     let hasPerm = false
     if (privilege) {
-      //TODO: Fix TS7053
       hasPerm = privilege[namespace].permissions.includes(reqPerm)
     }
 

@@ -1,4 +1,4 @@
-import { PublishStatus, UserStatus } from "@/interfaces"
+import { UserStatus } from "@/interfaces"
 import { RadioGroup as RadioGroupPrimitive } from "radix-ui"
 import { AnyFieldApi } from "@tanstack/form-core"
 
@@ -16,7 +16,7 @@ const UserStatusRadioGroup = ({ field }: Props) => {
       className="grid w-full max-w-md grid-cols-3 gap-3"
       value={field.state.value}
       onValueChange={(val) => field.handleChange(val as UserStatus)}
-      defaultValue={UserStatus.Draft}>
+      defaultValue={UserStatus.Disabled}>
       {(Object.values(UserStatus) as UserStatus[]).map((status) => (
         <RadioGroupPrimitive.Item
           key={status}

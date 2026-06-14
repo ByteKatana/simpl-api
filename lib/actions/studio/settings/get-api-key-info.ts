@@ -1,7 +1,7 @@
 "use server"
 
 import { connectDB } from "@/lib/mongodb"
-import { ApiKey, ActionResponse } from "@/interfaces"
+import { ApiKey, ActionResponse, ErrorResponse } from "@/interfaces"
 import handleError from "@/lib/handlers/error"
 
 /**
@@ -29,6 +29,7 @@ export async function getApiKeyInfo(apiKey: Pick<ApiKey, "key">): Promise<Action
 
     return {
       success: true,
+      status: 200,
       data: {
         _id: apiKeyDoc._id.toString(),
         key: apiKeyDoc.key,
@@ -39,7 +40,6 @@ export async function getApiKeyInfo(apiKey: Pick<ApiKey, "key">): Promise<Action
       }
     }
   } catch (error: unknown) {
-    // 5. Use the project's standard error handler
-    return handleError(new Error("An error occurred while retrieving API key information:", error))
+    return handleError(new Error("An error occurred while retrieving API key information"), "server") as ErrorResponse
   }
 }

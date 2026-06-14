@@ -5,6 +5,9 @@ import EntryForm from "@/app/studio/entries/form"
 import { notFound } from "next/navigation"
 import { FormMode } from "@/interfaces"
 import { PermissionGuard } from "@/components/studio/permission-groups/permission-guard"
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
+import { ChevronLeft } from "lucide-react"
 
 type Props = {
   searchParams: Promise<{ slug: string }>
@@ -42,12 +45,20 @@ const Page = async ({ searchParams }: Props) => {
     // Sort by namespace length to get hierarchy order
     entryTypesHierarchy = [...parents.sort((a, b) => a.namespace.length - b.namespace.length), targetEntryType]
   }
-  console.log("TARGETENTRYTYPE: ", targetEntryType.namespace)
+
   return (
     <PermissionGuard reqPermission={["system.entries.create", `${targetEntryType.namespace}.create`]} isPage={true}>
       <div>
         <div className="flex flex-col max-w-3xl mx-auto">
           <Toaster />
+          <div className="mb-4">
+            <Button variant="ghost" asChild className="-ml-4 text-muted-foreground hover:text-foreground">
+              <Link href="/studio/entries" className="flex items-center gap-1">
+                <ChevronLeft className="w-4 h-4" />
+                <span>Back to Entries</span>
+              </Link>
+            </Button>
+          </div>
           <div className="flex flex-col gap-y-0.5 mb-8">
             <h1 className="text-4xl font-bold font-sans">New Entry</h1>
             <small className="text-lg text-neutral-300">

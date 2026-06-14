@@ -3,16 +3,18 @@
 import { getPermissionGroup } from "@/lib/auth/get-session"
 import handleError from "@/lib/handlers/error"
 import { ApiKeyFormSchema } from "@/lib/schemas/client/form-schemas"
-import { ApiKey, SuccessResponse } from "@/interfaces"
+import { ActionResponse, ApiKey, SuccessResponse } from "@/interfaces"
 import { z } from "zod"
 import { connectDB } from "@/lib/mongodb"
 import { uid } from "uid"
 
-export default async function generateApiKey(formValues: z.infer<typeof ApiKeyFormSchema>) {
+export default async function generateApiKey(
+  formValues: z.infer<typeof ApiKeyFormSchema>
+): Promise<ActionResponse<ApiKey>> {
   try {
     const permGroup = await getPermissionGroup()
     if (!permGroup) {
-      return handleError(new Error("Unauthorized"))
+      return handleError(new Error("Unauthorized"), "server")
     }
 
     const validated = ApiKeyFormSchema.parse(formValues)
@@ -29,7 +31,7 @@ export default async function generateApiKey(formValues: z.infer<typeof ApiKeyFo
 
     const result = await db.collection("api_keys").insertOne(newKey)
     if (!result.insertedId) {
-      return handleError(new Error("Failed to generate API key"))
+      return handleError(new Error("Failed to generate API key"), "server")
     }
     return {
       success: true,
@@ -41,6 +43,6 @@ export default async function generateApiKey(formValues: z.infer<typeof ApiKeyFo
       }
     } as SuccessResponse<ApiKey>
   } catch (error) {
-    return handleError(error)
+    return handleError(error, "server")
   }
 }

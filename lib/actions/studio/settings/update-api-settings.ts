@@ -26,9 +26,12 @@ export default async function updateApiSettings(formValues: any, _id: string): P
       const unhandledError = new Error("Failed to update general settings")
       return handleError(unhandledError)
     }
-    const data = response.settings
+    const data = {
+      id: response.id,
+      name: response.name,
+      settings: response.settings
+    } as ApiSettings
 
-    //TODO: Fix TS2352: Conversion of type
     return { success: true, status: 200, data } as SuccessResponse<ApiSettings>
   } catch (error) {
     return handleError(error) as ErrorResponse

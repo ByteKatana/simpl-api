@@ -7,11 +7,9 @@ import { uid } from "uid"
 
 // Actions and Helpers
 import createUser from "@/lib/actions/studio/users/create-user"
-import checkUserEmailExist from "@/lib/check-user-email-exist"
 import { getSettingsValue } from "@/lib/actions/studio/settings/get-settings-value"
 import updateUser from "@/lib/actions/studio/users/update-user"
 import handleError from "@/lib/handlers/error"
-import checkUserOAuthExist from "@/lib/check-user-oauth-exist"
 
 // Provider Imports
 import Google from "next-auth/providers/google"

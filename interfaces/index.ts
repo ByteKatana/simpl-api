@@ -87,7 +87,7 @@ export enum BuiltInPermGroup {
 
 export type SystemFeature = (typeof SYSTEM_FEATURES)[number]
 
-export type DbPrivilege = Record<string, { permission: string[] }>
+export type DbPrivilege = Record<string, { permissions: string[] }>
 
 export enum EmailVerification {
   MAGIC_LINK = "MAGIC_LINK",

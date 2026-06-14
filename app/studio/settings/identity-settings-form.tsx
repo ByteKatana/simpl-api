@@ -18,7 +18,6 @@ import {
   SiNetlify,
   SiNotion,
   SiSlack,
-  SiTodoist,
   SiVercel,
   SiYandexcloud,
   SiZoom
@@ -39,7 +38,7 @@ type Props = {
 }
 
 const IdentitySettingsForm = ({ formValues, permGroups }: Props) => {
-  const { id, settings, ...rest } = formValues
+  const { id, settings } = formValues
   const form = useForm({
     defaultValues: settings,
     validators: {
@@ -49,7 +48,7 @@ const IdentitySettingsForm = ({ formValues, permGroups }: Props) => {
     },
     onSubmit: async ({ value }) => {
       try {
-        let response = await updateIdentitySettings(value, id)
+        let response = await updateIdentitySettings(value, id?.toString() || "")
         if (response.success) {
           toast.success("Successful!", {
             description: `Identity Settings has been updated successfully!`,

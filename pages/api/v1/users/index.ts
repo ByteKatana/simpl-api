@@ -10,7 +10,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
   const { apikey } = _req.query
   const apiKey = new apiKeyController({ key: apikey as string })
   const apiKeyData = await apiKey.findKey()
-  if (apiKeyData[0] !== undefined && apiKeyData[0].key === apikey) {
+  if (apiKeyData && apiKeyData[0].key === apikey) {
     //Check permission
     const isAllowed = await hasPermissionApi(apiKeyData[0], "system.users.read")
     if (!isAllowed) {

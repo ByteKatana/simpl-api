@@ -9,7 +9,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
   const { apikey } = _req.query
   const apiKey = new apiKeyController({ key: apikey as string })
   const apiKeyData = await apiKey.findKey()
-  if (apiKeyData[0] !== undefined && apiKeyData[0].key === apikey) {
+  if (apiKeyData && apiKeyData[0].key === apikey) {
     const apiBuilder = new apiBuilderController("index", "permission_groups")
     const permGroupsData: any[] = await apiBuilder.fetchData("Equals")
     return res.status(200).json(permGroupsData.filter((group) => group.slug !== "root"))

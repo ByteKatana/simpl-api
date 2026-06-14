@@ -4,12 +4,11 @@ import { DataTable } from "@/components/studio/data-table/data-table"
 import type { ColumnDef, Row } from "@tanstack/react-table"
 import { Checkbox } from "@/components/ui/checkbox"
 import { DataTableRowActions } from "./data-table/data-table-row-actions"
-import { PermissionGroup } from "@/interfaces"
+import { PermissionGroup } from "@/interfaces/permission_group"
 import deletePermissionGroupAction from "@/lib/actions/studio/permission-groups/delete-permission-group"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { hasPermission } from "@/lib/actions/auth/has-permission"
-import deleteEntryAction from "@/lib/actions/studio/entry/delete-entry"
 
 const deletePermGroup = async (row: Row<PermissionGroup>) => {
   try {

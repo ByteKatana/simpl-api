@@ -23,7 +23,7 @@ import { DataTableToolbar } from "./data-table-toolbar"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
-  data: TData[] | undefined
+  data: TData[]
   searchKey?: string
   filters?: {
     columnId: string

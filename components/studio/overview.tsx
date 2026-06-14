@@ -1,16 +1,15 @@
 "use client"
-import React, { useCallback, useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import TotalRequests from "@/components/studio/total-requests"
 import { HourlyRequests } from "@/components/studio/hourly-requests"
 import OverviewSkeleton from "@/components/studio/skeletons/overview-skeleton"
-import getDashboardStats from "@/lib/actions/studio/stats/get-dashboard-stats"
+import getOverviewStats from "@/lib/actions/studio/stats/get-overview-stats"
 import { useQuery } from "@tanstack/react-query"
 
 const Overview = () => {
   const { data: stats, isLoading } = useQuery({
     queryKey: ["overviw-stats"],
-    queryFn: () => getDashboardStats(),
+    queryFn: () => getOverviewStats(),
     refetchInterval: 30000
   })
 

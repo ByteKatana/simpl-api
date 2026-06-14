@@ -9,6 +9,8 @@ import {
 
 // EntryType Form Schemas
 export const EntryTypeFieldFormSchema = z.object({
+  instanceId: z.string(),
+  type: z.string(),
   name: z.string().min(2),
   label: z.string(),
   placeholder: z.string(),
@@ -29,10 +31,12 @@ export const EntryTypeFieldFormSchema = z.object({
     {
       message: "Invalid regular expression pattern"
     }
-  )
+  ),
+  nextFieldId: z.string().optional()
 })
 
 export const EntryTypeFieldsetFormSchema = z.object({
+  instanceId: z.string(),
   name: z.string(),
   slug: z
     .string()
@@ -169,16 +173,6 @@ export const SignInFormSchema = z.object({
     .min(8, { message: "Password must be at least 8 characters." })
     .max(64, { message: "Password cannot exceed 64 characters." })
 })
-
-// Permission Group Schemas
-/*export const PrivilegeFormSchema = z.array(
-  z.record(
-    z.string(), // dynamic key (namespaces e.g., fruits, fruits.oranges)
-    z.object({
-      permissions: z.array(z.string()).default([])
-    })
-  )
-)*/
 
 const ActionSchema = z.record(
   z.string(), // action keys: "read", "create", "update", "delete"

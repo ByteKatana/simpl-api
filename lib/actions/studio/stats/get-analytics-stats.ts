@@ -3,7 +3,26 @@
 import { prisma } from "@/lib/prisma"
 import handleError from "@/lib/handlers/error"
 
-export default async function getAnalyticsStats() {
+type AnalyticsStats = {
+  trafficData: any[]
+  avgResponseTime: number
+  totalRequestStats: {
+    count: number
+    change: number
+  }
+  uniqueRequestStats: {
+    count: number
+    change: number
+  }
+  rateLimitStats: {
+    percentage: number
+    change: number
+  }
+  topKeysThisWeek: { name: string; value: number }[]
+  topKeysAllTime: { name: string; value: number }[]
+}
+
+export default async function getAnalyticsStats(): Promise<AnalyticsStats> {
   try {
     const now = new Date()
     const startOfThisWeek = new Date(now)
@@ -113,9 +132,12 @@ export default async function getAnalyticsStats() {
     return {
       trafficData,
       avgResponseTime,
-      rateLimitStats: { percentage: rateLimitPercentage.toFixed(1), change: rateLimitChange.toFixed(1) },
-      uniqueRequestStats: { count: uniqueRequestsThisWeek, change: uniqueChange.toFixed(1) },
-      totalRequestStats: { count: totalRequestsThisWeek, change: totalChange.toFixed(1) },
+      rateLimitStats: {
+        percentage: Number(rateLimitPercentage.toFixed(1)),
+        change: Number(rateLimitChange.toFixed(1))
+      },
+      uniqueRequestStats: { count: uniqueRequestsThisWeek, change: Number(uniqueChange.toFixed(1)) },
+      totalRequestStats: { count: totalRequestsThisWeek, change: Number(totalChange.toFixed(1)) },
       topKeysThisWeek: topKeysThisWeek.map((k) => ({ name: k.apiKey, value: k._count.apiKey })),
       topKeysAllTime: topKeysAllTime.map((k) => ({ name: k.apiKey, value: k._count.apiKey }))
     }

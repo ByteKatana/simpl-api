@@ -15,25 +15,19 @@ import { EntryTypeFieldFormSchema, EntryTypeFieldsetFormSchema } from "@/lib/sch
 import { z } from "zod"
 import { PlusCircle, Pencil } from "lucide-react"
 
-//TODO: Remove redundant types, Fix Errors (TS2322,TS2339,TS2345)
-type FieldFormValues = z.infer<typeof EntryTypeFieldFormSchema>
+// EntryType Field and Row Types
+type FieldItem = z.infer<typeof EntryTypeFieldFormSchema>
+type RowItem = z.infer<typeof EntryTypeFieldsetFormSchema>
 
-type FieldItem = z.infer<typeof EntryTypeFieldFormSchema> & {
-  instanceId: string
-  type: string
-  nextFieldId?: string
-  options: string[]
-}
-
-type RowItem = z.infer<typeof EntryTypeFieldsetFormSchema> & {
-  fields: FieldItem[]
-}
+type FieldFormValues = FieldItem
 
 interface CanvasState {
   rows: RowItem[]
 }
 
 const defaultFieldValues = (): FieldFormValues => ({
+  instanceId: "",
+  type: "",
   name: "",
   label: "",
   placeholder: "",
@@ -125,7 +119,9 @@ export const BuilderCanvas = ({
     const row = rows.find((r) => r.instanceId === rowId)
     const field = row?.fields.find((f) => f.instanceId === instanceId)
     if (!field) return
-    savedFieldSnapshot.current = { ...field, options: [...field.options] } as FieldItem
+    savedFieldSnapshot.current = { ...field, options: [...field.options] }
+    editForm.setFieldValue("instanceId", field.instanceId)
+    editForm.setFieldValue("type", field.type)
     editForm.setFieldValue("name", field.name)
     editForm.setFieldValue("label", field.label)
     editForm.setFieldValue("placeholder", field.placeholder)
@@ -134,6 +130,7 @@ export const BuilderCanvas = ({
     editForm.setFieldValue("minLength", field.minLength)
     editForm.setFieldValue("maxLength", field.maxLength)
     editForm.setFieldValue("pattern", field.pattern)
+    editForm.setFieldValue("nextFieldId", field.nextFieldId)
     setEditingField({ rowId, instanceId })
   }
 
@@ -148,16 +145,9 @@ export const BuilderCanvas = ({
           fields: row.fields.map((f): FieldItem => {
             if (f.instanceId !== editingField.instanceId) return f
             return {
-              ...f,
-              name: values.name.split(" ").join("_").toLowerCase(),
-              label: values.label,
-              placeholder: values.placeholder,
-              options: values.options,
-              required: values.required,
-              minLength: values.minLength,
-              maxLength: values.maxLength,
-              pattern: values.pattern
-            } as FieldItem
+              ...values,
+              name: values.name.split(" ").join("_").toLowerCase()
+            }
           })
         }
       })

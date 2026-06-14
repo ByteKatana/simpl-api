@@ -19,8 +19,8 @@ export default async function deleteUserAction(id: string) {
     if (perm_group !== "root") {
       const responseTargetUser = await getUserBySlug("_id", id)
       const targetUser = responseTargetUser.data
-      if (targetUser[0].permission_group === "root") {
-        return handleError(new Error("Unauthorized to delete this user"))
+      if (targetUser && targetUser.permission_group === "root") {
+        return handleError(new Error("Unauthorized to delete this user"), "server")
       }
     }
 

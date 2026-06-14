@@ -6,7 +6,6 @@ import {
   AppearanceSettingsFormSchema,
   EntryCreateFormSchema,
   EntryTypeFieldFormSchema,
-  EntryTypeFieldsetFormSchema,
   EntryTypeFormSchema,
   GeneralSettingsFormSchema,
   IdentitySettingsFormSchema,
@@ -14,7 +13,7 @@ import {
   UserFormSchema
 } from "@/lib/schemas/client/form-schemas"
 
-export const UserCreateSchema = UserFormSchema.transform((formData) => ({
+export const UserCreateSchema = UserFormSchema.extend({
   _id: z
     .union([z.instanceof(ObjectId), z.string().refine((val) => ObjectId.isValid(val), { message: "Invalid ObjectId" })])
     .optional(),
@@ -36,9 +35,8 @@ export const UserCreateSchema = UserFormSchema.transform((formData) => ({
     }),
   oauth_id: z.string().optional(),
   oauth_provider: z.string().optional(),
-  email_verified: z.boolean().default(false),
-  ...formData
-}))
+  email_verified: z.boolean().default(false)
+})
 
 /*
  * EntryType Schemas
@@ -53,34 +51,30 @@ export const EntryTypeFieldValidationSchema = EntryTypeFieldFormSchema.transform
 }))
 
 export const EntryTypeFieldSchema = EntryTypeFieldFormSchema.transform((formData) => ({
-  instanceId: z.string().min(1),
-  type: z.string().min(1),
+  instanceId: formData.instanceId,
+  type: formData.type,
   name: formData.name,
   label: formData.label,
   placeholder: formData.placeholder,
   options: formData.options,
-  validation: EntryTypeFieldValidationSchema,
-  nextFieldId: z.string().optional()
+  validation: {
+    required: formData.required,
+    minLength: formData.minLength,
+    maxLength: formData.maxLength,
+    pattern: formData.pattern
+  },
+  nextFieldId: formData.nextFieldId
 }))
 
-export const EntryTypeFieldsetSchema = EntryTypeFieldsetFormSchema.transform((formData) => ({
-  ...formData,
-  instanceId: z.string().min(1)
-}))
-
-export const EntryTypeSchema = EntryTypeFormSchema.transform((formData) => ({
+export const EntryTypeSchema = EntryTypeFormSchema.extend({
   _id: z
     .union([z.instanceof(ObjectId), z.string().refine((val) => ObjectId.isValid(val), { message: "Invalid ObjectId" })])
     .optional(),
-  name: formData.name,
-  namespace: formData.namespace,
   slug: z.string().min(1, { message: "Slug is required" }).max(255, { message: "Slug cannot exceed 255 characters" }),
-  fieldsets: formData.fieldsets,
-  status: formData.status,
   createdBy: z.string(),
   created_at: z.date(),
   updated_at: z.date().optional()
-}))
+})
 
 /*
  * Entry Schemas
@@ -88,11 +82,11 @@ export const EntryTypeSchema = EntryTypeFormSchema.transform((formData) => ({
  * EntryUpdateSchema -> Schema for updating an entry
  * EntryDeleteSchema -> Schema for deleting an entry
  * */
-export const EntryCreateSchema = EntryCreateFormSchema.transform((formData) => ({
-  ...formData,
-  _id: z
-    .union([z.instanceof(ObjectId), z.string().refine((val) => ObjectId.isValid(val), { message: "Invalid ObjectId" })])
-    .optional(),
+export const EntryCreateSchema = EntryCreateFormSchema.extend({
+  _id: z.union([
+    z.instanceof(ObjectId),
+    z.string().refine((val) => ObjectId.isValid(val), { message: "Invalid ObjectId" })
+  ]),
   namespace: z.string().min(1),
   slug: z.string().min(1, { message: "Slug is required" }),
   data: z.object(),
@@ -100,49 +94,72 @@ export const EntryCreateSchema = EntryCreateFormSchema.transform((formData) => (
   created_by: z.string().optional(),
   updated_at: z.date().default(() => new Date()),
   updated_by: z.string().optional()
-}))
+})
 
 // Permission Group Schema
-export const PermissionGroupSchema = PermissionGroupFormSchema.transform((formData) => ({
-  _id: z
-    .union([z.instanceof(ObjectId), z.string().refine((val) => ObjectId.isValid(val), { message: "Invalid ObjectId" })])
-    .optional(),
+export const PermissionGroupSchema = PermissionGroupFormSchema.extend({
+  _id: z.union([
+    z.instanceof(ObjectId),
+    z.string().refine((val) => ObjectId.isValid(val), { message: "Invalid ObjectId" })
+  ]),
   slug: z.string().min(1, "Slug is required"),
-  ...formData,
   updated_at: z.date().default(() => new Date())
+}).transform((formData: any) => ({
+  ...formData,
+  _id: formData._id.toString()
 }))
 
 // Settings Schema
-export const GeneralSettingsSchema = GeneralSettingsFormSchema.transform((formData) => ({
-  id: z
-    .union([z.instanceof(ObjectId), z.string().refine((val) => ObjectId.isValid(val), { message: "Invalid ObjectId" })])
-    .optional(),
+export const GeneralSettingsSchema = GeneralSettingsFormSchema.extend({
+  id: z.union([
+    z.instanceof(ObjectId),
+    z.string().refine((val) => ObjectId.isValid(val), { message: "Invalid ObjectId" })
+  ]),
   name: z.string().min(1, "Name is required"),
-  settings: formData
+  settings: z.object()
+}).transform((formData) => ({
+  id: formData.id,
+  name: formData.name,
+  settings: formData.settings
 }))
 
-export const IdentitySettingsSchema = IdentitySettingsFormSchema.transform((formData) => ({
-  id: z
-    .union([z.instanceof(ObjectId), z.string().refine((val) => ObjectId.isValid(val), { message: "Invalid ObjectId" })])
-    .optional(),
+export const IdentitySettingsSchema = IdentitySettingsFormSchema.extend({
+  id: z.union([
+    z.instanceof(ObjectId),
+    z.string().refine((val) => ObjectId.isValid(val), { message: "Invalid ObjectId" })
+  ]),
   name: z.string().min(1, "Name is required"),
-  settings: formData
+  settings: z.object()
+}).transform((formData) => ({
+  id: formData.id,
+  name: formData.name,
+  settings: formData.settings
 }))
 
-export const ApiSettingsSchema = ApiSettingsFormSchema.transform((formData) => ({
-  id: z
-    .union([z.instanceof(ObjectId), z.string().refine((val) => ObjectId.isValid(val), { message: "Invalid ObjectId" })])
-    .optional(),
+export const ApiSettingsSchema = ApiSettingsFormSchema.extend({
+  id: z.union([
+    z.instanceof(ObjectId),
+    z.string().refine((val) => ObjectId.isValid(val), { message: "Invalid ObjectId" })
+  ]),
   name: z.string().min(1, "Name is required"),
-  settings: formData
+  settings: z.json()
+}).transform((formData) => ({
+  id: formData.id,
+  name: formData.name,
+  settings: formData.settings
 }))
 
-export const AppearanceSettingsSchema = AppearanceSettingsFormSchema.transform((formData) => ({
-  id: z
-    .union([z.instanceof(ObjectId), z.string().refine((val) => ObjectId.isValid(val), { message: "Invalid ObjectId" })])
-    .optional(),
+export const AppearanceSettingsSchema = AppearanceSettingsFormSchema.extend({
+  id: z.union([
+    z.instanceof(ObjectId),
+    z.string().refine((val) => ObjectId.isValid(val), { message: "Invalid ObjectId" })
+  ]),
   name: z.string().min(1, "Name is required"),
-  settings: formData
+  settings: z.json()
+}).transform((formData) => ({
+  id: formData.id,
+  name: formData.name,
+  settings: formData.settings
 }))
 
 export const SettingsSchema = z.object({
@@ -155,12 +172,10 @@ export const SettingsSchema = z.object({
 
 // API Key Schema
 
-export const ApiKeySchema = ApiKeyFormSchema.transform((formData) => ({
+export const ApiKeySchema = ApiKeyFormSchema.extend({
   _id: z
     .union([z.instanceof(ObjectId), z.string().refine((val) => ObjectId.isValid(val), { message: "Invalid ObjectId" })])
-    .optional()
-    .toString(),
-  ...formData,
-  key: z.string(), // This will be generated on the server
+    .optional(),
+  key: z.string(),
   created_at: z.date().default(() => new Date())
-}))
+})

@@ -17,7 +17,8 @@ export default async function getPermissionGroupById(id: string): Promise<Action
       const unhandledError = new Error("Failed to fetch permission group by slug")
       return handleError(unhandledError)
     }
-    return { success: true, status: 200, data: entryType } as SuccessResponse<PermissionGroup>
+    const data = Array.isArray(entryType) ? entryType[0] : entryType
+    return { success: true, status: 200, data } as SuccessResponse<PermissionGroup>
   } catch (error) {
     return handleError(error) as ErrorResponse
   }

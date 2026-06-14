@@ -25,7 +25,6 @@ import {
   SiLinkedin,
   SiClickup,
   SiHuggingface,
-  SiYandex,
   SiMaildotru
 } from "react-icons/si"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"

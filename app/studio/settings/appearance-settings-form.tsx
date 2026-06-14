@@ -11,7 +11,7 @@ import { toast } from "sonner"
 import updateAppearanceSettings from "@/lib/actions/studio/settings/update-appearance-settings"
 
 const AppearanceSettingsForm = ({ formValues }: { formValues: z.infer<typeof AppearanceSettingsSchema> }) => {
-  const { id, settings, ...rest } = formValues
+  const { id, settings } = formValues
   const form = useForm({
     defaultValues: settings,
     validators: {
@@ -21,7 +21,7 @@ const AppearanceSettingsForm = ({ formValues }: { formValues: z.infer<typeof App
     },
     onSubmit: async ({ value }) => {
       try {
-        let response = await updateAppearanceSettings(value, id)
+        let response = await updateAppearanceSettings(value, id?.toString() || "")
         if (response.success) {
           toast.success("Successful!", {
             description: `Apperance Settings has been updated successfully!`,
@@ -55,7 +55,7 @@ const AppearanceSettingsForm = ({ formValues }: { formValues: z.infer<typeof App
             Default Mode
           </FieldLabel>
           <form.Field name="mode">
-            {(field) => (
+            {(field: any) => (
               <Select
                 name={field.name}
                 value={field.state.value as string}

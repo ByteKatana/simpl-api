@@ -1,5 +1,6 @@
 import LoginForm from "./LoginForm"
 import { getSettingsValue } from "@/lib/actions/studio/settings/get-settings-value"
+import { Metadata } from "next"
 
 /**
  * Login Page (App Router)
@@ -8,7 +9,7 @@ import { getSettingsValue } from "@/lib/actions/studio/settings/get-settings-val
  * grid structure for the login form placement.
  */
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Login | simpl:api",
   description: "Login to simpl:api dashboard"
 }

@@ -111,7 +111,8 @@ export function DataTableToolbar<TData>({
             onDelete(selectedRows.map((row) => row.original))
             table.resetRowSelection()
             setShowDeleteDialog(false)
-            toast.success(`${selectedRows.length} item(s) deleted successfully`, { position: "top-center" })
+            toast.info("This feature is not yet implemented", { position: "top-center" })
+            //toast.success(`${selectedRows.length} item(s) deleted successfully`, { position: "top-center" })
           }}
         />
       )}

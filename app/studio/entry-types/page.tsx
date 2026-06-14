@@ -4,10 +4,8 @@ import { Button } from "@/components/ui/button"
 import { Metadata } from "next"
 import Link from "next/link"
 import getEntryTypes from "@/lib/actions/studio/entry-types/get-entry-types"
-import { EntryType } from "@/interfaces/entry_type"
 import { Toaster } from "sonner"
 import { PermissionGuard } from "@/components/studio/permission-groups/permission-guard"
-import { ActionResponse } from "@/interfaces"
 
 export const metadata: Metadata = {
   title: "Entry Types | simpl:api",
@@ -15,8 +13,8 @@ export const metadata: Metadata = {
 }
 
 const EntryTypesStudioPage = async () => {
-  const response: ActionResponse<EntryType[]> = await getEntryTypes()
-  const entryTypes: EntryType[] | undefined = response.data
+  const response = await getEntryTypes()
+  const entryTypes = response.success ? response.data : []
   return (
     <PermissionGuard reqPermission={["system.entry_types.list"]} isPage={true}>
       <div className="flex flex-col gap-y-10 ">

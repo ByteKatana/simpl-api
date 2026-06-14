@@ -28,8 +28,11 @@ export default async function updateIdentitySettings(
       const unhandledError = new Error("Failed to update general settings")
       return handleError(unhandledError)
     }
-    const data = response.settings
-    //TODO: Fix TS2352: Conversion of type
+    const data = {
+      id: response.id,
+      name: response.name,
+      settings: response.settings
+    } as IdentitySettings
     return { success: true, status: 200, data } as SuccessResponse<IdentitySettings>
   } catch (error) {
     return handleError(error) as ErrorResponse

@@ -4,7 +4,6 @@ import { Field, FieldError, FieldLabel } from "@/components/ui/field"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { BuilderCanvas } from "@/components/studio/entry-types/builder-canvas"
-import useSaveData from "@/hooks/use-save-data"
 import { toast } from "sonner"
 import { ActionResponse, FormMode, PublishStatus } from "@/interfaces"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -14,7 +13,6 @@ import { useRouter } from "next/navigation"
 import { Undo2Icon } from "lucide-react"
 import StatusRadioGroup from "@/components/studio/status-radio-group"
 import { EntryType } from "@/interfaces/entry_type"
-import { NextResponse } from "next/server"
 import createEntryType from "@/lib/actions/studio/entry-types/create-entry-type"
 import updateEntryType from "@/lib/actions/studio/entry-types/update-entry-type"
 
@@ -67,9 +65,9 @@ const EntryTypeForm = ({ namespaces, mode, formPayload }: Props) => {
       try {
         let response: ActionResponse
         if (mode === FormMode.EDIT && formPayload) {
-          response = await updateEntryType(value, formPayload._id.toString())
+          response = await updateEntryType(value as any, formPayload._id?.toString())
         } else {
-          response = await createEntryType(value)
+          response = await createEntryType(value as any)
         }
         if (response.success) {
           toast.success("Successful!", {
@@ -138,13 +136,13 @@ const EntryTypeForm = ({ namespaces, mode, formPayload }: Props) => {
                     </SelectItem>
                     {mode === FormMode.EDIT
                       ? namespaces
-                          .filter((ns) => ns !== formPayload!.namespace)
+                          ?.filter((ns) => ns !== formPayload!.namespace)
                           .map((ns) => (
                             <SelectItem key={ns} value={ns}>
                               {ns}
                             </SelectItem>
                           ))
-                      : namespaces.map((ns) => (
+                      : namespaces?.map((ns) => (
                           <SelectItem key={ns} value={ns}>
                             {ns}
                           </SelectItem>

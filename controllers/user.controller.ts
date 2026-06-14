@@ -57,7 +57,7 @@ export class UserController {
   }
 
   async update(id: string) {
-    let client: MongoClient
+    let client: MongoClient | undefined
     let dbCollection: Collection
     let isConnected = false
 
@@ -68,7 +68,7 @@ export class UserController {
       console.log(e)
     }
 
-    if (isConnected) {
+    if (client && isConnected) {
       let updateResult: UpdateResult
       try {
         let setObj = {

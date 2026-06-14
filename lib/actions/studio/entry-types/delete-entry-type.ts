@@ -1,18 +1,18 @@
 "use server"
 
 import handleError from "@/lib/handlers/error"
-import { ErrorResponse, SuccessResponse } from "@/interfaces/"
+import { ActionResponse, ErrorResponse, SuccessResponse } from "@/interfaces/"
 import { EntryType } from "@/interfaces/entry_type"
 import { revalidatePath } from "next/cache"
 import { getPermissionGroup } from "@/lib/auth/get-session"
 
-export default async function deleteEntryTypeAction(id: string) {
+export default async function deleteEntryTypeAction(id: string): Promise<ActionResponse<EntryType>> {
   try {
     // Check permission first.
     const perm_group = await getPermissionGroup()
 
     if (!perm_group) {
-      return handleError(new Error("Unauthorized to delete entry type"))
+      return handleError(new Error("Unauthorized to delete entry type"), "server")
     }
 
     const response = await fetch(

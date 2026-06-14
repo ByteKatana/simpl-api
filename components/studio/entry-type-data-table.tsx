@@ -1,7 +1,7 @@
 "use client"
 import React from "react"
 import { DataTable } from "@/components/studio/data-table/data-table"
-import type { ColumnDef } from "@tanstack/react-table"
+import type { ColumnDef, Row } from "@tanstack/react-table"
 import { Checkbox } from "@/components/ui/checkbox"
 import { DataTableRowActions } from "./data-table/data-table-row-actions"
 import { EntryType } from "@/interfaces/entry_type"
@@ -12,7 +12,6 @@ import deleteEntryTypeAction from "@/lib/actions/studio/entry-types/delete-entry
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { hasPermission } from "@/lib/actions/auth/has-permission"
-import deleteEntryAction from "@/lib/actions/studio/entry/delete-entry"
 
 const getLabelForStatus = (status: string) => {
   switch (status) {
@@ -55,6 +54,8 @@ const deleteEntryType = async (row: Row<EntryType>) => {
     }
     if (!isAllowed)
       return toast.error("You don't have permission to delete this entry type", { position: "top-center" })
+    if (!row.original._id)
+      return toast.error("Failed to delete Entry Type. No Entry Type Id", { position: "top-center" })
     const deleteResult = await deleteEntryTypeAction(row.original._id.toString())
     if (deleteResult.success) {
       toast.success("Item deleted successfully", { position: "top-center" })
@@ -127,6 +128,8 @@ type DataTableFilterObject = {
 }
 
 export default function EntryTypeDataTable({ data }: { data: EntryType[] | undefined }) {
+  if (!data) return <div>Loading...</div>
+
   const getNameSpaceFilterOptions = () => {
     return data
       .filter(

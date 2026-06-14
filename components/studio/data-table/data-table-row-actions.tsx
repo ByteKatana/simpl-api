@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useState } from "react"
 import { ConfirmDialog } from "@/components/studio/confirm-dialog"
-import { toast } from "sonner"
 import { Eye, FilePlus, Shredder, SquarePen } from "lucide-react"
 import { PreviewModal } from "@/components/studio/preview-modal"
 

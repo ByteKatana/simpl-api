@@ -22,9 +22,9 @@ import {
 import { signOut } from "next-auth/react"
 import { Session } from "next-auth"
 
-export function NavUser({ session }) {
+export function NavUser({ session }: { session: Session }) {
   const { isMobile } = useSidebar()
-  console.log("Profile Image: ", session.user.profile_img)
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -35,7 +35,7 @@ export function NavUser({ session }) {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={session.user.profile_img} alt={"User's profile image"} />
-                <AvatarFallback className="rounded-lg">{session.user.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+                <AvatarFallback className="rounded-lg">{session.user.name?.slice(0, 2).toUpperCase()}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{session.user.name}</span>
@@ -53,7 +53,7 @@ export function NavUser({ session }) {
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src={session.user.profile_img} alt={"User's profile image"} />
-                  <AvatarFallback className="rounded-lg">{session.user.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+                  <AvatarFallback className="rounded-lg">{session.user.name?.slice(0, 2).toUpperCase()}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{session.user.name}</span>

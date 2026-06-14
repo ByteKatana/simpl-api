@@ -1,13 +1,16 @@
 "use server"
 
 import handleError from "@/lib/handlers/error"
-import { EntryType, ErrorResponse, SuccessResponse, FormField, FormattedEntryType } from "@/interfaces"
+import { EntryType, ErrorResponse, SuccessResponse, FormField, FormattedEntryType, ActionResponse } from "@/interfaces"
 import { getPermissionGroup } from "@/lib/auth/get-session"
 import { EntryTypeSchema } from "@/lib/schemas/server/server-schemas"
 import { EntryTypeFormSchema } from "@/lib/schemas/client/form-schemas"
 import { z } from "zod"
 
-export default async function updateEntryType(formValues: z.infer<typeof EntryTypeFormSchema>, id: string) {
+export default async function updateEntryType(
+  formValues: z.infer<typeof EntryTypeFormSchema>,
+  id: string
+): Promise<ActionResponse<EntryType>> {
   try {
     // Check permission first.
     const perm_group = await getPermissionGroup()
@@ -57,13 +60,11 @@ export default async function updateEntryType(formValues: z.infer<typeof EntryTy
       }))
     }
 
-    // Validate the form input against EntryTypeSchema
-    // EntryTypeSchema is a transform of EntryTypeFormSchema — safeParse runs
-    // EntryTypeFormSchema validation first. If it fails, we return early.
-    const validated = EntryTypeSchema.safeParse(formValues)
+    // Validate the form input against EntryTypeFormSchema
+    const validated = EntryTypeFormSchema.safeParse(formValues)
 
     if (!validated.success) {
-      return handleError(new Error(validated.error.errors.map((e: Error) => e.message).join(", ")))
+      return handleError(new Error(validated.error.errors.map((e: Error) => e.message).join(", ")), "server")
     }
 
     // Send the validated (merged) data to the API

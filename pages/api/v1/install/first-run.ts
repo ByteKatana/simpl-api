@@ -15,7 +15,7 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
   if (process.env.SECRET_KEY === secretkey) {
     let dbConnection: Db
     let isConnected = false
-    let client: MongoClient
+    let client: MongoClient | undefined
 
     try {
       client = await connectDB()
@@ -23,17 +23,17 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
     } catch (e) {
       console.error(e)
     }
-    let apiKeysResult: Collection
-    let entriesResult: Collection
-    let entryTypesResult: Collection
-    let permissionGroupsResult: Collection
-    let usersResult: Collection
+    let apiKeysResult: Collection | undefined
+    let entriesResult: Collection | undefined
+    let entryTypesResult: Collection | undefined
+    let permissionGroupsResult: Collection | undefined
+    let usersResult: Collection | undefined
     let accountResult
     let rootGroupResult
     let adminGroupResult
     let viewerGroupResult
-    let newPW: string
-    if (isConnected) {
+    let newPW = Math.random().toString(36).slice(2)
+    if (client && isConnected) {
       try {
         //Creating collections
         dbConnection = client.db(process.env.DB_NAME)
@@ -44,7 +44,6 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
         usersResult = await dbConnection.createCollection("users")
 
         //Creating Admin Account
-        newPW = Math.random().toString(36).slice(2)
         const UserData = new UserController(
           {
             username: "admin",
@@ -142,11 +141,15 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
       }
     }
     if (
-      apiKeysResult !== undefined &&
-      entriesResult !== undefined &&
-      entryTypesResult !== undefined &&
-      permissionGroupsResult !== undefined &&
-      usersResult !== undefined &&
+      apiKeysResult &&
+      entriesResult &&
+      entryTypesResult &&
+      permissionGroupsResult &&
+      usersResult &&
+      accountResult &&
+      rootGroupResult &&
+      adminGroupResult &&
+      viewerGroupResult &&
       accountResult.status === "success" &&
       rootGroupResult.status === "success" &&
       adminGroupResult.status === "success" &&

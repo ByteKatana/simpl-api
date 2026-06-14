@@ -4,7 +4,7 @@ import { sendVerificationEmail } from "@/lib/verification-email"
 import crypto from "crypto"
 import { getSettingsValue } from "@/lib/actions/studio/settings/get-settings-value"
 import { prisma } from "@/lib/prisma"
-import { EmailVerification } from "@/interfaces"
+import { EmailVerification, ErrorResponse } from "@/interfaces"
 import handleError from "@/lib/handlers/error"
 import verifyUser from "@/lib/actions/studio/users/verify-user"
 
@@ -39,8 +39,10 @@ export async function EmailVerificationAction(email: string) {
   }
 }
 
-export async function verifyCode(email: string, inputCode: string) {
-
+export async function verifyCode(
+  email: string,
+  inputCode: string
+): Promise<{ success: boolean; message: string } | ErrorResponse> {
   const storedCode = await prisma.verificationToken.findUnique({
     where: { token: inputCode, identifier: email }
   })

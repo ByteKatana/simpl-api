@@ -1,5 +1,4 @@
 import { User } from "@/interfaces/user"
-import { ErrorResponse, UserCreateActionResponse } from "@/interfaces"
 import { getPermissionGroup } from "@/lib/auth/get-session"
 import handleError from "@/lib/handlers/error"
 

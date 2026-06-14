@@ -1,4 +1,3 @@
-import React from "react"
 import { Draggable, Droppable } from "@hello-pangea/dnd"
 import { Card } from "@/components/ui/card"
 import { Type, AlignLeft, CheckSquare, CircleDot, ChevronDown } from "lucide-react"

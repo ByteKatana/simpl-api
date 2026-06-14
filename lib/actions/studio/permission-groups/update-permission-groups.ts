@@ -22,9 +22,7 @@ export default async function updatePermissionGroups(
 
     // 2. Transform form values to DB structure
     const groupsToUpdate = permGroupsFormToDb(formValues)
-    console.log("GROUPS_FORM", formValues, groupsToUpdate)
     const slugs = Object.keys(groupsToUpdate)
-    console.log("GROUPS_ACTION", groupsToUpdate, slugs)
     if (slugs.length === 0) {
       return { success: true, status: 200, message: "No changes to update." }
     }

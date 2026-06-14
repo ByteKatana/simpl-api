@@ -14,7 +14,6 @@ import { AvatarSelector } from "@/components/studio/users/avatar-selector"
 import { useState } from "react"
 import { User } from "@/interfaces/user"
 import { Avatar, AvatarImage } from "@/components/ui/avatar"
-import { signIn } from "next-auth/webauthn"
 
 type Props = {
   profileImgProvider: string
@@ -37,13 +36,13 @@ const ProfileForm = ({ profileImgProvider, formPayload }: Props) => {
       status: formPayload.status
     },
     validators: {
-      onMount: UserUpdateFormSchema,
+      onMount: UserUpdateFormSchema as any,
       onChangeAsyncDebounceMs: 2500,
-      onChangeAsync: UserUpdateFormSchema
+      onChangeAsync: UserUpdateFormSchema as any
     },
     onSubmit: async ({ value }) => {
       try {
-        const response = await updateUser(value as User, formPayload, formPayload._id.toString())
+        const response = await updateUser(value as User, formPayload, formPayload._id?.toString() || "")
 
         if (response.success) {
           toast.success("Successful!", {

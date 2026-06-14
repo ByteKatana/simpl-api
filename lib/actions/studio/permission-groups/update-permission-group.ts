@@ -1,14 +1,17 @@
 "use server"
 
 import handleError from "@/lib/handlers/error"
-import { ErrorResponse, SuccessResponse } from "@/interfaces"
+import { ActionResponse, ErrorResponse, SuccessResponse } from "@/interfaces"
 import { PermissionGroup } from "@/interfaces/permission_group"
 import { PermissionGroupFormSchema } from "@/lib/schemas/client/form-schemas"
 import { z } from "zod"
 import { permGroupFormToDb } from "@/lib/form-to-db"
 import { getPermissionGroup } from "@/lib/auth/get-session"
 
-export default async function updatePermissionGroup(formValues: z.infer<typeof PermissionGroupFormSchema>, id: string) {
+export default async function updatePermissionGroup(
+  formValues: z.infer<typeof PermissionGroupFormSchema>,
+  id: string
+): Promise<ActionResponse<PermissionGroup>> {
   try {
     // Check permission first.
     const perm_group = await getPermissionGroup()

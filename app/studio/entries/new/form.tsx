@@ -115,7 +115,6 @@ const EntryCreateForm = ({ fetchedEntryType }: Props) => {
     },
     onSubmit: async ({ value }) => {
       try {
-        //TODO: Fix type missmatch (TS2339) on response variable
         const response = await createEntry(value as EntryFormValues, fetchedEntryType)
         if (response.success) {
           toast.success("Successful!", {
@@ -132,7 +131,7 @@ const EntryCreateForm = ({ fetchedEntryType }: Props) => {
             }
           })
         } else {
-          toast.error(response.message, { position: "top-center" })
+          toast.error(response.error?.message || "Failed to create entry", { position: "top-center" })
         }
       } catch (error) {
         toast.error("An error occurred while creating the entry", { position: "top-center" })

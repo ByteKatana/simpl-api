@@ -1,20 +1,22 @@
 "use server"
 
 import handleError from "@/lib/handlers/error"
-import { ErrorResponse, SuccessResponse } from "@/interfaces"
+import { ActionResponse, ErrorResponse, SuccessResponse } from "@/interfaces"
 import { PermissionGroup } from "@/interfaces/permission_group"
 import { getPermissionGroup } from "@/lib/auth/get-session"
 import { PermissionGroupFormSchema } from "@/lib/schemas/client/form-schemas"
 import { z } from "zod"
 import { permGroupFormToDb } from "@/lib/form-to-db"
 
-export default async function createPermissionGroup(formValues: z.infer<typeof PermissionGroupFormSchema>) {
+export default async function createPermissionGroup(
+  formValues: z.infer<typeof PermissionGroupFormSchema>
+): Promise<ActionResponse<PermissionGroup>> {
   try {
     // Check permission first.
     const perm_group = await getPermissionGroup()
 
     if (!perm_group) {
-      return handleError(new Error("Unauthorized to  create permission group"))
+      return handleError(new Error("Unauthorized to  create permission group"), "server")
     }
 
     const privileges = permGroupFormToDb(formValues)
@@ -39,7 +41,7 @@ export default async function createPermissionGroup(formValues: z.infer<typeof P
 
     if (!response.ok) {
       const error = new Error("Failed to create permission group")
-      return handleError(error)
+      return handleError(error, "server")
     }
 
     return { success: true, status: response.status, data } as SuccessResponse<PermissionGroup>

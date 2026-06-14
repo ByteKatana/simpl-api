@@ -254,11 +254,13 @@ const UserForm = ({ mode, profileImgProvider, permGroups, formPayload }: Props) 
                     <SelectValue placeholder={"Select a permission group"} />
                   </SelectTrigger>
                   <SelectContent>
-                    {permGroups.map((group) => (
-                      <SelectItem key={group.slug} value={group.slug}>
-                        {group.name}
-                      </SelectItem>
-                    ))}
+                    {permGroups
+                      .filter((pg) => pg.slug !== "viewer")
+                      .map((group) => (
+                        <SelectItem key={group.slug} value={group.slug}>
+                          {group.name}
+                        </SelectItem>
+                      ))}
                     <SelectItem key="viewer" value="viewer">
                       Viewer
                     </SelectItem>

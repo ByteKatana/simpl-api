@@ -14,7 +14,7 @@ import { MessageSquareWarning } from "lucide-react"
 import { GeneralSettings } from "@/interfaces/settings"
 
 const GeneralSettingsForm = ({ formValues }: { formValues: GeneralSettings }) => {
-  const { id, settings, ...rest } = formValues
+  const { id, settings } = formValues
   const form = useForm({
     defaultValues: settings,
     validators: {
@@ -24,7 +24,7 @@ const GeneralSettingsForm = ({ formValues }: { formValues: GeneralSettings }) =>
     },
     onSubmit: async ({ value }) => {
       try {
-        let response = await updateGeneralSettings(value, id)
+        let response = await updateGeneralSettings(value, id?.toString() || "")
         if (response.success) {
           toast.success("Successful!", {
             description: `General Settings has been updated successfully!`,

@@ -19,7 +19,9 @@ export default async function getUserBySlug(slugType: slugType, query: string): 
       const unhandledError = new Error("Failed to fetch entry type")
       return handleError(unhandledError)
     }
-    return { success: true, status: 200, data: user } as SuccessResponse<User>
+
+    const data = Array.isArray(user) ? user[0] : user
+    return { success: true, status: 200, data } as SuccessResponse<User>
   } catch (error) {
     return handleError(error) as ErrorResponse
   }

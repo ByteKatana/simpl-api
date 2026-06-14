@@ -1,7 +1,7 @@
 "use client"
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
 
-export function HourlyRequests({ data }) {
+export function HourlyRequests({ data: any }) {
   return (
     <ResponsiveContainer width="100%" height={550}>
       <BarChart data={data}>

@@ -1,4 +1,3 @@
-import React from "react"
 import { Droppable, Draggable } from "@hello-pangea/dnd"
 import { Card } from "@/components/ui/card"
 import { Pencil, X } from "lucide-react"
