@@ -114,9 +114,9 @@ export class apiBuilderController {
       console.error(e)
       return [{ message: "Database operation failed." }]
     } finally {
-      if (client?.close && typeof client.close === "function") {
+      /*if (client?.close && typeof client.close === "function") {
         await client.close()
-      }
+      }*/
     }
   }
 }

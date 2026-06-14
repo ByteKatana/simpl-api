@@ -49,9 +49,9 @@ export class PermissionGroupController {
         console.log(e)
         return { status: "failed", message: "Failed to create the permission group." }
       } finally {
-        if (client?.close && typeof client.close === "function") {
+        /*if (client?.close && typeof client.close === "function") {
           await client.close()
-        }
+        }*/
       }
     } else {
       return [{ message: "Database connection is NOT established" }]
@@ -81,9 +81,9 @@ export class PermissionGroupController {
       } catch (e) {
         console.log(e)
       } finally {
-        if (client?.close && typeof client.close === "function") {
+        /*if (client?.close && typeof client.close === "function") {
           await client.close()
-        }
+        }*/
       }
       if (updateResult["modifiedCount"] === 1) {
         return { status: "success", message: "Permission group has been updated." }
@@ -116,9 +116,9 @@ export class PermissionGroupController {
       } catch (e) {
         console.log(e)
       } finally {
-        if (client?.close && typeof client.close === "function") {
+        /*if (client?.close && typeof client.close === "function") {
           await client.close()
-        }
+        }*/
       }
       if (deleteResult.deletedCount === 1) {
         return { status: "success", message: "Permission group has been deleted." }

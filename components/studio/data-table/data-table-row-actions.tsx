@@ -14,16 +14,23 @@ import {
 import { useState } from "react"
 import { ConfirmDialog } from "@/components/studio/confirm-dialog"
 import { toast } from "sonner"
-import { Shredder, SquarePen } from "lucide-react"
+import { Eye, FilePlus, Shredder, SquarePen } from "lucide-react"
+import { PreviewModal } from "@/components/studio/preview-modal"
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>
   onEdit?: (row: Row<TData>) => void
   onDelete?: (row: Row<TData>) => void
+  onCreateEntry?: (row: Row<TData>) => void
 }
 
-export function DataTableRowActions<TData>({ row, onEdit, onDelete }: DataTableRowActionsProps<TData>) {
+export function DataTableRowActions<TData>({ row, onEdit, onDelete, onCreateEntry }: DataTableRowActionsProps<TData>) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [showPreview, setShowPreview] = useState(false)
+
+  // Determine type based on properties (preview-modal)
+  const isEntryType = "fieldsets" in (row.original as any)
+  const dataType = isEntryType ? "entry-type" : "entry"
 
   return (
     <>
@@ -35,19 +42,33 @@ export function DataTableRowActions<TData>({ row, onEdit, onDelete }: DataTableR
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-[160px]">
+          <DropdownMenuItem onClick={() => setShowPreview(true)}>
+            <span className="flex flex-row w-full gap-x-2 py-2 cursor-pointer justify-start items-center text-slate-700 dark:text-slate-400">
+              <Eye className="h-4 w-4" /> Preview
+            </span>
+          </DropdownMenuItem>
           <DropdownMenuItem onClick={() => onEdit?.(row)}>
-            <span className="flex flex-row w-full gap-x-2 py-2 justify-start items-centertext-slate-700 dark:text-slate-400">
+            <span className="flex flex-row w-full gap-x-2 py-2 cursor-pointer justify-start items-centertext-slate-700 dark:text-slate-400">
               <SquarePen /> Edit
             </span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => onCreateEntry?.(row)}>
+            <span className="flex flex-row w-full gap-x-2 py-2 cursor-pointer justify-start items-centertext-slate-700 dark:text-slate-400">
+              <FilePlus /> Create Entry
+            </span>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => setShowDeleteDialog(true)} variant="destructive">
-            <span className="flex flex-row w-full gap-x-2 py-2 justify-start items-center text-rose-500">
+            <span className="flex flex-row w-full gap-x-2 py-2 cursor-pointer justify-start items-center text-rose-500">
               <Shredder /> Delete
             </span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      {/* Preview Modal */}
+      <PreviewModal open={showPreview} onOpenChange={setShowPreview} data={row.original} type={dataType as any} />
 
       {onDelete && (
         <ConfirmDialog
@@ -60,7 +81,6 @@ export function DataTableRowActions<TData>({ row, onEdit, onDelete }: DataTableR
           handleConfirm={() => {
             onDelete(row)
             setShowDeleteDialog(false)
-            toast.success("Item deleted successfully")
           }}
         />
       )}

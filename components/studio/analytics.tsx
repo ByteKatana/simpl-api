@@ -2,138 +2,104 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { TrafficChart } from "@/components/studio/traffic-chart"
+import getAnalyticsStats from "@/lib/actions/studio/stats/get-analytics-stats"
+import AnalyticsSkeleton from "@/components/studio/skeletons/analytics-skeleton"
+import { useQuery } from "@tanstack/react-query"
 
 const Analytics = () => {
+  const { data: stats, isLoading } = useQuery({
+    queryKey: ["analytics-stats"],
+    queryFn: () => getAnalyticsStats(),
+    refetchInterval: 30000
+  })
+
+  if (isLoading || !stats) return <AnalyticsSkeleton />
+
   return (
     <div className="space-y-4">
       <Card>
         <CardHeader>
           <CardTitle>Traffic Overview</CardTitle>
-          <CardDescription>Weekly clicks and unique visitors</CardDescription>
+          <CardDescription>Weekly requests and unique api keys</CardDescription>
         </CardHeader>
         <CardContent className="px-6">
-          <TrafficChart />
+          <TrafficChart data={stats.trafficData} />
         </CardContent>
       </Card>
+
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Clicks</CardTitle>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              className="text-muted-foreground h-4 w-4">
-              <path d="M3 3v18h18" />
-              <path d="M7 15l4-4 4 4 4-6" />
-            </svg>
+            <CardTitle className="text-sm font-medium">Total Request (Weekly)</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">1,248</div>
-            <p className="text-muted-foreground text-xs">+12.4% vs last week</p>
+            <div className="text-2xl font-bold">{stats.totalRequestStats.count.toLocaleString()}</div>
+            <p className="text-muted-foreground text-xs">
+              {stats.totalRequestStats.change >= 0 ? "+" : ""}
+              {stats.totalRequestStats.change}% vs last week
+            </p>
           </CardContent>
         </Card>
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Unique Visitors</CardTitle>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              className="text-muted-foreground h-4 w-4">
-              <circle cx="12" cy="7" r="4" />
-              <path d="M6 21v-2a6 6 0 0 1 12 0v2" />
-            </svg>
+            <CardTitle className="text-sm font-medium">Unique Request</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">832</div>
-            <p className="text-muted-foreground text-xs">+5.8% vs last week</p>
+            <div className="text-2xl font-bold">{stats.uniqueRequestStats.count.toLocaleString()}</div>
+            <p className="text-muted-foreground text-xs">
+              {stats.uniqueRequestStats.change >= 0 ? "+" : ""}
+              {stats.uniqueRequestStats.change}% vs last week
+            </p>
           </CardContent>
         </Card>
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Bounce Rate</CardTitle>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              className="text-muted-foreground h-4 w-4">
-              <path d="M3 12h6l3 6 3-6h6" />
-            </svg>
+            <CardTitle className="text-sm font-medium">Rate Limit Reach</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">42%</div>
-            <p className="text-muted-foreground text-xs">-3.2% vs last week</p>
+            <div className="text-2xl font-bold">{stats.rateLimitStats.percentage}%</div>
+            <p className="text-muted-foreground text-xs">
+              {stats.rateLimitStats.change >= 0 ? "+" : ""}
+              {stats.rateLimitStats.change}% vs last week
+            </p>
           </CardContent>
         </Card>
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg. Session</CardTitle>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              className="text-muted-foreground h-4 w-4">
-              <circle cx="12" cy="12" r="10" />
-              <path d="M12 6v6l4 2" />
-            </svg>
+            <CardTitle className="text-sm font-medium">Avg. Response Time</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">3m 24s</div>
-            <p className="text-muted-foreground text-xs">+18s vs last week</p>
+            <div className="text-2xl font-bold">{stats.avgResponseTime}ms</div>
+            <p className="text-muted-foreground text-xs">system average</p>
           </CardContent>
         </Card>
       </div>
+
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-7">
         <Card className="col-span-1 lg:col-span-4">
           <CardHeader>
-            <CardTitle>Referrers</CardTitle>
-            <CardDescription>Top sources driving traffic</CardDescription>
+            <CardTitle>Top 10 API Keys (This Week)</CardTitle>
+            <CardDescription>Most active keys in the last 7 days</CardDescription>
           </CardHeader>
           <CardContent>
             <SimpleBarList
-              items={[
-                { name: "Direct", value: 512 },
-                { name: "Product Hunt", value: 238 },
-                { name: "Twitter", value: 174 },
-                { name: "Blog", value: 104 }
-              ]}
+              items={stats.topKeysThisWeek}
               barClass="bg-primary"
-              valueFormatter={(n) => `${n}`}
+              valueFormatter={(n) => `${n} requests`}
             />
           </CardContent>
         </Card>
+
         <Card className="col-span-1 lg:col-span-3">
           <CardHeader>
-            <CardTitle>Devices</CardTitle>
-            <CardDescription>How users access your app</CardDescription>
+            <CardTitle>Top 10 API Keys (All Time)</CardTitle>
+            <CardDescription>Historical top usage</CardDescription>
           </CardHeader>
           <CardContent>
-            <SimpleBarList
-              items={[
-                { name: "Desktop", value: 74 },
-                { name: "Mobile", value: 22 },
-                { name: "Tablet", value: 4 }
-              ]}
-              barClass="bg-muted-foreground"
-              valueFormatter={(n) => `${n}%`}
-            />
+            <SimpleBarList items={stats.topKeysAllTime} barClass="bg-muted-foreground" valueFormatter={(n) => `${n}`} />
           </CardContent>
         </Card>
       </div>

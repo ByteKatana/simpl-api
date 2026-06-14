@@ -3,23 +3,30 @@
  *
  * This proxy wraps the Auth.js middleware with custom permission-based logic
  *
- * Protected Routes:
- * - /dashboard/* (all dashboard routes require authentication)
- * - /dashboard/settings (admin only)
- * - /dashboard/users (admin)
- * - /dashboard/permission-groups (admin only)
- * - /api/v1/key/generate (admin only)
  */
 
 import { NextResponse } from "next/server"
 import { auth as proxy } from "./auth"
+import { getSettingsValue } from "@/lib/actions/studio/settings/get-settings-value"
 
-export default proxy((req) => {
+// In-memory store for rate limiting
+// Stores: { count: number, resetTime: number, lastRequestTime: number }
+const rateLimitStore = new Map<
+  string,
+  {
+    count: number
+    resetTime: number
+    lastRequestTime: number
+  }
+>()
+
+export default proxy(async (req) => {
   const { pathname } = req.nextUrl
   const session = req.auth
 
+  // --- Auth.js Protection Logic --- //
   // Check if route requires authentication
-  const isProtectedRoute = pathname.startsWith("/dashboard")
+  const isProtectedRoute = pathname.startsWith("/studio")
   const isApiKeyRoute = pathname === "/api/v1/key/generate"
 
   // Redirect to login if accessing protected route without session
@@ -29,11 +36,11 @@ export default proxy((req) => {
     return NextResponse.redirect(loginUrl)
   }
 
-  // Permission-based route protection
+  /*// Permission-based route protection
   const protectedRoutes: Record<string, string[]> = {
-    "/dashboard/users": ["admin"],
-    "/dashboard/permission-groups": ["admin"],
-    "/dashboard/settings": ["admin"],
+    "/studio/users": ["admin"],
+    "/studio/permission-groups": ["admin"],
+    "/studio/settings": ["admin"],
     "/api/v1/key/generate": ["admin"]
   }
 
@@ -43,15 +50,15 @@ export default proxy((req) => {
 
       if (!userPermission || !allowedGroups.includes(userPermission)) {
         // Redirect to dashboard for unauthorized access
-        return NextResponse.redirect(new URL("/dashboard", req.url))
+        return NextResponse.redirect(new URL("/studio", req.url))
       }
     }
-  }
+  }*/
 
   // Allow request to proceed
   return NextResponse.next()
 })
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/api/v1/key/generate"]
+  matcher: ["/studio/:path*", "/dashboard/:path*", "/api/v1/key/generate"]
 }

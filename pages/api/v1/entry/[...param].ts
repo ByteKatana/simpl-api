@@ -3,8 +3,9 @@ import { apiBuilderController } from "../../../../controllers/api-builder.contro
 import { apiKeyController } from "../../../../controllers/api-key.controller"
 import { getByIndex } from "../../../../lib/get-by-index"
 import { getByLimit } from "../../../../lib/get-by-limit"
+import { withRateLimit } from "@/lib/api/rate-limits"
 
-export default async function handler(_req: NextApiRequest, res: NextApiResponse) {
+async function handler(_req: NextApiRequest, res: NextApiResponse) {
   const {
     query: { param, apikey }
   } = _req
@@ -32,5 +33,6 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
     res.status(200).json({ message: "Index or Limit parameter must be set." })
     //console.log(fetchedData.length - 1)
   }
-  res.status(200).json({ message: "You're not authorized!" })
+  res.status(401).json({ message: "You're not authorized!" })
 }
+export default withRateLimit(handler)

@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
-const TotalRequests = () => {
+const TotalRequests = ({ value, change }) => {
   const calcPercentage = (lastMonth: number, currentMonth: number) => {
     return ((currentMonth - lastMonth) / lastMonth) * 100
   }
@@ -11,8 +11,8 @@ const TotalRequests = () => {
         <CardTitle className="text-sm font-medium">Total Requests</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">798,562</div>
-        <p className="text-xs text-muted-foreground">+20.1% from last month</p>
+        <div className="text-2xl font-bold">{value}</div>
+        <p className="text-xs text-muted-foreground">+{calcPercentage(change, value).toFixed(2)}% from last month</p>
       </CardContent>
     </Card>
   )

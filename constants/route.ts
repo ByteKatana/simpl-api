@@ -1,12 +1,15 @@
 export const ROUTES = {
-  HOME: "/",
-  ENTRY_TYPES: "/entry-types",
-  ENTRIES: "/entry",
-  PERMISSION_GROUPS: "/permission-groups",
-  USERS: "/users",
-  SETTINGS: "/settings",
-  ENTRY_TYPE: (id: string) => `/entry-type/${id}`,
-  ENTRY: (id: string) => `/entry/${id}`,
-  PERMISSION_GROUP: (id: string) => `/permission-group/${id}`,
-  USER: (id: string) => `/user/${id}`
+  HOME: { url: "/", title: "Home" },
+  ENTRY_TYPES: { url: "/entry-types", title: "Entry Types" },
+  ENTRIES: { url: "/entry", title: "Entries" },
+  PERMISSION_GROUPS: { url: "/permission-groups", title: "Permission Groups" },
+  USERS: { url: "/users", title: "Users" },
+  SETTINGS: { url: "/settings", title: "Settings" },
+  ENTRY_TYPE: (slug: string, title: string) => ({
+    url: `/entry-type/${slug}`,
+    title
+  }),
+  ENTRY: (slug: string, title: string) => ({ url: `/entry/${slug}`, title }),
+  PERMISSION_GROUP: (slug: string, title: string) => ({ url: `/permission-group/${slug}`, title }),
+  USER: (slug: string, title: string) => ({ url: `/user/${slug}`, title })
 }

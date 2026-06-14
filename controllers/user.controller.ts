@@ -47,9 +47,9 @@ export class UserController {
         console.log(e)
         return { status: "failed", message: "Failed to create the user." }
       } finally {
-        if (client?.close && typeof client.close === "function") {
+        /*if (client?.close && typeof client.close === "function") {
           await client.close()
-        }
+        }*/
       }
     } else {
       return [{ message: "Database connection is NOT established" }]
@@ -71,29 +71,26 @@ export class UserController {
     if (isConnected) {
       let updateResult: UpdateResult
       try {
-        let lastPw = this.user.password
-        if (this.user.pwchanged) {
-          lastPw = bcrypt.hashSync(lastPw, 8)
+        let setObj = {
+          ...this.user
+        }
+        if (this.user.password !== "" && this.user.password !== undefined && this.user.password !== null) {
+          setObj.password = this.user.password
         }
         dbCollection = client.db(process.env.DB_NAME).collection("users")
         updateResult = await dbCollection.updateOne(
           { _id: new ObjectId(id) },
           {
-            $set: {
-              username: this.user.username,
-              email: this.user.email,
-              password: lastPw,
-              permission_group: this.user.permission_group
-            }
+            $set: setObj
           },
           { upsert: false }
         )
       } catch (e) {
         console.log(e)
       } finally {
-        if (client?.close && typeof client.close === "function") {
+        /*if (client?.close && typeof client.close === "function") {
           await client.close()
-        }
+        }*/
       }
       if (updateResult["matchedCount"] === 1 && updateResult["modifiedCount"] === 1) {
         return { status: "success", message: "User has been updated." }
@@ -126,9 +123,9 @@ export class UserController {
       } catch (e) {
         console.log(e)
       } finally {
-        if (client?.close && typeof client.close === "function") {
+        /*if (client?.close && typeof client.close === "function") {
           await client.close()
-        }
+        }*/
       }
       if (deleteResult.deletedCount === 1) {
         return { status: "success", message: "User has been deleted." }

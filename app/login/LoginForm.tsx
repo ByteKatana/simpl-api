@@ -1,22 +1,77 @@
 "use client"
 
 import { signIn } from "next-auth/react"
+/*import { signIn as signInWithPasskey } from "next-auth/webauthn"*/
 import { useRouter } from "next/navigation"
-import { useState, FormEvent } from "react"
+import { useState, FormEvent, useMemo } from "react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Field, FieldLabel } from "@/components/ui/field"
+import { Loader2 } from "lucide-react"
+import {
+  SiGithub,
+  SiGitlab,
+  SiBitbucket,
+  SiAtlassian,
+  SiVercel,
+  SiNetlify,
+  SiGoogle,
+  SiApple,
+  SiSlack,
+  SiZoom,
+  SiNotion,
+  SiTodoist,
+  SiLinkedin,
+  SiClickup,
+  SiHuggingface,
+  SiYandex,
+  SiMaildotru
+} from "react-icons/si"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 /**
  * Login Form Component (Client Component)
  *
- * Handles the login form submission using Auth.js v5.
- * Uses the signIn function from next-auth/react which automatically handles:
- * - CSRF token generation and validation
- * - Credentials provider authentication
- * - Session creation
+ * Updated with OAuth provider grid and shadcn/ui components.
  */
-export default function LoginForm() {
+
+type Props = {
+  authMethods: {
+    built_in: object
+    third_party: object
+  }
+}
+export default function LoginForm({ authMethods }: Props) {
   const router = useRouter()
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [loadingProvider, setLoadingProvider] = useState<string | null>(null)
+
+  const oauthProviders = [
+    { id: "github", name: "GitHub", icon: SiGithub },
+    { id: "gitlab", name: "GitLab", icon: SiGitlab },
+    { id: "bitbucket", name: "Bitbucket", icon: SiBitbucket },
+    { id: "atlassian", name: "Atlassian", icon: SiAtlassian },
+    { id: "vercel", name: "Vercel", icon: SiVercel },
+    { id: "netlify", name: "Netlify", icon: SiNetlify },
+    { id: "google", name: "Google", icon: SiGoogle },
+    { id: "apple", name: "Apple", icon: SiApple },
+    { id: "slack", name: "Slack", icon: SiSlack },
+    { id: "zoom", name: "Zoom", icon: SiZoom },
+    { id: "notion", name: "Notion", icon: SiNotion },
+    { id: "todoist", name: "Todoist", icon: SiTodoist },
+    { id: "linkedin", name: "LinkedIn", icon: SiLinkedin },
+    { id: "clickup", name: "ClickUp", icon: SiClickup },
+    { id: "huggingface", name: "Hugging Face", icon: SiHuggingface },
+    { id: "yandex", name: "Yandex", icon: SiGoogle },
+    { id: "mailru", name: "Mail.Ru", icon: SiMaildotru }
+  ]
+  // Filter providers based on authMethods.third_party configuration
+  const enabledThirdPartyProviders = useMemo(
+    () => oauthProviders.filter((provider) => authMethods.third_party[provider.id] === true),
+    [authMethods, oauthProviders]
+  )
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -28,7 +83,6 @@ export default function LoginForm() {
     const password = formData.get("password") as string
 
     try {
-      // Auth.js v5 signIn with credentials
       const result = await signIn("credentials", {
         email,
         password,
@@ -36,11 +90,10 @@ export default function LoginForm() {
       })
 
       if (result?.error) {
-        setError("Invalid email or password")
+        setError(result?.error || "Invalid credentials or cannot connect to the server.")
         setIsLoading(false)
       } else if (result?.ok) {
-        // Successful login - redirect to dashboard
-        router.push("/dashboard")
+        router.push("/studio")
         router.refresh()
       }
     } catch (error) {
@@ -50,58 +103,134 @@ export default function LoginForm() {
     }
   }
 
-  return (
-    <form onSubmit={handleSubmit}>
-      <div className="flex flex-col border-2 bg-slate-200 p-10 rounded-xl">
-        <div className="text-slate-800 hover:text-yellow-500 h-24 font-raleway text-6xl pl-7 mt-3">
-          <a href="#">simpl:api</a>
-        </div>
+  const handleOAuthSignIn = async (providerId: string) => {
+    setLoadingProvider(providerId)
+    try {
+      await signIn(providerId, { callbackUrl: "/studio" })
+    } catch (error) {
+      console.error(`${providerId} login error:`, error)
+      setError(`Could not sign in with ${providerId}`)
+      setLoadingProvider(null)
+    }
+  }
 
-        {error && (
-          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-sm">
-            {error}
+  return (
+    <Card className="border-2 shadow-sm w-full max-w-md mx-auto">
+      <CardHeader className="space-y-1 text-center">
+        <div className="mb-2">
+          <a href="#" className="text-4xl font-raleway font-bold text-slate-800 hover:text-primary transition-colors">
+            simpl:api
+          </a>
+        </div>
+        <CardTitle className="text-2xl">Login</CardTitle>
+        <CardDescription>Enter your credentials or choose a provider</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <div className="p-3 bg-destructive/10 border border-destructive/20 text-destructive text-sm rounded-sm">
+              {error}
+            </div>
+          )}
+
+          <Field>
+            <FieldLabel htmlFor="email">Email</FieldLabel>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="name@example.com"
+              required
+              disabled={isLoading || !!loadingProvider}
+              className="h-10 text-base"
+              aria-label={"Email"}
+            />
+          </Field>
+
+          <Field>
+            <FieldLabel htmlFor="password">Password</FieldLabel>
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="••••••••"
+              required
+              disabled={isLoading || !!loadingProvider}
+              className="h-10 text-base"
+              aria-label={"Password"}
+            />
+          </Field>
+
+          <Button
+            type="submit"
+            className="w-full h-10 text-sm uppercase font-semibold"
+            disabled={isLoading || !!loadingProvider}>
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Logging in...
+              </>
+            ) : (
+              "Login"
+            )}
+          </Button>
+        </form>
+        {/*{authMethods.built_in["passkeys"] && (
+          <>
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+              </div>
+            </div>
+            <div className="flex flex-col gap-2">
+              <button
+                onClick={() => signInWithPasskey("passkey")}
+                className="px-4 py-2 bg-slate-600 text-white rounded shadow">
+                Sign in with Passkey / Yubikey
+              </button>
+            </div>
+          </>
+        )}*/}
+        {enabledThirdPartyProviders.length > 0 && (
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+            </div>
           </div>
         )}
-
-        <div>
-          <label htmlFor="email" className="form-label inline-block mb-2 text-gray-700 text-xl">
-            Email
-          </label>
-          <input
-            id="email"
-            name="email"
-            type="text"
-            required
-            disabled={isLoading}
-            className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded-sm transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-hidden disabled:opacity-50"
-            placeholder="Email"
-          />
-        </div>
-
-        <div className="mt-5">
-          <label htmlFor="password" className="form-label inline-block mb-2 text-gray-700 text-xl">
-            Password
-          </label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            required
-            disabled={isLoading}
-            className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded-sm transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-slate-600 focus:outline-hidden disabled:opacity-50"
-            placeholder="Password"
-          />
-        </div>
-
-        <div className="mt-5">
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="mb-2 w-full inline-block px-6 py-2.5 bg-slate-700 text-white font-medium text-xs leading-normal uppercase rounded-sm shadow-md hover:bg-slate-800 hover:shadow-lg focus:bg-slate-700 focus:shadow-lg focus:outline-hidden focus:ring-0 active:bg-slate-800 active:shadow-lg transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed">
-            {isLoading ? "Logging in..." : "Login"}
-          </button>
-        </div>
-      </div>
-    </form>
+        <TooltipProvider>
+          <div className="grid grid-cols-6 gap-2">
+            {enabledThirdPartyProviders.map((provider) => (
+              <Tooltip key={provider.id}>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="w-full h-10"
+                    onClick={() => handleOAuthSignIn(provider.id)}
+                    aria-label={`Sign in with ${provider.name}`}
+                    disabled={isLoading || !!loadingProvider}>
+                    {loadingProvider === provider.id ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <provider.icon className="h-5 w-5" />
+                    )}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{provider.name}</p>
+                </TooltipContent>
+              </Tooltip>
+            ))}
+          </div>
+        </TooltipProvider>
+      </CardContent>
+    </Card>
   )
 }

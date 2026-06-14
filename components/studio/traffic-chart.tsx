@@ -1,52 +1,16 @@
 "use client"
 
-import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
+import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts"
 
-const data = [
-  {
-    name: "Mon",
-    clicks: Math.floor(Math.random() * 900) + 100,
-    uniques: Math.floor(Math.random() * 700) + 80
-  },
-  {
-    name: "Tue",
-    clicks: Math.floor(Math.random() * 900) + 100,
-    uniques: Math.floor(Math.random() * 700) + 80
-  },
-  {
-    name: "Wed",
-    clicks: Math.floor(Math.random() * 900) + 100,
-    uniques: Math.floor(Math.random() * 700) + 80
-  },
-  {
-    name: "Thu",
-    clicks: Math.floor(Math.random() * 900) + 100,
-    uniques: Math.floor(Math.random() * 700) + 80
-  },
-  {
-    name: "Fri",
-    clicks: Math.floor(Math.random() * 900) + 100,
-    uniques: Math.floor(Math.random() * 700) + 80
-  },
-  {
-    name: "Sat",
-    clicks: Math.floor(Math.random() * 900) + 100,
-    uniques: Math.floor(Math.random() * 700) + 80
-  },
-  {
-    name: "Sun",
-    clicks: Math.floor(Math.random() * 900) + 100,
-    uniques: Math.floor(Math.random() * 700) + 80
-  }
-]
-
-export function TrafficChart() {
+export function TrafficChart({ data }: { data: any[] }) {
   return (
     <ResponsiveContainer width="100%" height={300}>
       <AreaChart data={data}>
         <XAxis dataKey="name" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
         <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
+        <Tooltip />
         <Area
+          name="Total Requests"
           type="monotone"
           dataKey="clicks"
           stroke="currentColor"
@@ -55,6 +19,7 @@ export function TrafficChart() {
           fillOpacity={0.15}
         />
         <Area
+          name="Unique Requests"
           type="monotone"
           dataKey="uniques"
           stroke="currentColor"

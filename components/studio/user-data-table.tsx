@@ -1,13 +1,17 @@
 "use client"
 import React from "react"
 import { DataTable } from "@/components/studio/data-table/data-table"
-import type { ColumnDef } from "@tanstack/react-table"
+import type { ColumnDef, Row } from "@tanstack/react-table"
 import { Checkbox } from "@/components/ui/checkbox"
 import { DataTableRowActions } from "./data-table/data-table-row-actions"
-import { User } from "@/interfaces"
+import { User, UserStatus } from "@/interfaces"
 import { Avatar, AvatarBadge, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ShieldCheck, Star, User as UserIcon } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import deleteUserAction from "@/lib/actions/studio/users/delete-user"
+import { useRouter } from "next/navigation"
+import { hasPermission } from "@/lib/actions/auth/has-permission"
+import { toast } from "sonner"
 
 const getBadgeForPermissionGroup = (permissionGroup: string) => {
   switch (permissionGroup.toLowerCase()) {
@@ -57,6 +61,29 @@ const getLabelForStatus = (status: string) => {
   }
 }
 
+const deleteUser = async (row: Row<User>) => {
+  try {
+    const requiredPermissions = ["system.users.delete"]
+    let isAllowed = false
+    for (const permission of requiredPermissions) {
+      const permType = permission.split(".")[0]
+      isAllowed = await hasPermission(permission)
+      // If the user has the system permission, they're always allowed
+      if (permType === "system" && isAllowed) {
+        isAllowed = true
+        break
+      }
+    }
+    if (!isAllowed) return toast.error("You don't have permission to delete a user", { position: "top-center" })
+    const deleteResult = await deleteUserAction(row.original._id.toString())
+    if (deleteResult.success) {
+      toast.success("Item deleted successfully", { position: "top-center" })
+    }
+  } catch (error) {
+    toast.error("Failed to delete Permission Group", { position: "top-center" })
+  }
+}
+
 const columns: ColumnDef<User>[] = [
   {
     id: "select",
@@ -96,10 +123,11 @@ const columns: ColumnDef<User>[] = [
   },
   { accessorKey: "username", header: "Username" },
   { accessorKey: "email", header: "Email" },
-  { accessorKey: "permission_group", header: "Role" },
+  { accessorKey: "permission_group", filterFn: "arrIncludes", header: "Group" },
   {
     accessorKey: "status",
     header: "Status",
+    filterFn: "arrIncludes",
     cell: ({ row }) => {
       const user = row.original
       return <div className="flex items-center gap-2">{getLabelForStatus(user.status)}</div>
@@ -107,13 +135,16 @@ const columns: ColumnDef<User>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => (
-      <DataTableRowActions
-        row={row}
-        onEdit={(row) => console.log("Edit", row.original)}
-        onDelete={(row) => console.log("Delete", row.original)}
-      />
-    )
+    cell: ({ row }) => {
+      const router = useRouter()
+      return (
+        <DataTableRowActions
+          row={row}
+          onEdit={(row) => router.push(`/studio/users/edit/${row.original._id.toString()}`)}
+          onDelete={(row) => deleteUser(row)}
+        />
+      )
+    }
   }
 ]
 
@@ -148,11 +179,15 @@ export default function UserDataTable({ data }: { data: User[] }) {
   }
   const getPermGroupStatusFilterOptions = () => {
     return data
-      .filter((user: User, index: number) => data.findIndex((user2: User) => user2.status === user.status) === index)
+      .filter(
+        (user: User, index: number) =>
+          data.findIndex((user2: User) => user2.status.toLowerCase() === user.status.toLowerCase()) === index
+      )
       .map((user: User) => {
+        const normalizedStatus = user.status.toLowerCase()
         return {
-          label: user.status.charAt(0).toUpperCase() + user.status.slice(1),
-          value: user.status
+          label: normalizedStatus.charAt(0).toUpperCase() + normalizedStatus.slice(1),
+          value: user.status as UserStatus
         }
       })
   }

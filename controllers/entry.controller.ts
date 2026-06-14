@@ -45,9 +45,9 @@ export class EntryController {
         console.log(e)
         return { status: "failed", message: "Failed to create the entry." }
       } finally {
-        if (client?.close && typeof client.close === "function") {
+        /*if (client?.close && typeof client.close === "function") {
           await client.close()
-        }
+        }*/
       }
     } else {
       return [{ message: "Database connection is NOT established" }]
@@ -73,9 +73,9 @@ export class EntryController {
       } catch (e) {
         console.log(e)
       } finally {
-        if (client?.close && typeof client.close === "function") {
+        /*if (client?.close && typeof client.close === "function") {
           await client.close()
-        }
+        }*/
       }
       if (updateResult.modifiedCount === 1) {
         return { status: "success", message: "Entry has been updated." }
@@ -108,9 +108,9 @@ export class EntryController {
       } catch (e) {
         console.log(e)
       } finally {
-        if (client?.close && typeof client.close === "function") {
+        /*if (client?.close && typeof client.close === "function") {
           await client.close()
-        }
+        }*/
       }
       if (deleteResult.deletedCount === 1) {
         return { status: "success", message: "Entry has been deleted." }

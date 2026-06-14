@@ -78,7 +78,7 @@ export function DataTableToolbar<TData>({
                 onClick={() => {
                   onPublish(selectedRows.map((row) => row.original))
                   table.resetRowSelection()
-                  toast.success(`${selectedRows.length} item(s) published successfully`)
+                  toast.success(`${selectedRows.length} item(s) published successfully`, { position: "top-center" })
                 }}>
                 <Check className="mr-2 h-4 w-4" />
                 Publish
@@ -111,7 +111,7 @@ export function DataTableToolbar<TData>({
             onDelete(selectedRows.map((row) => row.original))
             table.resetRowSelection()
             setShowDeleteDialog(false)
-            toast.success(`${selectedRows.length} item(s) deleted successfully`)
+            toast.success(`${selectedRows.length} item(s) deleted successfully`, { position: "top-center" })
           }}
         />
       )}

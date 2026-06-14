@@ -1,10 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import { apiBuilderController } from "../../../../controllers/api-builder.controller"
 import { apiKeyController } from "../../../../controllers/api-key.controller"
+import { withRateLimit } from "@/lib/api/rate-limits"
 
 //===============================================
 
-export default async function handler(_req: NextApiRequest, res: NextApiResponse) {
+async function handler(_req: NextApiRequest, res: NextApiResponse) {
   const { apikey } = _req.query
   const apiKey = new apiKeyController({ key: apikey as string })
   const apiKeyData = await apiKey.findKey()
@@ -12,5 +13,6 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
     const apiBuilder = new apiBuilderController("index", "entries", "namespace")
     return res.status(200).json(await apiBuilder.fetchData("Equals"))
   }
-  return res.status(200).json({ message: "You're not authorized!" })
+  return res.status(401).json({ message: "You're not authorized!" })
 }
+export default withRateLimit(handler)

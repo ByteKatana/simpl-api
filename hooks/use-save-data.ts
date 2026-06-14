@@ -1,9 +1,8 @@
 "use client"
-import { ActionType, DataType, Entry, EntryType, User, UserCreateActionResponse } from "../interfaces"
-import { ObjectId } from "mongodb"
+import { ActionType, DataType } from "@/interfaces"
 import createEntry from "@/lib/actions/dashboard/entries/create-entry"
 import updateEntry from "@/lib/actions/dashboard/entries/update-entry"
-import createEntryType from "@/lib/actions/dashboard/entry-types/create-entry-type"
+import createEntryType from "@/lib/actions/studio/entry-types/create-entry-type"
 import updateEntryType from "@/lib/actions/dashboard/entry-types/update-entry-type"
 import createPermissionGroup from "@/lib/actions/dashboard/permission-groups/create-permission-group"
 import updatePermissionGroup from "@/lib/actions/dashboard/permission-groups/update-permission-group"
@@ -30,7 +29,7 @@ const useSaveData = (dataType: DataType, actionType: ActionType) => {
       } else if (dataType === "ENTRY_TYPE") {
         switch (actionType) {
           case "CREATE":
-            response = await createEntryType(payload.entryType, payload.formFields, payload.permGroup)
+            response = await createEntryType(payload)
             break
           case "UPDATE":
             response = await updateEntryType(payload.entryType, payload.formFields, payload.slug)
@@ -79,7 +78,7 @@ const useSaveData = (dataType: DataType, actionType: ActionType) => {
     }
   }
 
-  return saveData
+  return { saveData }
 }
 
 export default useSaveData

@@ -1,11 +1,39 @@
 "use client"
 import React from "react"
 import { DataTable } from "@/components/studio/data-table/data-table"
-import type { ColumnDef } from "@tanstack/react-table"
+import type { ColumnDef, Row } from "@tanstack/react-table"
 import { Checkbox } from "@/components/ui/checkbox"
 import { DataTableRowActions } from "./data-table/data-table-row-actions"
 import { PermissionGroup } from "@/interfaces"
-import { AvatarGroup, AvatarGroupCount } from "@/components/ui/avatar"
+import deletePermissionGroupAction from "@/lib/actions/studio/permission-groups/delete-permission-group"
+import { toast } from "sonner"
+import { useRouter } from "next/navigation"
+import { hasPermission } from "@/lib/actions/auth/has-permission"
+import deleteEntryAction from "@/lib/actions/studio/entry/delete-entry"
+
+const deletePermGroup = async (row: Row<PermissionGroup>) => {
+  try {
+    const requiredPermissions = ["system.permission_groups.delete"]
+    let isAllowed = false
+    for (const permission of requiredPermissions) {
+      const permType = permission.split(".")[0]
+      isAllowed = await hasPermission(permission)
+      // If the user has the system permission, they're always allowed
+      if (permType === "system" && isAllowed) {
+        isAllowed = true
+        break
+      }
+    }
+    if (!isAllowed)
+      return toast.error("You don't have permission to delete a permission group", { position: "top-center" })
+    const deleteResult = await deletePermissionGroupAction(row.original._id.toString())
+    if (deleteResult.success) {
+      toast.success("Item deleted successfully", { position: "top-center" })
+    }
+  } catch (error) {
+    toast.error("Failed to delete Permission Group", { position: "top-center" })
+  }
+}
 
 const columns: ColumnDef<PermissionGroup>[] = [
   {
@@ -39,24 +67,26 @@ const columns: ColumnDef<PermissionGroup>[] = [
       const permGroup = row.original
       return (
         <div className="flex items-center gap-3">
-          <AvatarGroup>
+          {/* <AvatarGroup>
             <AvatarGroupCount>{permGroup.icon}</AvatarGroupCount>
-          </AvatarGroup>
+          </AvatarGroup>*/}
           <span className="mt-2.5 font-medium text-sm">{permGroup.name}</span>
         </div>
       )
     }
   },
-  { accessorKey: "users", header: "Number of Users" },
   {
     id: "actions",
-    cell: ({ row }) => (
-      <DataTableRowActions
-        row={row}
-        onEdit={(row) => console.log("Edit", row.original)}
-        onDelete={(row) => console.log("Delete", row.original)}
-      />
-    )
+    cell: ({ row }) => {
+      const route = useRouter()
+      return (
+        <DataTableRowActions
+          row={row}
+          onEdit={(row) => route.push(`/studio/permission-groups/edit/${row.original._id}`)}
+          onDelete={(row) => deletePermGroup(row)}
+        />
+      )
+    }
   }
 ]
 

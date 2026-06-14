@@ -1,11 +1,11 @@
-import { getCsrfToken } from "next-auth/react"
 import LoginForm from "./LoginForm"
+import { getSettingsValue } from "@/lib/actions/studio/settings/get-settings-value"
 
 /**
  * Login Page (App Router)
  *
- * This is the main login page using Next.js App Router with Auth.js v5.
- * The page is a Server Component that fetches the CSRF token server-side.
+ * Updated to use shadcn-compatible layout while maintaining the original
+ * grid structure for the login form placement.
  */
 
 export const metadata = {
@@ -14,16 +14,12 @@ export const metadata = {
 }
 
 export default async function LoginPage() {
-  // Note: In Auth.js v5 with App Router, we use a Client Component for the form
-  // The CSRF token is handled automatically by the Auth.js client
+  const authMethods = await getSettingsValue("identity_settings", "auth_methods")
+
   return (
-    <div className="container">
-      <div className="grid grid-flow-col auto-cols-max h-screen w-screen">
-        <div className="grid grid-col-6 ml-10 place-content-center w-screen">
-          <div className="col-start-2 col-end-4">
-            <LoginForm />
-          </div>
-        </div>
+    <div className="flex min-h-screen w-full items-center justify-center bg-muted/40 p-4">
+      <div className="w-full max-w-[400px]">
+        <LoginForm authMethods={authMethods} />
       </div>
     </div>
   )

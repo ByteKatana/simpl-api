@@ -2,10 +2,11 @@ import { NextApiRequest, NextApiResponse } from "next"
 import { apiBuilderController } from "../../../../controllers/api-builder.controller"
 import { apiKeyController } from "../../../../controllers/api-key.controller"
 import { getByLimit } from "../../../../lib/get-by-limit"
+import { withRateLimit } from "@/lib/api/rate-limits"
 
 //===============================================
 
-export default async function handler(_req: NextApiRequest, res: NextApiResponse) {
+async function handler(_req: NextApiRequest, res: NextApiResponse) {
   const {
     query: { slug, apikey }
   } = _req
@@ -15,10 +16,12 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
   if (apiKeyData[0] !== undefined && apiKeyData[0].key === apikey) {
     const user = new apiBuilderController("single-param", "users", "permission_group", slug)
     const userData: any[] = await user.fetchData("Equals")
-    userData.forEach((user) => {
-      const { password, ...rest } = user
-      return rest
-    })
+    const usersWithoutPassword = userData
+      .filter((user) => user.permission_group !== "root")
+      .map((user) => {
+        const { password, ...rest } = user
+        return rest
+      })
     if (_slug.startsWith("first_") || _slug.startsWith("last_") || _slug.startsWith("random_")) {
       const userWithLimit = new apiBuilderController("index", "users")
       const userDataWithLimit: any[] = await userWithLimit.fetchData("Equals")
@@ -28,7 +31,9 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
       })
       return res.status(200).json(getByLimit(_slug, userDataWithLimit))
     }
-    return res.status(200).json(userData)
+    return res.status(200).json(usersWithoutPassword)
   }
-  res.status(200).json({ message: "You're not authorized!" })
+  res.status(401).json({ message: "You're not authorized!" })
 }
+
+export default withRateLimit(handler)

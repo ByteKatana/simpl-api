@@ -4,33 +4,63 @@ import { DataTable } from "@/components/studio/data-table/data-table"
 import type { ColumnDef } from "@tanstack/react-table"
 import { Checkbox } from "@/components/ui/checkbox"
 import { DataTableRowActions } from "./data-table/data-table-row-actions"
-import { Entry, EntryType } from "@/interfaces"
-import { Archive, Box, Check, CircleDotDashed } from "lucide-react"
+import { EntryType } from "@/interfaces/entry_type"
+import { Archive, Check, CircleDotDashed } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import { PublishStatus } from "@/interfaces"
+import deleteEntryTypeAction from "@/lib/actions/studio/entry-types/delete-entry-type"
+import { toast } from "sonner"
+import { useRouter } from "next/navigation"
+import { hasPermission } from "@/lib/actions/auth/has-permission"
+import deleteEntryAction from "@/lib/actions/studio/entry/delete-entry"
 
 const getLabelForStatus = (status: string) => {
-  switch (status.toLowerCase()) {
-    case "published":
+  switch (status) {
+    case PublishStatus.Published:
       return (
         <Badge variant={"secondary"} className="bg-emerald-400 text-white">
           <Check data-icon="inline-start" />
           <span className="text-sm">Published</span>
         </Badge>
       )
-    case "archived":
+    case PublishStatus.Archived:
       return (
         <Badge variant={"secondary"} className="bg-gray-400 text-white">
           <Archive data-icon="inline-start" />
           <span className="text-sm">Archived</span>
         </Badge>
       )
-    case "draft":
+    case PublishStatus.Draft:
       return (
         <Badge variant={"secondary"} className="bg-amber-400 text-white">
           <CircleDotDashed data-icon="inline-start" />
           <span className="text-sm">Draft</span>
         </Badge>
       )
+  }
+}
+
+const deleteEntryType = async (row: Row<EntryType>) => {
+  try {
+    const requiredPermissions = ["system.entry_types.delete", `${row.original.namespace}.delete`]
+    let isAllowed = false
+    for (const permission of requiredPermissions) {
+      const permType = permission.split(".")[0]
+      isAllowed = await hasPermission(permission)
+      // If the user has the system permission, they're always allowed
+      if (permType === "system" && isAllowed) {
+        isAllowed = true
+        break
+      }
+    }
+    if (!isAllowed)
+      return toast.error("You don't have permission to delete this entry type", { position: "top-center" })
+    const deleteResult = await deleteEntryTypeAction(row.original._id.toString())
+    if (deleteResult.success) {
+      toast.success("Item deleted successfully", { position: "top-center" })
+    }
+  } catch (error) {
+    toast.error("Failed to delete Entry Type", { position: "top-center" })
   }
 }
 
@@ -56,7 +86,7 @@ const columns: ColumnDef<EntryType>[] = [
   },
   { accessorKey: "name", header: "Name" },
   { accessorKey: "namespace", header: "Namespace" },
-  { accessorKey: "entries", header: "Number of Entries" },
+  { accessorKey: "createdBy", header: "Created By" },
   {
     accessorKey: "status",
     header: "Status",
@@ -67,13 +97,17 @@ const columns: ColumnDef<EntryType>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => (
-      <DataTableRowActions
-        row={row}
-        onEdit={(row) => console.log("Edit", row.original)}
-        onDelete={(row) => console.log("Delete", row.original)}
-      />
-    )
+    cell: ({ row }) => {
+      const route = useRouter()
+      return (
+        <DataTableRowActions
+          row={row}
+          onEdit={(row) => route.push(`/studio/entry-types/edit/${row.original.slug}`)}
+          onCreateEntry={(row) => route.push(`/studio/entries/new?slug=${row.original.slug}`)}
+          onDelete={(row) => deleteEntryType(row)}
+        />
+      )
+    }
   }
 ]
 
@@ -92,7 +126,7 @@ type DataTableFilterObject = {
   }[]
 }
 
-export default function EntryTypeDataTable({ data }: { data: EntryType[] }) {
+export default function EntryTypeDataTable({ data }: { data: EntryType[] | undefined }) {
   const getNameSpaceFilterOptions = () => {
     return data
       .filter(

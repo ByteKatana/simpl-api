@@ -69,9 +69,9 @@ export class EntryTypeController {
         console.log(e)
         return { status: "failed", message: "Failed to create the entry type." }
       } finally {
-        if (client?.close && typeof client.close === "function") {
+        /*if (client?.close && typeof client.close === "function") {
           await client.close()
-        }
+        }*/
       }
     } else {
       return [{ message: "Database connection is NOT established" }]
@@ -129,9 +129,9 @@ export class EntryTypeController {
       } catch (e) {
         console.log(e)
       } finally {
-        if (client?.close && typeof client.close === "function") {
+        /*if (client?.close && typeof client.close === "function") {
           await client.close()
-        }
+        }*/
       }
 
       // Check if namespace changed and privileges were updated
@@ -170,9 +170,9 @@ export class EntryTypeController {
       } catch (e) {
         console.log(e)
       } finally {
-        if (client?.close && typeof client.close === "function") {
+        /*if (client?.close && typeof client.close === "function") {
           await client.close()
-        }
+        }*/
       }
       if (deleteResult.deletedCount === 1) {
         return { status: "success", message: "Entry Type has been deleted." }

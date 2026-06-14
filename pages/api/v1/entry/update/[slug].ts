@@ -4,9 +4,10 @@ import { NextApiRequest, NextApiResponse } from "next"
 //Controller
 import { EntryController } from "../../../../../controllers/entry.controller"
 import { apiKeyController } from "../../../../../controllers/api-key.controller"
+import { withRateLimit } from "@/lib/api/rate-limits"
 //===============================================
 
-export default async function handler(_req: NextApiRequest, res: NextApiResponse) {
+async function handler(_req: NextApiRequest, res: NextApiResponse) {
   const { slug, apikey, secretkey, mockclient } = _req.query
   const apiKey = new apiKeyController({ key: apikey as string })
   const apiKeyData = await apiKey.findKey()
@@ -19,5 +20,6 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
       return res.status(200).json({ message: "You can only do PUT request for this endpoint!" })
     }
   }
-  return res.status(200).json({ message: "You're not authorized!" })
+  return res.status(401).json({ message: "You're not authorized!" })
 }
+export default withRateLimit(handler)

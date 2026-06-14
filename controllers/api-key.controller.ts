@@ -40,9 +40,9 @@ export class apiKeyController {
     } catch (e) {
       console.error(e)
     } finally {
-      if (client?.close && typeof client.close === "function") {
+      /*if (client?.close && typeof client.close === "function") {
         await client.close()
-      }
+      }*/
     }
   }
 
@@ -78,9 +78,9 @@ export class apiKeyController {
     } catch (e) {
       console.error(e)
     } finally {
-      if (client?.close && typeof client.close === "function") {
+      /*if (client?.close && typeof client.close === "function") {
         await client.close()
-      }
+      }*/
     }
   }
 
@@ -115,9 +115,9 @@ export class apiKeyController {
     } catch (e) {
       console.log(e) //TODO: better error logging & displaying
     } finally {
-      if (client?.close && typeof client.close === "function") {
+      /*if (client?.close && typeof client.close === "function") {
         await client.close()
-      }
+      }*/
     }
   }
 }

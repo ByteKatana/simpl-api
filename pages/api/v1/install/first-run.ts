@@ -29,8 +29,9 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
     let permissionGroupsResult: Collection
     let usersResult: Collection
     let accountResult
+    let rootGroupResult
     let adminGroupResult
-    let memberGroupResult
+    let viewerGroupResult
     let newPW: string
     if (isConnected) {
       try {
@@ -44,27 +45,98 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
 
         //Creating Admin Account
         newPW = Math.random().toString(36).slice(2)
-        const UserData = new UserController({
-          username: "admin",
-          password: newPW,
-          email: "admin@localhost.test",
-          permission_group: "admin"
-        })
+        const UserData = new UserController(
+          {
+            username: "admin",
+            password: newPW,
+            email: "admin@localhost.test",
+            permission_group: "root"
+          },
+          false
+        )
         accountResult = await UserData.create()
 
-        const AdminPermissionGroupData = new PermissionGroupController({
-          name: "Admin",
-          slug: "admin",
-          privileges: []
-        })
+        const RootPermissionGroupData = new PermissionGroupController(
+          {
+            name: "root",
+            slug: "root",
+            privileges: [
+              {
+                "system.entry_types": {
+                  permissions: ["read", "update", "delete", "create"]
+                }
+              },
+              {
+                "system.entries": {
+                  permissions: ["read", "update", "delete", "create"]
+                }
+              },
+              {
+                "system.users": {
+                  permissions: ["read", "update", "delete", "create"]
+                }
+              },
+              {
+                "system.permission_groups": {
+                  permissions: ["read", "update", "delete", "create"]
+                }
+              },
+              {
+                "system.settings": {
+                  permissions: ["read", "update", "delete", "create"]
+                }
+              }
+            ]
+          },
+          false
+        )
+        rootGroupResult = await RootPermissionGroupData.create()
+
+        const AdminPermissionGroupData = new PermissionGroupController(
+          {
+            name: "admin",
+            slug: "admin",
+            privileges: [
+              {
+                "system.entry_types": {
+                  permissions: ["read", "update", "delete", "create"]
+                }
+              },
+              {
+                "system.entries": {
+                  permissions: ["read", "update", "delete", "create"]
+                }
+              },
+              {
+                "system.users": {
+                  permissions: ["read", "update", "delete", "create"]
+                }
+              },
+              {
+                "system.permission_groups": {
+                  permissions: ["read", "update", "delete", "create"]
+                }
+              },
+              {
+                "system.settings": {
+                  permissions: ["read", "update", "delete", "create"]
+                }
+              }
+            ]
+          },
+          false
+        )
         adminGroupResult = await AdminPermissionGroupData.create()
 
-        const MemberPermissionGroupData = new PermissionGroupController({
-          name: "Member",
-          slug: "member",
-          privileges: []
-        })
-        memberGroupResult = await MemberPermissionGroupData.create()
+        const ViewerPermissionGroupData = new PermissionGroupController(
+          {
+            name: "Viewer",
+            slug: "viewer",
+            privileges: []
+          },
+          false
+        )
+        viewerGroupResult = await ViewerPermissionGroupData.create()
       } catch (e) {
         console.log(e)
       }
@@ -76,8 +148,9 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
       permissionGroupsResult !== undefined &&
       usersResult !== undefined &&
       accountResult.status === "success" &&
+      rootGroupResult.status === "success" &&
       adminGroupResult.status === "success" &&
-      memberGroupResult.status === "success"
+      viewerGroupResult.status === "success"
     ) {
       res.status(200).json({
         collectionsCreated: true,
@@ -91,5 +164,5 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
     }
     //res.status(200).json({ message: "OK!" })
   }
-  res.status(200).json({ message: "You're not authorized!" })
+  res.status(401).json({ message: "You're not authorized!" })
 }

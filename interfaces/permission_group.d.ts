@@ -1,6 +1,6 @@
 import { z } from "zod"
-import { CrudActionSchema, PermissionGroupSchema, PrivilegeSchema } from "@/lib/schemas"
+import { PermissionGroupSchema } from "@/lib/schemas/server/server-schemas"
+import { CrudActionSchema } from "@/lib/schemas/constants"
 
 export type PermissionGroup = z.infer<typeof PermissionGroupSchema>
-export type Privilege = z.infer<typeof PrivilegeSchema>
 export type CrudAction = z.infer<keyof typeof CrudActionSchema>

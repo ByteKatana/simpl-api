@@ -1,3 +1,10 @@
+import { SYSTEM_FEATURES } from "@/lib/schemas/constants"
+import { ApiKeySchema } from "@/lib/schemas/server/server-schemas"
+import { z } from "zod"
+import { SetupFormSchema } from "@/lib/schemas/client/form-schemas"
+import { PermissionGroup } from "@/interfaces/permission_group"
+import { EntryType } from "@/interfaces/entry_type"
+
 enum FindLike {
   StartsWith,
   EndsWith,
@@ -28,16 +35,67 @@ enum ActionTypes {
 }
 
 export enum PublishStatus {
-  Draft,
-  Published,
-  Archived
+  Draft = "Draft",
+  Published = "Published",
+  Archived = "Archived"
 }
 
 export enum UserStatus {
-  Active,
-  Inactive,
-  Disabled
+  Active = "Active",
+  Inactive = "Inactive",
+  Disabled = "Disabled"
 }
+
+export enum CrudAction {
+  LIST = "list",
+  CREATE = "create",
+  READ = "read",
+  READ_ENTRY = "read-entry",
+  UPDATE = "update",
+  UPDATE_ENTRY = "update-entry",
+  DELETE = "delete",
+  DELETE_ENTRY = "delete-entry"
+}
+
+export enum FormMode {
+  CREATE = "create",
+  EDIT = "edit"
+}
+
+export enum DbDriver {
+  MONGO = "mongo",
+  POSTGRES = "pg",
+  MYSQL = "mysql",
+  MSSQL = "mssql"
+}
+
+export enum IdentityManagementMode {
+  BUILT_IN = "built-in",
+  THIRD_PARTY = "third-party"
+}
+
+export enum AppearanceMode {
+  LIGHT = "light",
+  DARK = "dark",
+  SYSTEM = "system"
+}
+
+export enum BuiltInPermGroup {
+  SYS_MANAGER = "system-manager",
+  VIEWER = "viewer"
+}
+
+export type SystemFeature = (typeof SYSTEM_FEATURES)[number]
+
+export type DbPrivilege = Record<string, { permission: string[] }>
+
+export enum EmailVerification {
+  MAGIC_LINK = "MAGIC_LINK",
+  REGISTRATION = "REGISTRATION",
+  OTP = "OTP"
+}
+
+export type SetupFormValues = z.infer<typeof SetupFormSchema>
 
 export type DataType = keyof typeof DataTypes
 export type ActionType = keyof typeof ActionTypes
@@ -48,18 +106,25 @@ export type ContentType = keyof typeof ContentTypes
 
 export type ResponseType = "api" | "server"
 
-export type ActionResponse<T = null> = {
-  success: boolean
-  status?: number
-  data?: T
-  error?: {
-    message: string
-    details?: Record<string, string[]>
-  }
-}
+export type ActionResponse<T = any> =
+  | {
+      success: true
+      status: number
+      data: T
+      error?: never
+    }
+  | {
+      success: false
+      status?: number
+      data?: never
+      error: {
+        message: string
+        details?: Record<string, string[]>
+      }
+    }
 
-export type SuccessResponse<T = null> = ActionResponse<T> & { success: true }
-export type ErrorResponse = ActionResponse<undefined> & { success: false }
+export type SuccessResponse<T = any> = ActionResponse<T> & { success: true }
+export type ErrorResponse = ActionResponse & { success: false }
 
 export type SettingsData = {
   permissionGroups: PermissionGroup
@@ -67,64 +132,7 @@ export type SettingsData = {
   apiKeys: ApiKey[]
 }
 
-export interface EntryType {
-  _id?: string
-  name: string
-  namespace: string
-  status: PublishStatus
-  entries: number
-  fields: object[]
-  createdBy?: string
-}
-
-export interface Entry {
-  _id?: string
-  name: string
-  entry_type: {
-    _id: string
-    name: string
-    namespace: string
-  }
-  slug: string
-  status: PublishStatus
-}
-
-export interface User {
-  _id?: string
-  fullname?: string
-  username: string
-  password: string
-  email: string
-  permission_group: string
-  profile_img?: string
-  status: UserStatus
-  created_at?: string
-  updated_at?: string
-  created_by?: string
-  updated_by?: string
-  pwchanged?: boolean
-}
-
-export interface UserCreateResponse {
-  data: {
-    isEmailExist: boolean
-    isUsernameExist: boolean
-    result: Response
-  }
-  status: number
-}
-
-export interface PermissionGroup {
-  _id?: string
-  name: string
-  icon?: string
-  slug: string
-  privileges: any[]
-}
-
-export interface ApiKey {
-  key: string
-}
+export type ApiKey = z.infer<typeof ApiKeySchema>
 
 export interface DOMEvent<T extends EventTarget> extends Event {
   readonly target: T
@@ -144,7 +152,7 @@ export interface FormattedEntryType {
   createdBy?: string
 }
 
-export interface UserCreateActionResponse {
+export interface UserCreateUpdateActionResponse {
   success: boolean
   status?: number
   data?: {
