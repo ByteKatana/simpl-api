@@ -1,5 +1,5 @@
 import { connectDB } from "@/lib/mongodb"
-import { Collection, DeleteResult, Filter, InsertOneResult, MongoClient, ObjectId } from "mongodb"
+import { Collection, DeleteResult, InsertOneResult, MongoClient, ObjectId } from "mongodb"
 
 //Interface
 import { ApiKey } from "@/interfaces"
@@ -13,8 +13,8 @@ export class apiKeyController {
     this.apiKey = apiKey
   }
 
-  async findKey() {
-    let dbCollection: Collection<any>
+  async findKey(): Promise<ApiKey[] | { message: string }[] | undefined> {
+    let dbCollection: Collection<ApiKey>
     let isConnected = false
     let client: MongoClient | undefined
     try {
@@ -25,10 +25,10 @@ export class apiKeyController {
         console.log(e)
       }
       if (client && isConnected) {
-        let findResult: Filter<object> | undefined
+        let findResult: ApiKey[] | undefined
         try {
-          dbCollection = client.db(process.env.DB_NAME).collection("api_keys") as Collection
-          findResult = await dbCollection.find({ key: this.apiKey.key }).toArray()
+          dbCollection = client.db(process.env.DB_NAME).collection("api_keys") as Collection<ApiKey>
+          findResult = (await dbCollection.find({ key: this.apiKey.key }).toArray()) as ApiKey[]
         } catch (e) {
           console.log(e)
         }

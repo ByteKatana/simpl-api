@@ -55,17 +55,15 @@ export default async function createUser(
       result = { data, status: response.status }
     }
 
-    const userCreateResponse: UserCreateUpdateActionResponse = {
+    return {
       success: true,
       status: 200,
       data: {
-        isEmailExist: isEmailExist.length <= 0 ? false : true,
-        isUsernameExist: isUsernameExist.length <= 0 ? false : true,
+        isEmailExist: isEmailExist.length > 0,
+        isUsernameExist: isUsernameExist.length > 0,
         result: result
       }
     }
-
-    return userCreateResponse
   } catch (error) {
     return handleError(error) as ErrorResponse
   }

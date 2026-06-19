@@ -1,7 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { apiBuilderController } from "../../../../controllers/api-builder.controller"
-import { apiKeyController } from "../../../../controllers/api-key.controller"
-import { getByLimit } from "../../../../lib/get-by-limit"
+import { apiBuilderController } from "@/controllers/api-builder.controller"
+import { apiKeyController } from "@/controllers/api-key.controller"
+import { isValidApiKey } from "@/lib/api/utils"
+import { getByLimit } from "@/lib/get-by-limit"
 import { withRateLimit } from "@/lib/api/rate-limits"
 
 //===============================================
@@ -12,13 +13,14 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
   } = _req
   const apiKey = new apiKeyController({ key: apikey as string })
   const apiKeyData = await apiKey.findKey()
-  if (apiKeyData[0] !== undefined && apiKeyData[0].key === apikey) {
+  if (param && isValidApiKey(apiKeyData, apikey)) {
     const user = new apiBuilderController("single-param", "users", param[0], param[1])
-    const userData: any[] = await user.fetchData("Equals")
-    let responseUsers = userData.filter((user) => user.permission_group !== "root")
+    const fetchData = await user.fetchData("Equals")
+    const userData = Array.isArray(fetchData) ? fetchData : []
+    let responseUsers = userData.filter((user: any) => user.permission_group !== "root")
 
     if (process.env.SECRET_KEY !== secretkey) {
-      responseUsers = responseUsers.map((user) => {
+      responseUsers = responseUsers.map((user: any) => {
         const { password, ...rest } = user
         return rest
       })

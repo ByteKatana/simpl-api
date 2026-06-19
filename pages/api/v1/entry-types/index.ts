@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { apiBuilderController } from "../../../../controllers/api-builder.controller"
-import { apiKeyController } from "../../../../controllers/api-key.controller"
+import { apiBuilderController } from "@/controllers/api-builder.controller"
+import { apiKeyController } from "@/controllers/api-key.controller"
+import { isValidApiKey } from "@/lib/api/utils"
 import { withRateLimit } from "@/lib/api/rate-limits"
 
 //===============================================
@@ -9,7 +10,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
   const { apikey } = _req.query
   const apiKey = new apiKeyController({ key: apikey as string })
   const apiKeyData = await apiKey.findKey()
-  if (apiKeyData && apiKeyData[0].key === apikey) {
+  if (isValidApiKey(apiKeyData, apikey)) {
     const apiBuilder = new apiBuilderController("index", "entry_types")
     return res.status(200).json(await apiBuilder.fetchData("Equals"))
   }

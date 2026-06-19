@@ -1,6 +1,7 @@
 //Core
 import { NextApiRequest, NextApiResponse } from "next"
 
+import { isValidApiKey } from "@/lib/api/utils"
 //Controller
 import { PermissionGroupController } from "@/controllers/permission-group.controller"
 import { apiKeyController } from "@/controllers/api-key.controller"
@@ -14,7 +15,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
   const { slug, apikey, secretkey, mockclient } = _req.query
   const apiKey = new apiKeyController({ key: apikey as string })
   const apiKeyData = await apiKey.findKey()
-  if (apiKeyData && apiKeyData[0].key === apikey && process.env.SECRET_KEY === secretkey) {
+  if (isValidApiKey(apiKeyData, apikey) && process.env.SECRET_KEY === secretkey) {
     if (_req.method === "DELETE") {
       const dummyObj: PermissionGroup = {
         name: "",

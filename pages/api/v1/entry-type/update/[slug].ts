@@ -1,6 +1,7 @@
 //Core
 import { NextApiRequest, NextApiResponse } from "next"
 
+import { isValidApiKey } from "@/lib/api/utils"
 //Controller
 import { EntryTypeController } from "@/controllers/entry-type.controller"
 import { apiKeyController } from "@/controllers/api-key.controller"
@@ -11,7 +12,7 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
   const { slug, apikey, secretkey, mockclient } = _req.query
   const apiKey = new apiKeyController({ key: apikey as string })
   const apiKeyData = await apiKey.findKey()
-  if (apiKeyData && apiKeyData[0].key === apikey && process.env.SECRET_KEY === secretkey) {
+  if (isValidApiKey(apiKeyData, apikey) && process.env.SECRET_KEY === secretkey) {
     if (_req.method === "PUT") {
       const EntryTypeData = new EntryTypeController(_req.body, mockclient === "true")
       const result = await EntryTypeData.update(slug as string)

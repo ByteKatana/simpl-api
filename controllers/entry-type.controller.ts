@@ -1,9 +1,9 @@
 //Database
-import { connectDB } from "../lib/mongodb"
+import { connectDB } from "@/lib/mongodb"
 import { Collection, InsertOneResult, MongoClient, ObjectId, UpdateResult } from "mongodb"
 
 //Interface
-import { EntryType } from "../interfaces/entry_type"
+import { EntryType } from "@/interfaces/entry_type"
 
 //===============================================
 

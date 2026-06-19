@@ -1,6 +1,7 @@
 //Core
 import { NextApiRequest, NextApiResponse } from "next"
 import { withRateLimit } from "@/lib/api/rate-limits"
+import { isValidApiKey } from "@/lib/api/utils"
 
 //Controller
 import { EntryController } from "@/controllers/entry.controller"
@@ -14,13 +15,17 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
   const { slug, apikey, secretkey, mockclient } = _req.query
   const apiKey = new apiKeyController({ key: apikey as string })
   const apiKeyData = await apiKey.findKey()
-  if (apiKeyData && process.env.SECRET_KEY === secretkey) {
+  if (isValidApiKey(apiKeyData, apikey) && process.env.SECRET_KEY === secretkey) {
     if (_req.method === "DELETE") {
-      const dummyObj: Entry = {
+      const dummyObj = {
         name: "",
         namespace: "",
-        slug: ""
-      }
+        slug: "",
+        status: "Draft",
+        data: {},
+        created_at: new Date(),
+        updated_at: new Date()
+      } as Entry
       const EntryData = new EntryController(dummyObj, mockclient === "true")
       const result = await EntryData.delete(slug as string)
       return res.status(200).json(result)

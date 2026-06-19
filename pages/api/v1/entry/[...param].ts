@@ -1,8 +1,9 @@
 import { NextApiResponse, NextApiRequest } from "next"
-import { apiBuilderController } from "../../../../controllers/api-builder.controller"
-import { apiKeyController } from "../../../../controllers/api-key.controller"
-import { getByIndex } from "../../../../lib/get-by-index"
-import { getByLimit } from "../../../../lib/get-by-limit"
+import { apiBuilderController } from "@/controllers/api-builder.controller"
+import { apiKeyController } from "@/controllers/api-key.controller"
+import { isValidApiKey } from "@/lib/api/utils"
+import { getByIndex } from "@/lib/get-by-index"
+import { getByLimit } from "@/lib/get-by-limit"
 import { withRateLimit } from "@/lib/api/rate-limits"
 
 async function handler(_req: NextApiRequest, res: NextApiResponse) {
@@ -11,7 +12,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
   } = _req
   const apiKey = new apiKeyController({ key: apikey as string })
   const apiKeyData = await apiKey.findKey()
-  if (apiKeyData[0] !== undefined && apiKeyData[0].key === apikey) {
+  if (param && isValidApiKey(apiKeyData, apikey)) {
     let apiBuilder: apiBuilderController
     if (param.length > 3) {
       //For Sub-entry-types
@@ -25,14 +26,15 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
       param[param.length - 1].startsWith("last_") ||
       param[param.length - 1].startsWith("random_")
     ) {
-      res.status(200).json(getByLimit(param[param.length - 1], await apiBuilder.fetchData("StartsWith")))
+      const fetchData = await apiBuilder.fetchData("StartsWith")
+      return res.status(200).json(getByLimit(param[param.length - 1], Array.isArray(fetchData) ? fetchData : []))
     } else if (Number.isInteger(parseInt(param[param.length - 1]))) {
-      res.status(200).json(getByIndex(param[param.length - 1], await apiBuilder.fetchData("StartsWith")))
+      const fetchData = await apiBuilder.fetchData("StartsWith")
+      return res.status(200).json(getByIndex(param[param.length - 1], Array.isArray(fetchData) ? fetchData : []))
     }
 
-    res.status(200).json({ message: "Index or Limit parameter must be set." })
-    //console.log(fetchedData.length - 1)
+    return res.status(200).json({ message: "Index or Limit parameter must be set." })
   }
-  res.status(401).json({ message: "You're not authorized!" })
+  return res.status(401).json({ message: "You're not authorized!" })
 }
 export default withRateLimit(handler)

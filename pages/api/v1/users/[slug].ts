@@ -1,7 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { apiBuilderController } from "../../../../controllers/api-builder.controller"
-import { apiKeyController } from "../../../../controllers/api-key.controller"
-import { getByLimit } from "../../../../lib/get-by-limit"
+import { apiBuilderController } from "@/controllers/api-builder.controller"
+import { apiKeyController } from "@/controllers/api-key.controller"
+import { isValidApiKey } from "@/lib/api/utils"
+import { getByLimit } from "@/lib/get-by-limit"
 import { withRateLimit } from "@/lib/api/rate-limits"
 
 //===============================================
@@ -13,19 +14,20 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
   const apiKey = new apiKeyController({ key: apikey as string })
   const apiKeyData = await apiKey.findKey()
   const _slug = slug as string
-  if (apiKeyData && apiKeyData[0] !== undefined && apiKeyData[0].key === apikey) {
+  if (isValidApiKey(apiKeyData, apikey)) {
     const user = new apiBuilderController("single-param", "users", "permission_group", slug)
-    const userData: any[] = await user.fetchData("Equals")
+    const fetchData = await user.fetchData("Equals")
+    const userData = Array.isArray(fetchData) ? fetchData : []
     const usersWithoutPassword = userData
-      .filter((user) => user.permission_group !== "root")
-      .map((user) => {
+      .filter((user: any) => user.permission_group !== "root")
+      .map((user: any) => {
         const { password, ...rest } = user
         return rest
       })
     if (_slug.startsWith("first_") || _slug.startsWith("last_") || _slug.startsWith("random_")) {
       const userWithLimit = new apiBuilderController("index", "users")
-      const userDataWithLimit: any[] = await userWithLimit.fetchData("Equals")
-      userDataWithLimit.forEach((user) => {
+      const fetchDataWithLimit = await userWithLimit.fetchData("Equals")
+      const userDataWithLimit = (Array.isArray(fetchDataWithLimit) ? fetchDataWithLimit : []).map((user: any) => {
         const { password, ...rest } = user
         return rest
       })
