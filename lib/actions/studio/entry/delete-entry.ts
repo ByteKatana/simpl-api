@@ -1,7 +1,7 @@
 "use server"
 
 import handleError from "@/lib/handlers/error"
-import { ErrorResponse, SuccessResponse } from "@/interfaces"
+import { ActionResponse, SuccessResponse } from "@/interfaces"
 import { Entry } from "@/interfaces/entry"
 import { revalidatePath } from "next/cache"
 import { getPermissionGroup } from "@/lib/auth/get-session"
@@ -12,7 +12,7 @@ export default async function deleteEntryAction(id: string): Promise<ActionRespo
     const perm_group = await getPermissionGroup()
 
     if (!perm_group) {
-      return handleError(new Error("Unauthorized to delete entry"))
+      return handleError(new Error("Unauthorized to delete entry"), "server")
     }
 
     const response = await fetch(
@@ -25,11 +25,11 @@ export default async function deleteEntryAction(id: string): Promise<ActionRespo
     const data = await response.json()
     if (!response.ok) {
       const unhandledError = new Error("Failed to delete the entry")
-      return handleError(unhandledError)
+      return handleError(unhandledError, "server")
     }
     revalidatePath("/studio/entries")
-    return { success: true, status: 200, data } as SuccessResponse<Entry[]>
+    return { success: true, status: 200, data } as SuccessResponse<Entry>
   } catch (error) {
-    return handleError(error) as ErrorResponse
+    return handleError(error, "server")
   }
 }

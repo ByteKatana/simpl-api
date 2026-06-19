@@ -16,7 +16,7 @@ type Props = {
 }
 
 export const FormRenderer = ({ rows, context }: Props) => {
-  let form = undefined
+  let form: any = undefined
   if (context) form = context()
 
   const renderField = (field: RendererField) => {
@@ -80,18 +80,18 @@ export const FormRenderer = ({ rows, context }: Props) => {
     return (
       <form.Field
         validators={{
-          onBlur: ({ value }) => {
+          onBlur: ({ value }: { value: any }) => {
             const r = fieldSchema.safeParse(value)
             return r.success ? undefined : r.error.issues[0]?.message
           },
           onChangeAsyncDebounceMs: 1500,
-          onChangeAsync: async ({ value }) => {
+          onChangeAsync: async ({ value }: { value: any }) => {
             const r = await fieldSchema.safeParseAsync(value)
             return r.success ? undefined : r.error.issues[0]?.message
           }
         }}
         name={fieldName}>
-        {(f) => {
+        {(f: any) => {
           switch (field.type) {
             case "Text Input":
               return (

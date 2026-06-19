@@ -76,6 +76,7 @@ const deleteUser = async (row: Row<User>) => {
       }
     }
     if (!isAllowed) return toast.error("You don't have permission to delete a user", { position: "top-center" })
+    if (!row.original._id) return toast.error("Missing user identifier", { position: "top-center" })
     const deleteResult = await deleteUserAction(row.original._id.toString())
     if (deleteResult.success) {
       toast.success("Item deleted successfully", { position: "top-center" })
@@ -141,7 +142,7 @@ const columns: ColumnDef<User>[] = [
       return (
         <DataTableRowActions
           row={row}
-          onEdit={(row) => router.push(`/studio/users/edit/${row.original._id.toString()}`)}
+          onEdit={(row) => router.push(`/studio/users/edit/${row.original._id?.toString() ?? ""}`)}
           onDelete={(row) => deleteUser(row)}
         />
       )

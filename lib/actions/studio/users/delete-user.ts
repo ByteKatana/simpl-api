@@ -1,19 +1,19 @@
 "use server"
 
 import handleError from "@/lib/handlers/error"
-import { ErrorResponse, SuccessResponse } from "@/interfaces"
+import { ActionResponse, ErrorResponse, SuccessResponse } from "@/interfaces"
 import { User } from "@/interfaces/user"
 import { revalidatePath } from "next/cache"
 import { getPermissionGroup } from "@/lib/auth/get-session"
 import getUserBySlug from "@/lib/actions/studio/users/get-user-by-slug"
 
-export default async function deleteUserAction(id: string) {
+export default async function deleteUserAction(id: string): Promise<ActionResponse<User[]>> {
   try {
     // Check permission first.
     const perm_group = await getPermissionGroup()
 
     if (!perm_group) {
-      return handleError(new Error("Unauthorized to delete user"))
+      return handleError(new Error("Unauthorized to delete user"), "server")
     }
 
     if (perm_group !== "root") {
@@ -34,7 +34,7 @@ export default async function deleteUserAction(id: string) {
     const data = await response.json()
     if (!response.ok) {
       const unhandledError = new Error("Failed to delete the user")
-      return handleError(unhandledError)
+      return handleError(unhandledError, "server")
     }
     revalidatePath("/studio/users")
     return { success: true, status: 200, data } as SuccessResponse<User[]>

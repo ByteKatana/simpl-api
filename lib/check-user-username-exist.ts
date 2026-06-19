@@ -2,7 +2,7 @@ import { User } from "@/interfaces/user"
 import { getPermissionGroup } from "@/lib/auth/get-session"
 import handleError from "@/lib/handlers/error"
 
-async function checkUserUsernameExist(formValues: User, registerMode = false) {
+async function checkUserUsernameExist(formValues: Partial<User>, registerMode = false) {
   try {
     // Check permission first.
     if (!registerMode) {
@@ -22,11 +22,10 @@ async function checkUserUsernameExist(formValues: User, registerMode = false) {
     )
 
     if (!response.ok) {
-      throw new Error(`Failed to check username existence: ${response.statusText}`)
+      return handleError(new Error(`Failed to check username existence: ${response.statusText}`), "server")
     }
 
-    const data = await response.json()
-    return data
+    return await response.json()
   } catch (error) {
     console.log("USER_CHECK_USERNAME_EXIST_ERROR", error instanceof Error ? error.message : "Unknown error")
     throw error

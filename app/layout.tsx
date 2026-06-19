@@ -20,10 +20,7 @@ export async function generateMetadata(): Promise<Metadata> {
       template: `%s | ${siteName}`,
       default: siteName
     },
-    description: {
-      template: `%s | ${siteName} Studio`,
-      default: `${siteName} Studio`
-    }
+    description: `${siteName} Studio`
   }
 }
 

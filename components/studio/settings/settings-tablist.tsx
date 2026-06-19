@@ -7,11 +7,14 @@ const SettingsTablist = () => {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const updateParam = useCallback((param: string, value: string) => {
-    const params = new URLSearchParams(searchParams.toString())
-    params.set(param, value)
-    router.push(`${pathname}?${params.toString()}`)
-  })
+  const updateParam = useCallback(
+    (param: string, value: string) => {
+      const params = new URLSearchParams(searchParams?.toString())
+      params.set(param, value)
+      router.push(`${pathname}?${params.toString()}`)
+    },
+    [searchParams, pathname, router]
+  )
   return (
     <>
       <TabsTrigger onClick={() => updateParam("tab", "general")} value="general">

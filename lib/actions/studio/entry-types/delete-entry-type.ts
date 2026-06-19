@@ -1,7 +1,7 @@
 "use server"
 
 import handleError from "@/lib/handlers/error"
-import { ActionResponse, ErrorResponse, SuccessResponse } from "@/interfaces/"
+import { ActionResponse, SuccessResponse } from "@/interfaces/"
 import { EntryType } from "@/interfaces/entry_type"
 import { revalidatePath } from "next/cache"
 import { getPermissionGroup } from "@/lib/auth/get-session"
@@ -25,11 +25,11 @@ export default async function deleteEntryTypeAction(id: string): Promise<ActionR
     const data = await response.json()
     if (!response.ok) {
       const unhandledError = new Error("Failed to delete the entry type")
-      return handleError(unhandledError)
+      return handleError(unhandledError, "server")
     }
     revalidatePath("/studio/entry-types")
-    return { success: true, status: 200, data } as SuccessResponse<EntryType[]>
+    return { success: true, status: 200, data } as SuccessResponse<EntryType>
   } catch (error) {
-    return handleError(error) as ErrorResponse
+    return handleError(error, "server")
   }
 }

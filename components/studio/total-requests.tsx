@@ -1,6 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
-const TotalRequests = ({ value, change }) => {
+type TotalRequestsProps = {
+  value: number
+  change: number
+}
+
+const TotalRequests = ({ value, change }: TotalRequestsProps) => {
   const calcPercentage = (lastMonth: number, currentMonth: number) => {
     return ((currentMonth - lastMonth) / lastMonth) * 100
   }

@@ -126,10 +126,10 @@ export function withRateLimit(handler: NextApiHandlerWithAuth) {
 
       // Wrap the original handler to log when it finishes
       const originalEnd = res.end
-      res.end = function (...args: any[]) {
+      res.end = function (this: any, chunk?: any, encoding?: any, cb?: any) {
         finalizeLog(identifier, false, "")
-        return originalEnd.apply(this, args)
-      }
+        return originalEnd.call(this, chunk, encoding, cb)
+      } as any
 
       return handler(req, res)
     } catch (error) {

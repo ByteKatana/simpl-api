@@ -1,5 +1,5 @@
 import { Metadata } from "next"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs"
 import GeneralSettingsForm from "@/app/studio/settings/general-settings-form"
 import IdentitySettingsForm from "@/app/studio/settings/identity-settings-form"
 import ApiSettingsForm from "@/app/studio/settings/api-settings.form"
@@ -12,6 +12,7 @@ import { Toaster } from "@/components/ui/sonner"
 import AppearanceSettingsForm from "@/app/studio/settings/appearance-settings-form"
 import getAllApiKeys from "@/lib/actions/studio/settings/get-all-api-keys"
 import SettingsTablist from "@/components/studio/settings/settings-tablist"
+import { GeneralSettings, IdentitySettings, ApiSettings, AppearanceSettings } from "@/interfaces/settings"
 
 export const metadata: Metadata = {
   title: "Settings",
@@ -24,23 +25,29 @@ const SettingsStudioPage = async ({ searchParams }: { searchParams: { tab: strin
 
   // Settings
   const settingsResponse = await getAllSettings()
-  const allSettings = settingsResponse.data
-  const generalSettings = allSettings.filter((settings) => settings.name === "general_settings")[0]
-  const identitySettings = allSettings.filter((settings) => settings.name === "identity_settings")[0]
-  const apiSettings = allSettings.filter((settings) => settings.name === "api_settings")[0]
-  const appearanceSettings = allSettings.filter((settings) => settings.name === "appearance_settings")[0]
+  const allSettings = settingsResponse.success ? settingsResponse.data : []
+  const generalSettings = allSettings.filter(
+    (settings) => settings.name === "general_settings"
+  )[0] as unknown as GeneralSettings
+  const identitySettings = allSettings.filter(
+    (settings) => settings.name === "identity_settings"
+  )[0] as unknown as IdentitySettings
+  const apiSettings = allSettings.filter((settings) => settings.name === "api_settings")[0] as unknown as ApiSettings
+  const appearanceSettings = allSettings.filter(
+    (settings) => settings.name === "appearance_settings"
+  )[0] as unknown as AppearanceSettings
 
   // Permission Groups
   const responsePermGroups = await getPermissionGroups()
-  const permGroups = responsePermGroups.data
+  const permGroups = responsePermGroups.success ? responsePermGroups.data : []
 
   //Namespaces
   const responseNamespaces = await getEntryTypes()
-  const namespaces = responseNamespaces.data
+  const namespaces = responseNamespaces.success ? responseNamespaces.data : []
 
   // API Keys
   const responseApiKeys = await getAllApiKeys()
-  const apiKeys = responseApiKeys.data
+  const apiKeys = responseApiKeys.success ? responseApiKeys.data : []
 
   return (
     <PermissionGuard reqPermission={["system.settings.update"]} isPage={true}>

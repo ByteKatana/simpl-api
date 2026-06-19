@@ -1,7 +1,7 @@
 "use server"
 
 import handleError from "@/lib/handlers/error"
-import { ActionResponse, ErrorResponse, SuccessResponse } from "@/interfaces"
+import { ActionResponse, SuccessResponse } from "@/interfaces"
 import { PermissionGroup } from "@/interfaces/permission_group"
 import { PermissionGroupFormSchema } from "@/lib/schemas/client/form-schemas"
 import { z } from "zod"
@@ -17,7 +17,7 @@ export default async function updatePermissionGroup(
     const perm_group = await getPermissionGroup()
 
     if (!perm_group) {
-      return handleError(new Error("Unauthorized to create permission group"))
+      return handleError(new Error("Unauthorized to update permission group"), "server")
     }
     const privileges = permGroupFormToDb(formValues)
     // Make API request using fetch
@@ -41,11 +41,11 @@ export default async function updatePermissionGroup(
 
     if (!response.ok) {
       const error = new Error("Failed to update permission group")
-      return handleError(error)
+      return handleError(error, "server")
     }
 
     return { success: true, status: response.status, data } as SuccessResponse<PermissionGroup>
   } catch (error) {
-    return handleError(error) as ErrorResponse
+    return handleError(error, "server")
   }
 }

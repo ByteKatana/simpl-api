@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { apiBuilderController } from "../../../../controllers/api-builder.controller"
-import { apiKeyController } from "../../../../controllers/api-key.controller"
-import { getByLimit } from "../../../../lib/get-by-limit"
+import { apiBuilderController } from "@/controllers/api-builder.controller"
+import { apiKeyController } from "@/controllers/api-key.controller"
+import { getByLimit } from "@/lib/get-by-limit"
 import { withRateLimit } from "@/lib/api/rate-limits"
 
 async function handler(_req: NextApiRequest, res: NextApiResponse) {
@@ -11,7 +11,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
   const apiKey = new apiKeyController({ key: apikey as string })
   const apiKeyData = await apiKey.findKey()
   const _slug = slug as string
-  if (apiKeyData[0] !== undefined && apiKeyData[0].key === apikey) {
+  if (apiKeyData && apiKeyData[0].key === apikey) {
     let apiBuilder: apiBuilderController
     if (_slug.startsWith("first_") || _slug.startsWith("last_") || _slug.startsWith("random_")) {
       apiBuilder = new apiBuilderController("index", "entries", "namespace")

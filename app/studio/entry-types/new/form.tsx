@@ -4,7 +4,6 @@ import { Field, FieldError, FieldLabel } from "@/components/ui/field"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { BuilderCanvas } from "@/components/studio/entry-types/builder-canvas"
-import useSaveData from "@/hooks/use-save-data"
 import { toast } from "sonner"
 import { PublishStatus } from "@/interfaces"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -13,9 +12,9 @@ import { z } from "zod"
 import { useRouter } from "next/navigation"
 import { Undo2Icon } from "lucide-react"
 import StatusRadioGroup from "@/components/studio/status-radio-group"
+import createEntryType from "@/lib/actions/studio/entry-types/create-entry-type"
 
 const EntryTypeCreateForm = ({ namespaces }: { namespaces: string[] }) => {
-  const { saveData } = useSaveData("ENTRY_TYPE", "CREATE")
   const router = useRouter()
   const form = useForm({
     defaultValues: {
@@ -30,8 +29,7 @@ const EntryTypeCreateForm = ({ namespaces }: { namespaces: string[] }) => {
     },
     onSubmit: async ({ value }) => {
       try {
-        console.log("FORM VALUES:", value)
-        const response = await saveData(value)
+        const response = await createEntryType(value)
         if (response.status === 200) {
           toast.success("Successful!", {
             description: "Entry type has been created successfully!",

@@ -116,7 +116,7 @@ export const GeneralSettingsSchema = GeneralSettingsFormSchema.extend({
     z.string().refine((val) => ObjectId.isValid(val), { message: "Invalid ObjectId" })
   ]),
   name: z.string().min(1, "Name is required"),
-  settings: z.object()
+  settings: GeneralSettingsFormSchema
 }).transform((formData) => ({
   id: formData.id,
   name: formData.name,
@@ -129,7 +129,7 @@ export const IdentitySettingsSchema = IdentitySettingsFormSchema.extend({
     z.string().refine((val) => ObjectId.isValid(val), { message: "Invalid ObjectId" })
   ]),
   name: z.string().min(1, "Name is required"),
-  settings: z.object()
+  settings: IdentitySettingsFormSchema
 }).transform((formData) => ({
   id: formData.id,
   name: formData.name,
@@ -142,7 +142,7 @@ export const ApiSettingsSchema = ApiSettingsFormSchema.extend({
     z.string().refine((val) => ObjectId.isValid(val), { message: "Invalid ObjectId" })
   ]),
   name: z.string().min(1, "Name is required"),
-  settings: z.json()
+  settings: ApiSettingsFormSchema
 }).transform((formData) => ({
   id: formData.id,
   name: formData.name,
@@ -155,7 +155,7 @@ export const AppearanceSettingsSchema = AppearanceSettingsFormSchema.extend({
     z.string().refine((val) => ObjectId.isValid(val), { message: "Invalid ObjectId" })
   ]),
   name: z.string().min(1, "Name is required"),
-  settings: z.json()
+  settings: AppearanceSettingsFormSchema
 }).transform((formData) => ({
   id: formData.id,
   name: formData.name,

@@ -7,13 +7,15 @@ import AnalyticsSkeleton from "@/components/studio/skeletons/analytics-skeleton"
 import { useQuery } from "@tanstack/react-query"
 
 const Analytics = () => {
-  const { data: stats, isLoading } = useQuery({
+  const { data: statsResponse, isLoading } = useQuery({
     queryKey: ["analytics-stats"],
     queryFn: () => getAnalyticsStats(),
     refetchInterval: 30000
   })
 
-  if (isLoading || !stats) return <AnalyticsSkeleton />
+  if (isLoading || !statsResponse || !statsResponse.success) return <AnalyticsSkeleton />
+
+  const stats = statsResponse.data
 
   return (
     <div className="space-y-4">

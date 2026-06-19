@@ -1,7 +1,7 @@
 "use server"
 import { getPermissionGroup } from "@/lib/auth/get-session"
 import handleError from "@/lib/handlers/error"
-import { ActionResponse, ErrorResponse, SuccessResponse } from "@/interfaces"
+import { ActionResponse, SuccessResponse } from "@/interfaces"
 import { prisma } from "@/lib/prisma"
 import { IdentitySettings } from "@/interfaces/settings"
 
@@ -13,7 +13,7 @@ export default async function updateIdentitySettings(
     // Check permission first.
     const perm_group = await getPermissionGroup()
     if (!perm_group) {
-      return handleError(new Error("Unauthorized to update settings"))
+      return handleError(new Error("Unauthorized to update settings"), "server")
     }
     const response = await prisma.settings.update({
       where: { id: _id, name: "identity_settings" },
@@ -22,11 +22,10 @@ export default async function updateIdentitySettings(
         updated_at: new Date().toISOString()
       }
     })
-    console.log("PRISMA_RESPONSE", response)
 
     if (response === null || response.id !== _id) {
       const unhandledError = new Error("Failed to update general settings")
-      return handleError(unhandledError)
+      return handleError(unhandledError, "server")
     }
     const data = {
       id: response.id,
@@ -35,6 +34,6 @@ export default async function updateIdentitySettings(
     } as IdentitySettings
     return { success: true, status: 200, data } as SuccessResponse<IdentitySettings>
   } catch (error) {
-    return handleError(error) as ErrorResponse
+    return handleError(error, "server")
   }
 }

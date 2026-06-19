@@ -7,13 +7,14 @@ import getOverviewStats from "@/lib/actions/studio/stats/get-overview-stats"
 import { useQuery } from "@tanstack/react-query"
 
 const Overview = () => {
-  const { data: stats, isLoading } = useQuery({
-    queryKey: ["overviw-stats"],
+  const { data: statsResponse, isLoading } = useQuery({
+    queryKey: ["overview-stats"],
     queryFn: () => getOverviewStats(),
     refetchInterval: 30000
   })
 
-  if (isLoading || !stats) return <OverviewSkeleton />
+  if (isLoading || !statsResponse || !statsResponse.success) return <OverviewSkeleton />
+  const stats = statsResponse.data
 
   return (
     <>

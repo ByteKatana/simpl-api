@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 
 const Page = async () => {
   const responseNamespaces = await getEntryTypes()
-  const namespaces = responseNamespaces.data
+  const namespaces = responseNamespaces.success ? responseNamespaces.data : []
   //TODO:
   // 1. Add return button to Permission Group List Page
 

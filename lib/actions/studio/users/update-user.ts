@@ -9,7 +9,7 @@ import checkUserUsernameExist from "@/lib/check-user-username-exist"
 import bcrypt from "bcryptjs"
 
 export default async function updateUser(
-  formValues: User,
+  formValues: Partial<User>,
   prevValues: User,
   id: string,
   registerMode = false
@@ -19,11 +19,11 @@ export default async function updateUser(
       const perm_group = await getPermissionGroup()
 
       if (!perm_group) {
-        return handleError(new Error("Unauthorized to update user"))
+        return handleError(new Error("Unauthorized to update user"), "server") as any
       }
 
       if (perm_group !== "root" && prevValues.permission_group === "root") {
-        return handleError(new Error("Unauthorized to update this user"))
+        return handleError(new Error("Unauthorized to update this user"), "server") as any
       }
     }
 
@@ -66,7 +66,7 @@ export default async function updateUser(
 
       if (!response.ok) {
         const unhandledError = new Error(data?.message || "Failed to update user")
-        return handleError(unhandledError)
+        return handleError(unhandledError, "server") as any
       }
       result = { data, status: response.status }
     }
@@ -83,6 +83,6 @@ export default async function updateUser(
 
     return userUpdateResponse
   } catch (error) {
-    return handleError(error) as ErrorResponse
+    return handleError(error, "server") as any
   }
 }

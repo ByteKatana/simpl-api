@@ -15,7 +15,6 @@ import { Entry, EntryFormValues } from "@/interfaces/entry"
 import StatusRadioGroup from "@/components/studio/status-radio-group"
 import z from "zod"
 import FieldErrorText from "@/components/studio/field-error-text"
-import { NextResponse } from "next/server"
 import updateEntry from "@/lib/actions/studio/entry/update-entry"
 
 type Props = {

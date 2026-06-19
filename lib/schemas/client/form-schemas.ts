@@ -200,9 +200,9 @@ export const PermissionGroupFormSchema = z.object({
 // Settings Schemas
 export const GeneralSettingsFormSchema = z.object({
   site_name: z.string().min(1, { message: "Site name is required" }),
-  maintenance_mode: z.boolean().default(false),
+  maintenance_mode: z.boolean(),
   maintenance_msg: z.string().min(1, { message: "Maintenance Message is required" }).or(z.literal("")),
-  db_driver: z.enum([DbDriver.MONGO, DbDriver.POSTGRES, DbDriver.MYSQL, DbDriver.MSSQL]).default(DbDriver.MONGO)
+  db_driver: z.enum([DbDriver.MONGO, DbDriver.POSTGRES, DbDriver.MYSQL, DbDriver.MSSQL])
 })
 
 export const BuiltInAuthMethodsFormSchema = z.object({

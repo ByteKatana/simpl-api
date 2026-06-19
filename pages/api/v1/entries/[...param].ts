@@ -10,7 +10,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
   } = _req
   const apiKey = new apiKeyController({ key: apikey as string })
   const apiKeyData = await apiKey.findKey()
-  if (apiKeyData[0] !== undefined && apiKeyData[0].key === apikey) {
+  if (apiKeyData && apiKeyData[0].key === apikey) {
     let apiBuilder: apiBuilderController
     if (
       param[param.length - 1].startsWith("first_") ||

@@ -9,7 +9,6 @@ import { uid } from "uid"
 import createUser from "@/lib/actions/studio/users/create-user"
 import { getSettingsValue } from "@/lib/actions/studio/settings/get-settings-value"
 import updateUser from "@/lib/actions/studio/users/update-user"
-import handleError from "@/lib/handlers/error"
 
 // Provider Imports
 import Google from "next-auth/providers/google"
@@ -203,6 +202,10 @@ export const config = {
             dbUser = existingUsersByEmail[0]
           }
 
+          if (!dbUser) {
+            return false
+          }
+
           const defaultPermGroup = await getSettingsValue("identity_settings", "default_perm_group")
 
           if (!dbUser && emailVerified) {
@@ -220,7 +223,8 @@ export const config = {
 
             const response = await createUser(newUser as any, true)
             if ("error" in response || !response.success) {
-              return handleError(new Error("Failed to register user profile"))
+              console.error("Failed to register user profile")
+              return false
             }
 
             user.permission_group = newUser.permission_group
@@ -235,7 +239,8 @@ export const config = {
             // This prevents someone from "hijacking" an account if they somehow get the same oauth_id
             // from a different provider, unless the email also matches.
             if (!isNewConnection && dbUser.oauth_id !== proverId && dbUser.oauth_provider !== oauthProvider) {
-              return handleError(new Error("Invalid OAuth connection!"))
+              console.error("Invalid OAuth connection!")
+              return false
             }
 
             const isDataOutdated =
@@ -255,12 +260,13 @@ export const config = {
                   permission_group: dbUser.permission_group,
                   password: ""
                 },
-                dbUser,
-                dbUser._id,
+                dbUser as any,
+                dbUser._id.toString(),
                 true
               )
               if ("error" in updateResponse || !updateResponse.success) {
-                return handleError(new Error("Failed to update user profile"))
+                console.error("Failed to update user profile")
+                return false
               }
             }
 
@@ -279,7 +285,7 @@ export const config = {
       if (user.status === UserStatus.Disabled) return false //User banned
       return true
     },
-    async jwt({ token, user, account, trigger }) {
+    async jwt({ token, user /*account, trigger*/ }) {
       // During initial sign-in, the 'user' object is available
       if (user) {
         token.id = user.id

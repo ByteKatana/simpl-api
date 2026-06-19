@@ -59,7 +59,7 @@ const ProfileForm = ({ profileImgProvider, formPayload }: Props) => {
             }
           })
         } else {
-          toast.error(response.message || `Failed to update your profile.`, {
+          toast.error((response.error && response.error.message) || `Failed to update your profile.`, {
             position: "top-center"
           })
         }

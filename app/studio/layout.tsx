@@ -1,51 +1,9 @@
 import { AppSidebar } from "@/components/app-sidebar"
-import { SidebarInset, SidebarProvider, useSidebar } from "@/components/ui/sidebar"
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 
 import { SiteHeader } from "@/components/site-header"
 import { getSettingsValue } from "@/lib/actions/studio/settings/get-settings-value"
 import { Construction } from "lucide-react"
-
-type Props = {
-  children: React.ReactNode
-}
-
-/*
-function StudioLayoutContent({ children }: Props) {
-  const { side } = useSidebar()
-
-  return (
-    <div className="flex min-h-screen w-full">
-      {side === "left" && <AppSidebar />}
-      <div className="flex flex-1 flex-col">
-        <header className="flex h-16 items-center justify-between border-b px-4 shrink-0">
-          <div className="flex items-center gap-4">
-            <NavigationMenu>
-              <NavigationMenuList>
-                <NavigationMenuItem>
-                  <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                    <Link href="/studio">Dashboard</Link>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                    <Link href="/studio/projects">Projects</Link>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
-          </div>
-          <div className="flex items-center gap-4">
-            <SearchCommand />
-            <ThemeSwitcher />
-          </div>
-        </header>
-        <main className="flex-1 overflow-auto p-6">{children}</main>
-      </div>
-      {side === "right" && <AppSidebar />}
-    </div>
-  )
-}
-*/
 
 export default async function StudioLayout({ children }: { children: React.ReactNode }) {
   //Check Maintanence

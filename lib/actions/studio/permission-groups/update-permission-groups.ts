@@ -3,28 +3,28 @@
 import { connectDB } from "@/lib/mongodb"
 import { MongoClient, Collection } from "mongodb"
 import handleError from "@/lib/handlers/error"
-import { ErrorResponse, SuccessResponse } from "@/interfaces"
+import { ActionResponse, SuccessResponse } from "@/interfaces"
 import { PermissionGroupFormSchema } from "@/lib/schemas/client/form-schemas"
 import { z } from "zod"
 import { permGroupsFormToDb } from "@/lib/form-to-db"
 import { getPermissionGroup } from "@/lib/auth/get-session"
 
 export default async function updatePermissionGroups(
-  formValues: z.infer<typeof PermissionGroupFormSchema>
-): Promise<SuccessResponse<any> | ErrorResponse> {
+  formValues: Pick<z.infer<typeof PermissionGroupFormSchema>, "privileges">
+): Promise<ActionResponse<any>> {
   let client: MongoClient | null = null
   try {
     // 1. Authorization Check
     const session_perm_group = await getPermissionGroup()
     if (!session_perm_group) {
-      return handleError(new Error("Unauthorized to update permission groups"))
+      return handleError(new Error("Unauthorized to update permission groups"), "server")
     }
 
     // 2. Transform form values to DB structure
     const groupsToUpdate = permGroupsFormToDb(formValues)
     const slugs = Object.keys(groupsToUpdate)
     if (slugs.length === 0) {
-      return { success: true, status: 200, message: "No changes to update." }
+      return { success: true, status: 200, data: { message: "No changes to update." } }
     }
 
     // 3. Database connection
@@ -58,6 +58,6 @@ export default async function updatePermissionGroups(
       }
     } as SuccessResponse<any>
   } catch (error) {
-    return handleError(error) as ErrorResponse
+    return handleError(error, "server")
   }
 }

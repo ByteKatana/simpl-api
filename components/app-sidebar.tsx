@@ -37,9 +37,7 @@ export async function AppSidebar({ ...props }: React.ComponentProps<typeof Sideb
       <SidebarContent>
         <NavMain />
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser session={session} />
-      </SidebarFooter>
+      <SidebarFooter>{session && <NavUser session={session} />}</SidebarFooter>
     </Sidebar>
   )
 }

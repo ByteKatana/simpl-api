@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button"
 import { Metadata } from "next"
 import UserDataTable from "@/components/studio/user-data-table"
 import getUsers from "@/lib/actions/studio/users/get-users"
-import { User } from "@/interfaces/user"
 import Link from "next/link"
 import { PermissionGuard } from "@/components/studio/permission-groups/permission-guard"
 import { Toaster } from "@/components/ui/sonner"
@@ -15,7 +14,7 @@ export const metadata: Metadata = {
 
 const UsersStudioPage = async () => {
   const response = await getUsers()
-  const users = response.data
+  const users = response.success ? response.data : []
 
   return (
     <PermissionGuard reqPermission={["system.users.list"]} isPage={true}>

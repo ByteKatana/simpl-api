@@ -126,6 +126,13 @@ export type ActionResponse<T = any> =
 export type SuccessResponse<T = any> = ActionResponse<T> & { success: true }
 export type ErrorResponse = ActionResponse & { success: false }
 
+export interface SetupResponseData {
+  adminAccount: { username: string; email: string; password: any }
+  apiKey: string
+}
+
+export type SetupActionResponse = ActionResponse<SetupResponseData>
+
 export type SettingsData = {
   permissionGroups: PermissionGroup
   namespaces: EntryType

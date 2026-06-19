@@ -2,11 +2,11 @@
 import { NextApiRequest, NextApiResponse } from "next"
 
 //Controller
-import { PermissionGroupController } from "../../../../../controllers/permission-group.controller"
-import { apiKeyController } from "../../../../../controllers/api-key.controller"
+import { PermissionGroupController } from "@/controllers/permission-group.controller"
+import { apiKeyController } from "@/controllers/api-key.controller"
 
 //Interface
-import { PermissionGroup } from "../../../../../interfaces/"
+import { PermissionGroup } from "@/interfaces/permission_group"
 import { withRateLimit } from "@/lib/api/rate-limits"
 //===============================================
 
@@ -14,7 +14,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
   const { slug, apikey, secretkey, mockclient } = _req.query
   const apiKey = new apiKeyController({ key: apikey as string })
   const apiKeyData = await apiKey.findKey()
-  if (apiKeyData[0] !== undefined && apiKeyData[0].key === apikey && process.env.SECRET_KEY === secretkey) {
+  if (apiKeyData && apiKeyData[0].key === apikey && process.env.SECRET_KEY === secretkey) {
     if (_req.method === "DELETE") {
       const dummyObj: PermissionGroup = {
         name: "",

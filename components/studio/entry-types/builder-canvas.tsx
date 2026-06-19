@@ -1,4 +1,4 @@
-"use client"
+// "use client"
 import { useEffect, useRef, useState } from "react"
 import { DragDropContext, DropResult } from "@hello-pangea/dnd"
 import { useForm } from "@tanstack/react-form"

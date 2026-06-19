@@ -15,7 +15,7 @@ export default async function getPermissionGroups(
       const perm_group = await getPermissionGroup()
 
       if (!perm_group) {
-        return handleError(new Error("Unauthorized to delete entry type"))
+        return handleError(new Error("Unauthorized to delete entry type"), "server")
       }
     }
     // 1. Establish direct database connection
@@ -36,7 +36,7 @@ export default async function getPermissionGroups(
     })) as unknown as PermissionGroup[]
 
     if (!groups) {
-      return handleError(new Error("Failed to fetch permission groups"))
+      return handleError(new Error("Failed to fetch permission groups"), "server")
     }
 
     return {

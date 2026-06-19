@@ -9,7 +9,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
   } = _req
   const apiKey = new apiKeyController({ key: apikey as string })
   const apiKeyData = await apiKey.findKey()
-  if (apiKeyData[0] !== undefined && apiKeyData[0].key === apikey) {
+  if (apiKeyData && apiKeyData[0] !== undefined && apiKeyData[0].key === apikey) {
     const apiBuilder = new apiBuilderController("single-param", "entries", "slug", slug)
 
     res.status(200).json(await apiBuilder.fetchData("Equals"))

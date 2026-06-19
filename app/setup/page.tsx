@@ -4,6 +4,7 @@ import { useState } from "react"
 import SetupForm from "./form"
 import { SetupStatus } from "@/components/setup/setup-status"
 import { runSetupAction } from "@/app/setup/setup-action"
+import { SetupResponseData } from "@/interfaces"
 import { toast } from "sonner"
 import { Toaster } from "@/components/ui/sonner"
 import { CircleCheckBig, MessageSquareWarning } from "lucide-react"
@@ -12,7 +13,7 @@ export default function SetupPage() {
   const [setupState, setSetupState] = useState<"idle" | "running" | "completed" | "failed">("idle")
   const [currentStep, setCurrentStep] = useState(0)
   const [error, setError] = useState<string | null>(null)
-  const [setupResult, setSetupResult] = useState({})
+  const [setupResult, setSetupResult] = useState<SetupResponseData | null>(null)
 
   const handleSetup = async (values: any) => {
     setSetupState("running")
@@ -27,14 +28,14 @@ export default function SetupPage() {
       const result = await runSetupAction(values)
       /*clearInterval(interval)*/
       if (result.success) {
-        setSetupResult(result)
+        setSetupResult(result.data)
         setCurrentStep(4)
         setSetupState("completed")
         toast.success("Setup completed successfully!")
       } else {
         setSetupState("failed")
-        setError(result.error || "Something went wrong")
-        toast.error("Setup failed: " + (result.error || "Something went wrong"))
+        setError(result.error?.message || "Something went wrong")
+        toast.error("Setup failed: " + (result.error?.message || "Something went wrong"))
       }
     } catch (error) {
       setSetupState("failed")
@@ -61,12 +62,12 @@ export default function SetupPage() {
 
           <p className="text-emerald-800 font-semibold">API Details</p>
           <p className="text-emerald-800 font-semibold">Add generated API Key below to .env file</p>
-          <p className="text-emerald-800 bg-emerald-100 p-5 rounded-lg">API_KEY={setupResult.apiKey}</p>
+          <p className="text-emerald-800 bg-emerald-100 p-5 rounded-lg">API_KEY={setupResult?.apiKey}</p>
           <p className="text-emerald-800 font-semibold">Admin Credentials:</p>
           <div className="bg-emerald-100 p-5 rounded-lg">
-            <p className="text-emerald-800">Username: {setupResult.adminAccount.username}</p>
-            <p className="text-emerald-800">Email: {setupResult.adminAccount.email}</p>
-            <p className="text-emerald-800">Password: {setupResult.adminAccount.password}</p>
+            <p className="text-emerald-800">Username: {setupResult?.adminAccount.username}</p>
+            <p className="text-emerald-800">Email: {setupResult?.adminAccount.email}</p>
+            <p className="text-emerald-800">Password: {setupResult?.adminAccount.password}</p>
           </div>
           <p className="flex items-center gap-3 bg-primary/50 p-5 text-primary-foreground font-semibold animate-pulse">
             <MessageSquareWarning size={18} />

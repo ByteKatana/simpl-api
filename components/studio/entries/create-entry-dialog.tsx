@@ -15,14 +15,13 @@ import {
 } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-interface EntryType {
-  id: string
+interface EntryTypeOption {
   name: string
   slug: string
 }
 
 interface CreateEntryDialogProps {
-  entryTypes: EntryType[]
+  entryTypes: EntryTypeOption[]
 }
 
 export function CreateEntryDialog({ entryTypes }: CreateEntryDialogProps) {

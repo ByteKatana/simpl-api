@@ -1,9 +1,9 @@
 "use server"
 
 import handleError from "@/lib/handlers/error"
-import { EntryType, ErrorResponse, SuccessResponse, FormField, FormattedEntryType, ActionResponse } from "@/interfaces"
+import { ActionResponse, SuccessResponse } from "@/interfaces"
+import { EntryType } from "@/interfaces/entry_type"
 import { getPermissionGroup } from "@/lib/auth/get-session"
-import { EntryTypeSchema } from "@/lib/schemas/server/server-schemas"
 import { EntryTypeFormSchema } from "@/lib/schemas/client/form-schemas"
 import { z } from "zod"
 
@@ -16,11 +16,11 @@ export default async function updateEntryType(
     const perm_group = await getPermissionGroup()
 
     if (!perm_group) {
-      return handleError(new Error("Unauthorized to update entry type"))
+      return handleError(new Error("Unauthorized to update entry type"), "server")
     }
 
     // Get form values
-    const { name, namespace, status, fieldsets, created_at } = formValues
+    const { name, namespace, status, fieldsets } = formValues
 
     // Resolve namespace
     const resolvedNamespace =
@@ -36,7 +36,6 @@ export default async function updateEntryType(
       slug: name.split(" ").join("-").toLowerCase(),
       status,
       createdBy: perm_group,
-      created_at,
       updated_at: new Date().toISOString(),
       fieldsets: fieldsets.map((fieldset) => ({
         instanceId: fieldset.instanceId,
@@ -64,7 +63,7 @@ export default async function updateEntryType(
     const validated = EntryTypeFormSchema.safeParse(formValues)
 
     if (!validated.success) {
-      return handleError(new Error(validated.error.errors.map((e: Error) => e.message).join(", ")), "server")
+      return handleError(new Error(validated.error.issues.map((e) => e.message).join(", ")), "server")
     }
 
     // Send the validated (merged) data to the API
@@ -82,11 +81,11 @@ export default async function updateEntryType(
 
     if (!response.ok) {
       const error = new Error(data?.message || "Failed to update entry type")
-      return handleError(error)
+      return handleError(error, "server")
     }
 
     return { success: true, status: response.status, data } as SuccessResponse<EntryType>
   } catch (error) {
-    return handleError(error) as ErrorResponse
+    return handleError(error, "server")
   }
 }

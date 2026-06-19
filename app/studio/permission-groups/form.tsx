@@ -31,9 +31,9 @@ import { slugifyName } from "@/lib/slugify"
 
 type Props = {
   namespaces: EntryType[]
-  permGroups: PermissionGroup[]
+  permGroups?: PermissionGroup[]
   mode: FormMode
-  formPayload: {
+  formPayload?: {
     _id: any
     name: string
     slug: string

@@ -1,25 +1,22 @@
-import { connectDB } from "../lib/mongodb"
+import { connectDB } from "@/lib/mongodb"
 import { Collection, DeleteResult, Filter, InsertOneResult, MongoClient, ObjectId } from "mongodb"
 
 //Interface
-import { ApiKey } from "../interfaces"
+import { ApiKey } from "@/interfaces"
 
 //===============================================
 
 export class apiKeyController {
-  apiKey: ApiKey
+  apiKey: Partial<ApiKey>
 
-  constructor(apiKey: ApiKey) {
+  constructor(apiKey: Partial<ApiKey>) {
     this.apiKey = apiKey
   }
 
   async findKey() {
-    let dbCollection: Collection
+    let dbCollection: Collection<any>
     let isConnected = false
     let client: MongoClient | undefined
-
-    if (!client) return [{ message: "Database connection is NOT established" }]
-
     try {
       try {
         client = await connectDB()
@@ -27,7 +24,7 @@ export class apiKeyController {
       } catch (e) {
         console.log(e)
       }
-      if (isConnected) {
+      if (client && isConnected) {
         let findResult: Filter<object> | undefined
         try {
           dbCollection = client.db(process.env.DB_NAME).collection("api_keys") as Collection
@@ -49,7 +46,7 @@ export class apiKeyController {
   }
 
   async create() {
-    let dbCollection: Collection
+    let dbCollection: Collection<any>
     let isConnected = false
     let client: MongoClient | undefined
 
@@ -88,7 +85,7 @@ export class apiKeyController {
 
   async delete(id: string) {
     let client: MongoClient | undefined
-    let dbCollection: Collection
+    let dbCollection: Collection<any>
     let isConnected = false
 
     try {

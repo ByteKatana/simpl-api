@@ -52,7 +52,7 @@ export function permGroupFormToDb(formValues: z.infer<typeof PermissionGroupForm
  * Transforms a form values object containing multiple permission groups
  * into a record of slugs to their respective database privileges.
  */
-export function permGroupsFormToDb(formValues: z.infer<typeof PermissionGroupFormSchema>) {
+export function permGroupsFormToDb(formValues: Pick<z.infer<typeof PermissionGroupFormSchema>, "privileges">) {
   const result: Record<string, DbPrivilege[]> = {}
 
   if (formValues.privileges) {

@@ -10,7 +10,7 @@ import handleError from "@/lib/handlers/error"
  * @param apiKey - The plain text API key string to look up.
  * @returns An ActionResponse containing the ApiKey data if found.
  */
-export async function getApiKeyInfo(apiKey: Pick<ApiKey, "key">): Promise<ActionResponse<ApiKey>> {
+export async function getApiKeyInfo(apiKey: string): Promise<ActionResponse<ApiKey>> {
   try {
     const client = await connectDB()
     const db = client.db()

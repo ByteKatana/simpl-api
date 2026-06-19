@@ -2,7 +2,7 @@ import { User } from "@/interfaces/user"
 import { getPermissionGroup } from "@/lib/auth/get-session"
 import handleError from "@/lib/handlers/error"
 
-async function checkUserEmailExist(formValues: Pick<User, "email">, registerMode = false) {
+async function checkUserEmailExist(formValues: Partial<User>, registerMode = false) {
   try {
     // Check permission first.
     if (!registerMode) {
@@ -22,11 +22,10 @@ async function checkUserEmailExist(formValues: Pick<User, "email">, registerMode
     )
 
     if (!response.ok) {
-      throw new Error(`Failed to check email existence: ${response.statusText}`)
+      return handleError(new Error(`Failed to check email existence: ${response.statusText}`), "server")
     }
 
-    const data = await response.json()
-    return data
+    return await response.json()
   } catch (error) {
     console.log("USER_CHECK_EMAIL_EXIST_ERROR", error instanceof Error ? error.message : "Unknown error")
     throw error

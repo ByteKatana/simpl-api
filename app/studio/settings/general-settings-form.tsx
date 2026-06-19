@@ -12,6 +12,7 @@ import { Switch } from "@/components/ui/switch"
 import InfoTooltip from "@/components/studio/info-tooltip"
 import { MessageSquareWarning } from "lucide-react"
 import { GeneralSettings } from "@/interfaces/settings"
+import { DbDriver } from "@/interfaces"
 
 const GeneralSettingsForm = ({ formValues }: { formValues: GeneralSettings }) => {
   const { id, settings } = formValues
@@ -112,7 +113,7 @@ const GeneralSettingsForm = ({ formValues }: { formValues: GeneralSettings }) =>
                 name={field.name}
                 value={field.state.value as string}
                 defaultValue={"mongo"}
-                onValueChange={(value) => field.handleChange(value)}>
+                onValueChange={(value) => field.handleChange(value as DbDriver)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select Mode" />
                 </SelectTrigger>

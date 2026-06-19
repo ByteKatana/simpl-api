@@ -7,11 +7,9 @@ import { Field, FieldError, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import FieldErrorText from "@/components/studio/field-error-text"
 import { Button } from "@/components/ui/button"
-import { useForm, uuid } from "@tanstack/react-form"
+import { useForm } from "@tanstack/react-form"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { UserCreateFormSchema } from "@/lib/schemas/client/form-schemas"
-import createEntry from "@/lib/actions/studio/entry/create-entry"
-import { EntryFormValues } from "@/interfaces/entry"
+import { UserFormSchema } from "@/lib/schemas/client/form-schemas"
 import createUser from "@/lib/actions/studio/users/create-user"
 import { z } from "zod"
 
@@ -27,11 +25,11 @@ const UserCreateForm = () => {
       profile_img: "",
       permission_group: "viewer",
       status: UserStatus.Active
-    } as z.infer<typeof UserCreateFormSchema>,
+    } as z.infer<typeof UserFormSchema>,
     validators: {
-      onMount: UserCreateFormSchema,
+      onMount: UserFormSchema,
       onChangeAsyncDebounceMs: 2500,
-      onChangeAsync: UserCreateFormSchema
+      onChangeAsync: UserFormSchema
     },
     onSubmit: async ({ value }) => {
       try {

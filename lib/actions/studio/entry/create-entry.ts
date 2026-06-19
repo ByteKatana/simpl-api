@@ -1,18 +1,21 @@
 "use server"
 
 import handleError from "@/lib/handlers/error"
-import { ErrorResponse, SuccessResponse } from "@/interfaces"
+import { ActionResponse, ErrorResponse, SuccessResponse } from "@/interfaces"
 import { EntryType } from "@/interfaces/entry_type"
 import { Entry, EntryFormValues } from "@/interfaces/entry"
 import { getPermissionGroup } from "@/lib/auth/get-session"
 
-export default async function createEntry(formValues: EntryFormValues, fetchedEntryType: EntryType) {
+export default async function createEntry(
+  formValues: EntryFormValues,
+  fetchedEntryType: EntryType
+): Promise<ActionResponse<Entry>> {
   try {
     // Check permission first.
     const perm_group = await getPermissionGroup()
 
     if (!perm_group) {
-      return handleError(new Error("Unauthorized to create entry"))
+      return handleError(new Error("Unauthorized to create entry"), "server")
     }
 
     const created_date = new Date().toISOString()
@@ -38,7 +41,7 @@ export default async function createEntry(formValues: EntryFormValues, fetchedEn
 
     if (!response.ok) {
       const unhandledError = new Error(data?.message || "Failed to create entry")
-      return handleError(unhandledError)
+      return handleError(unhandledError, "server")
     }
 
     return { success: true, status: response.status, data } as SuccessResponse<Entry>

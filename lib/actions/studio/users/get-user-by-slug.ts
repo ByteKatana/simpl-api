@@ -17,7 +17,7 @@ export default async function getUserBySlug(slugType: slugType, query: string): 
     const user = await response.json()
     if (response.status !== 200) {
       const unhandledError = new Error("Failed to fetch entry type")
-      return handleError(unhandledError)
+      return handleError(unhandledError, "server")
     }
 
     const data = Array.isArray(user) ? user[0] : user

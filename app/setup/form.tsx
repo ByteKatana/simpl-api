@@ -1,4 +1,4 @@
-"use client"
+// "use client"
 
 import { useForm } from "@tanstack/react-form"
 import { Input } from "@/components/ui/input"
@@ -8,12 +8,11 @@ import { SetupFormSchema } from "@/lib/schemas/client/form-schemas"
 import FormSubmitResetBtn from "@/components/studio/form-submit-reset-btn"
 
 export default function SetupForm({
-  onInitiate,
+  onInitiate
 }: {
   onInitiate: (values: SetupFormValues) => void
   isSubmitting: boolean
 }) {
-
   const form = useForm({
     defaultValues: {
       ADMIN_FULLNAME: "SirAdmin",

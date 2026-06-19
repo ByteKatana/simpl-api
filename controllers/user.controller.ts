@@ -1,22 +1,22 @@
-import { connectDB } from "../lib/mongodb"
+import { connectDB } from "@/lib/mongodb"
 import { ObjectId, MongoClient, Collection, UpdateResult, DeleteResult, InsertOneResult } from "mongodb"
 import bcrypt from "bcryptjs"
 
 //Interface
-import { User } from "../interfaces"
+import { User } from "@/interfaces/user"
 
 export class UserController {
   user: User
   mockClient: boolean
 
-  constructor(userData: User, mockClient?: boolean) {
+  constructor(userData: User, mockClient: boolean = false) {
     this.user = userData
     this.mockClient = mockClient
   }
 
   async create() {
-    let client: MongoClient
-    let dbCollection: Collection
+    let client: MongoClient | undefined
+    let dbCollection: Collection<any>
     let isConnected = false
 
     try {
@@ -26,7 +26,7 @@ export class UserController {
       console.log(e)
     }
 
-    if (isConnected) {
+    if (client && isConnected) {
       let insertResult: InsertOneResult
       try {
         const plainPw = this.user.password
@@ -58,7 +58,7 @@ export class UserController {
 
   async update(id: string) {
     let client: MongoClient | undefined
-    let dbCollection: Collection
+    let dbCollection: Collection<any>
     let isConnected = false
 
     try {
@@ -69,7 +69,7 @@ export class UserController {
     }
 
     if (client && isConnected) {
-      let updateResult: UpdateResult
+      let updateResult: UpdateResult | undefined
       try {
         let setObj = {
           ...this.user
@@ -92,9 +92,9 @@ export class UserController {
           await client.close()
         }*/
       }
-      if (updateResult["matchedCount"] === 1 && updateResult["modifiedCount"] === 1) {
+      if (updateResult && updateResult["matchedCount"] === 1 && updateResult["modifiedCount"] === 1) {
         return { status: "success", message: "User has been updated." }
-      } else if (updateResult["matchedCount"] === 1 && updateResult["modifiedCount"] === 0) {
+      } else if (updateResult && updateResult["matchedCount"] === 1 && updateResult["modifiedCount"] === 0) {
         return { status: "failed", message: "You didn't make any change." }
       } else {
         return { status: "failed", message: "Failed to update the user." }
@@ -105,8 +105,8 @@ export class UserController {
   }
 
   async delete(id: string) {
-    let client: MongoClient
-    let dbCollection: Collection
+    let client: MongoClient | undefined
+    let dbCollection: Collection<any>
     let isConnected: boolean = false
 
     try {
@@ -115,8 +115,8 @@ export class UserController {
     } catch (e) {
       console.log(e)
     }
-    if (isConnected) {
-      let deleteResult: DeleteResult
+    if (client && isConnected) {
+      let deleteResult: DeleteResult | undefined
       try {
         dbCollection = client.db(process.env.DB_NAME).collection("users")
         deleteResult = await dbCollection.deleteOne({ _id: new ObjectId(id) })
@@ -127,7 +127,7 @@ export class UserController {
           await client.close()
         }*/
       }
-      if (deleteResult.deletedCount === 1) {
+      if (deleteResult && deleteResult.deletedCount === 1) {
         return { status: "success", message: "User has been deleted." }
       } else {
         return { status: "failed", message: "Failed to delete the user." }

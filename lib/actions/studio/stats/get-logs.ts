@@ -43,6 +43,6 @@ export default async function getLogs(params: GetLogsParams = {}) {
       }
     }
   } catch (e) {
-    return handleError(new Error("Failed to fetch logs", { cause: e }))
+    return handleError(new Error("Failed to fetch logs", { cause: e }), "server")
   }
 }

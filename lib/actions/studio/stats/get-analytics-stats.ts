@@ -1,5 +1,6 @@
 "use server"
 
+import { ActionResponse, SuccessResponse } from "@/interfaces"
 import { prisma } from "@/lib/prisma"
 import handleError from "@/lib/handlers/error"
 
@@ -22,7 +23,7 @@ type AnalyticsStats = {
   topKeysAllTime: { name: string; value: number }[]
 }
 
-export default async function getAnalyticsStats(): Promise<AnalyticsStats> {
+export default async function getAnalyticsStats(): Promise<ActionResponse<AnalyticsStats>> {
   try {
     const now = new Date()
     const startOfThisWeek = new Date(now)
@@ -130,18 +131,22 @@ export default async function getAnalyticsStats(): Promise<AnalyticsStats> {
     })
 
     return {
-      trafficData,
-      avgResponseTime,
-      rateLimitStats: {
-        percentage: Number(rateLimitPercentage.toFixed(1)),
-        change: Number(rateLimitChange.toFixed(1))
-      },
-      uniqueRequestStats: { count: uniqueRequestsThisWeek, change: Number(uniqueChange.toFixed(1)) },
-      totalRequestStats: { count: totalRequestsThisWeek, change: Number(totalChange.toFixed(1)) },
-      topKeysThisWeek: topKeysThisWeek.map((k) => ({ name: k.apiKey, value: k._count.apiKey })),
-      topKeysAllTime: topKeysAllTime.map((k) => ({ name: k.apiKey, value: k._count.apiKey }))
-    }
+      success: true,
+      status: 200,
+      data: {
+        trafficData,
+        avgResponseTime,
+        rateLimitStats: {
+          percentage: Number(rateLimitPercentage.toFixed(1)),
+          change: Number(rateLimitChange.toFixed(1))
+        },
+        uniqueRequestStats: { count: uniqueRequestsThisWeek, change: Number(uniqueChange.toFixed(1)) },
+        totalRequestStats: { count: totalRequestsThisWeek, change: Number(totalChange.toFixed(1)) },
+        topKeysThisWeek: topKeysThisWeek.map((k: any) => ({ name: k.apiKey, value: k._count.apiKey })),
+        topKeysAllTime: topKeysAllTime.map((k: any) => ({ name: k.apiKey, value: k._count.apiKey }))
+      }
+    } as SuccessResponse<AnalyticsStats>
   } catch (e) {
-    return handleError(new Error("Failed to fetch analytics stats", { cause: e }))
+    return handleError(new Error("Failed to fetch analytics stats", { cause: e }), "server")
   }
 }

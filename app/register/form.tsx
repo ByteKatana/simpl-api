@@ -2,7 +2,7 @@
 
 import { useForm } from "@tanstack/react-form"
 import { UserFormSchema } from "@/lib/schemas/client/form-schemas"
-import { EmailVerification, UserStatus } from "@/interfaces"
+import { UserStatus } from "@/interfaces"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Field, FieldLabel } from "@/components/ui/field"
@@ -71,9 +71,12 @@ export default function RegisterForm({ profileImgProvider }: Props) {
             router.push("/login")
           }
         } else {
-          toast.error(response.message || `An error occurred while registering your account.`, {
-            position: "top-center"
-          })
+          toast.error(
+            (response.error && response.error.message) || `An error occurred while registering your account.`,
+            {
+              position: "top-center"
+            }
+          )
         }
       } catch (error) {
         toast.error(`An error occurred while registering your account.`, {

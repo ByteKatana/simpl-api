@@ -154,7 +154,7 @@ const ApiSettingsForm = ({
                     <FieldDescription>Enables REST API service.</FieldDescription>
                   </FieldContent>
                   <Switch
-                    id="egistration_mode"
+                    id="service_rest_api"
                     defaultChecked
                     checked={field.state.value}
                     onCheckedChange={(checked) => field.handleChange(checked)}
@@ -354,58 +354,59 @@ const ApiSettingsForm = ({
             </Dialog>
           </div>
           <div id="api-keys" className="flex w-full max-w-md flex-col gap-6">
-            {apiKeys.map((apiKey) => (
-              <Item key={`apikey-${apiKey._id}`} variant="outline">
-                <ItemContent>
-                  <ItemTitle>
-                    <b>Key:</b> {apiKey.key}
-                  </ItemTitle>
-                  <ItemDescription className="flex flex-col gap-y-1">
-                    <span>
-                      <b>Permission Group:</b> {apiKey.permission_group || "No Data"}
-                    </span>
-                    <span>
-                      <b>Description</b>: {apiKey.description || "No Data"}
-                    </span>
-                    {apiKey.rate_limits && (
-                      <span className="flex flex-col gap-y-1">
-                        <b>Rate Limits:</b>
-                        <span className="flex flex-col gap-y-1 px-2">
-                          <span>&bull; Time Window: {apiKey.rate_limits.time_window} minute(s)</span>
-                          <span>&bull; Requests per Window: {apiKey.rate_limits.req_per_window}</span>
-                          <span>&bull; Time Interval: {apiKey.rate_limits.time_interval} ms</span>
-                        </span>
+            {apiKeys &&
+              apiKeys.map((apiKey) => (
+                <Item key={`apikey-${apiKey._id}`} variant="outline">
+                  <ItemContent>
+                    <ItemTitle>
+                      <b>Key:</b> {apiKey.key}
+                    </ItemTitle>
+                    <ItemDescription className="flex flex-col gap-y-1">
+                      <span>
+                        <b>Permission Group:</b> {apiKey.permission_group || "No Data"}
                       </span>
-                    )}
-                  </ItemDescription>
-                </ItemContent>
-                <ItemActions>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button variant="destructive" size="sm">
-                        <Trash2 />
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Are You Sure?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This action cannot be undone. This will permanently delete your API key.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={() => handleDeleteKey(apiKey._id.toString())}
-                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                          Delete
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </ItemActions>
-              </Item>
-            ))}
+                      <span>
+                        <b>Description</b>: {apiKey.description || "No Data"}
+                      </span>
+                      {apiKey.rate_limits && (
+                        <span className="flex flex-col gap-y-1">
+                          <b>Rate Limits:</b>
+                          <span className="flex flex-col gap-y-1 px-2">
+                            <span>&bull; Time Window: {apiKey.rate_limits.time_window} minute(s)</span>
+                            <span>&bull; Requests per Window: {apiKey.rate_limits.req_per_window}</span>
+                            <span>&bull; Time Interval: {apiKey.rate_limits.time_interval} ms</span>
+                          </span>
+                        </span>
+                      )}
+                    </ItemDescription>
+                  </ItemContent>
+                  <ItemActions>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="destructive" size="sm">
+                          <Trash2 />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Are You Sure?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete your API key.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => handleDeleteKey(apiKey._id!.toString())}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                            Delete
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </ItemActions>
+                </Item>
+              ))}
           </div>
         </fieldset>
         {/* @ts-ignore */}

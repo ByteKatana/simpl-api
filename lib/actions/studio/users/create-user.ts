@@ -8,7 +8,7 @@ import checkUserEmailExist from "@/lib/check-user-email-exist"
 import checkUserUsernameExist from "@/lib/check-user-username-exist"
 
 export default async function createUser(
-  formValues: User,
+  formValues: Partial<User>,
   registerMode: boolean = false
 ): Promise<UserCreateUpdateActionResponse | ErrorResponse> {
   try {

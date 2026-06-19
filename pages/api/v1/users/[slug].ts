@@ -13,7 +13,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
   const apiKey = new apiKeyController({ key: apikey as string })
   const apiKeyData = await apiKey.findKey()
   const _slug = slug as string
-  if (apiKeyData[0] !== undefined && apiKeyData[0].key === apikey) {
+  if (apiKeyData && apiKeyData[0] !== undefined && apiKeyData[0].key === apikey) {
     const user = new apiBuilderController("single-param", "users", "permission_group", slug)
     const userData: any[] = await user.fetchData("Equals")
     const usersWithoutPassword = userData

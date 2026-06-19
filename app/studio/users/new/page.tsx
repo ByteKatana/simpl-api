@@ -8,7 +8,7 @@ import { getSettingsValue } from "@/lib/actions/studio/settings/get-settings-val
 
 const Page = async () => {
   const responsePermGroups = await getPermissionGroups()
-  const permGroups: PermissionGroup[] = responsePermGroups.data
+  const permGroups: PermissionGroup[] = responsePermGroups.success ? responsePermGroups.data : []
 
   const profileImgProvider = await getSettingsValue("identity_settings", "profile_img_provider")
 

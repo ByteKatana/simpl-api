@@ -3,7 +3,7 @@ import { connectDB } from "../lib/mongodb"
 import { Collection, DeleteResult, InsertOneResult, MongoClient, ObjectId, UpdateResult } from "mongodb"
 
 //Interface
-import { Entry } from "../interfaces/entry"
+import { Entry } from "@/interfaces/entry"
 
 export class EntryController {
   entry: Entry
@@ -15,7 +15,7 @@ export class EntryController {
 
   async create() {
     let client: MongoClient | undefined
-    let dbCollection: Collection
+    let dbCollection: Collection<any>
     let isConnected = false
 
     try {
@@ -56,7 +56,7 @@ export class EntryController {
 
   async update(id: string) {
     let client: MongoClient | undefined
-    let dbCollection: Collection
+    let dbCollection: Collection<any>
     let isConnected = false
 
     try {
@@ -91,7 +91,7 @@ export class EntryController {
 
   async delete(id: string) {
     let client: MongoClient | undefined
-    let dbCollection: Collection
+    let dbCollection: Collection<any>
     let isConnected: boolean = false
 
     try {

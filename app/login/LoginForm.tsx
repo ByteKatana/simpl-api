@@ -28,6 +28,7 @@ import {
   SiMaildotru
 } from "react-icons/si"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { IconType } from "react-icons"
 
 /**
  * Login Form Component (Client Component)
@@ -37,8 +38,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 
 type Props = {
   authMethods: {
-    built_in: object
-    third_party: object
+    built_in: Record<string, any>
+    third_party: Record<string, any>
   }
 }
 export default function LoginForm({ authMethods }: Props) {
@@ -68,7 +69,10 @@ export default function LoginForm({ authMethods }: Props) {
   ]
   // Filter providers based on authMethods.third_party configuration
   const enabledThirdPartyProviders = useMemo(
-    () => oauthProviders.filter((provider) => authMethods.third_party[provider.id] === true),
+    () =>
+      oauthProviders.filter(
+        (provider: { id: string; name: string; icon: IconType }) => authMethods.third_party[provider.id] === true
+      ),
     [authMethods, oauthProviders]
   )
 

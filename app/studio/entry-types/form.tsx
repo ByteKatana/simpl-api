@@ -64,8 +64,8 @@ const EntryTypeForm = ({ namespaces, mode, formPayload }: Props) => {
     onSubmit: async ({ value }) => {
       try {
         let response: ActionResponse
-        if (mode === FormMode.EDIT && formPayload) {
-          response = await updateEntryType(value as any, formPayload._id?.toString())
+        if (formPayload && formPayload._id && mode === FormMode.EDIT) {
+          response = await updateEntryType(value as any, formPayload._id.toString())
         } else {
           response = await createEntryType(value as any)
         }
@@ -126,7 +126,7 @@ const EntryTypeForm = ({ namespaces, mode, formPayload }: Props) => {
           {(field) => (
             <>
               <Select value={field.state.value} defaultValue={"itself"} onValueChange={field.handleChange}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-45">
                   <SelectValue placeholder={"Select namespace"} />
                 </SelectTrigger>
                 <SelectContent>

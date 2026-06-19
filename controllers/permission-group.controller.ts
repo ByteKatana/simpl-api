@@ -1,9 +1,9 @@
 //Database
-import { connectDB } from "../lib/mongodb"
+import { connectDB } from "@/lib/mongodb"
 import { ObjectId, MongoClient, Collection, UpdateResult, DeleteResult, InsertOneResult } from "mongodb"
 
 //Interface
-import { PermissionGroup } from "../interfaces"
+import { PermissionGroup } from "@/interfaces/permission_group"
 //===============================================
 
 export class PermissionGroupController {
@@ -16,7 +16,7 @@ export class PermissionGroupController {
   }
 
   async create() {
-    let client: MongoClient
+    let client: MongoClient | undefined
     let dbCollection: Collection
     let isConnected = false
 
@@ -27,7 +27,7 @@ export class PermissionGroupController {
       console.log(e)
     }
 
-    if (isConnected) {
+    if (client && isConnected) {
       let insertResult: InsertOneResult
       try {
         dbCollection = client.db(process.env.DB_NAME).collection("permission_groups")
@@ -59,7 +59,7 @@ export class PermissionGroupController {
   }
 
   async update(id: string) {
-    let client: MongoClient
+    let client: MongoClient | undefined
     let dbCollection: Collection
     let isConnected = false
 
@@ -69,8 +69,8 @@ export class PermissionGroupController {
     } catch (e) {
       console.log(e)
     }
-    if (isConnected) {
-      let updateResult: UpdateResult
+    if (client && isConnected) {
+      let updateResult: UpdateResult | undefined
       try {
         dbCollection = client.db(process.env.DB_NAME).collection("permission_groups")
         updateResult = await dbCollection.updateOne(
@@ -85,9 +85,9 @@ export class PermissionGroupController {
           await client.close()
         }*/
       }
-      if (updateResult["modifiedCount"] === 1) {
+      if (updateResult && updateResult["modifiedCount"] === 1) {
         return { status: "success", message: "Permission group has been updated." }
-      } else if (updateResult["matchedCount"] === 1 && updateResult["modifiedCount"] === 0) {
+      } else if (updateResult && updateResult["matchedCount"] === 1 && updateResult["modifiedCount"] === 0) {
         return { status: "failed", message: "You didn't make any change." }
       } else {
         return { status: "failed", message: "Failed to update the permission group." }
@@ -98,7 +98,7 @@ export class PermissionGroupController {
   }
 
   async delete(id: string) {
-    let client: MongoClient
+    let client: MongoClient | undefined
     let dbCollection: Collection
     let isConnected: boolean = false
 
@@ -108,8 +108,8 @@ export class PermissionGroupController {
     } catch (e) {
       console.log(e)
     }
-    if (isConnected) {
-      let deleteResult: DeleteResult
+    if (client && isConnected) {
+      let deleteResult: DeleteResult | undefined
       try {
         dbCollection = client.db(process.env.DB_NAME).collection("permission_groups")
         deleteResult = await dbCollection.deleteOne({ _id: new ObjectId(id) })
@@ -120,7 +120,7 @@ export class PermissionGroupController {
           await client.close()
         }*/
       }
-      if (deleteResult.deletedCount === 1) {
+      if (deleteResult && deleteResult.deletedCount === 1) {
         return { status: "success", message: "Permission group has been deleted." }
       } else {
         return { status: "failed", message: "Failed to delete the permission group." }

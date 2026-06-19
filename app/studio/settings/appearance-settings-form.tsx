@@ -19,7 +19,7 @@ const AppearanceSettingsForm = ({ formValues }: { formValues: z.infer<typeof App
       onChange: AppearanceSettingsFormSchema,
       onSubmit: AppearanceSettingsFormSchema
     },
-    onSubmit: async ({ value }) => {
+    onSubmit: async ({ value }: any) => {
       try {
         let response = await updateAppearanceSettings(value, id?.toString() || "")
         if (response.success) {

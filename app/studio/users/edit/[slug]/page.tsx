@@ -37,11 +37,7 @@ const UserEditPage = async ({ params }: Props) => {
   }
 
   const responsePermGroups = await getPermissionGroups()
-  const permGroups: PermissionGroup[] = responsePermGroups.data
-
-  if (!permGroups) {
-    notFound()
-  }
+  const permGroups: PermissionGroup[] = responsePermGroups.success ? responsePermGroups.data : []
 
   const profileImgProvider = await getSettingsValue("identity_settings", "profile_img_provider")
 
@@ -51,13 +47,13 @@ const UserEditPage = async ({ params }: Props) => {
         <div className="flex flex-col max-w-3xl mx-auto">
           <Toaster />
           <div className="flex flex-col gap-y-0.5 mb-8">
-            <h1 className="text-4xl font-bold">Edit User: {fetchedUser[0].username}</h1>
+            <h1 className="text-4xl font-bold">Edit User: {fetchedUser.username}</h1>
             <small className="text-lg text-neutral-300">Update user profile and permissions</small>
           </div>
           <div>
             <UserForm
               mode={FormMode.EDIT}
-              formPayload={fetchedUser[0]}
+              formPayload={fetchedUser}
               permGroups={permGroups}
               profileImgProvider={profileImgProvider}
             />

@@ -17,7 +17,7 @@ export async function hasPermissionApi(apiKey: Pick<ApiKey, "key">, requiredPerm
   const sysApiKey = process.env.API_KEY as z.infer<typeof ZodString>
   if (apiKey.key === sysApiKey) return true // Allow acces to System API Key
 
-  const responseApiKeyInfo = await getApiKeyInfo(apiKey)
+  const responseApiKeyInfo = await getApiKeyInfo(apiKey.key)
   const apiKeyInfo = responseApiKeyInfo.data
 
   if (!apiKeyInfo?.permission_group) {

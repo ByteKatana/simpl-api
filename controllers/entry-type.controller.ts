@@ -18,7 +18,7 @@ export class EntryTypeController {
 
   async create() {
     let client: MongoClient | undefined
-    let dbCollection: Collection
+    let dbCollection: Collection<any>
     let isConnected = false
 
     try {
@@ -80,7 +80,7 @@ export class EntryTypeController {
 
   async update(id: string) {
     let client: MongoClient | undefined
-    let dbCollection: Collection
+    let dbCollection: Collection<any>
     let isConnected = false
 
     try {
@@ -159,7 +159,7 @@ export class EntryTypeController {
 
   async delete(id: string) {
     let client: MongoClient | undefined
-    let dbCollection: Collection
+    let dbCollection: Collection<any>
     let isConnected = false
 
     try {

@@ -4,8 +4,25 @@ import { prisma } from "@/lib/prisma"
 import { connectDB } from "@/lib/mongodb"
 import { MongoClient } from "mongodb"
 import handleError from "@/lib/handlers/error"
+import { ActionResponse } from "@/interfaces"
+export type OverviewStats = {
+  totalRequests: number
+  totalEntries: number
+  totalEntryTypes: number
+  totalActiveUsers: number
+  requestChangeMonthly: number
+  userChangeSinceLastMonth: number
+  entriesCreatedLastMonth: number
+  hourlyData: { name: string; total: number }[]
+  recentRequests: {
+    endpoint: string
+    apiKey: string
+    responseTime: number
+    timestamp: Date
+  }[]
+}
 
-export default async function getOverviewStats() {
+export default async function getOverviewStats(): Promise<ActionResponse<OverviewStats>> {
   let client: MongoClient | null = null
   try {
     client = await connectDB()
@@ -51,13 +68,11 @@ export default async function getOverviewStats() {
     })
 
     const hourlyData = Array.from({ length: 24 }, (_, i) => {
-      const log = hourlyLogs.find((l) => l._id === i)
+      const log = (hourlyLogs as unknown as any[]).find((l) => l._id === i)
       return { name: `${i}:00`, total: log ? log.count : 0 }
     })
 
-    console.log("HOURLY_DATA", hourlyData)
-
-    let recentRequests: object[] = []
+    let recentRequests: any[] = []
     try {
       recentRequests = await prisma.apiRequestLog.findMany({
         orderBy: { timestamp: "desc" },
@@ -68,7 +83,7 @@ export default async function getOverviewStats() {
       recentRequests = [] // Fallback to empty array
     }
 
-    const formattedRecentRequests = recentRequests.map((req) => ({
+    const formattedRecentRequests = recentRequests.map((req: any) => ({
       endpoint: req.endpoint,
       apiKey: req.apiKey ? req.apiKey.substring(0, 10) : "N/A",
       responseTime: req.responseTime,
@@ -76,15 +91,19 @@ export default async function getOverviewStats() {
     }))
 
     return {
-      totalRequests,
-      totalEntries,
-      totalEntryTypes,
-      totalActiveUsers,
-      requestChangeMonthly,
-      userChangeSinceLastMonth,
-      entriesCreatedLastMonth,
-      hourlyData,
-      recentRequests: formattedRecentRequests
+      success: true,
+      status: 200,
+      data: {
+        totalRequests,
+        totalEntries,
+        totalEntryTypes,
+        totalActiveUsers,
+        requestChangeMonthly,
+        userChangeSinceLastMonth,
+        entriesCreatedLastMonth,
+        hourlyData,
+        recentRequests: formattedRecentRequests
+      }
     }
   } catch (e) {
     return handleError(new Error("Failed to fetch overview stats:"), "server")

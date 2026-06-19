@@ -24,6 +24,7 @@ import {
 } from "react-icons/si"
 import FormSubmitResetBtn from "@/components/studio/form-submit-reset-btn"
 import { PermissionGroup } from "@/interfaces/permission_group"
+import { IdentityManagementMode } from "@/interfaces"
 import { z } from "zod"
 import { IdentitySettingsFormSchema } from "@/lib/schemas/client/form-schemas"
 import { toast } from "sonner"
@@ -92,7 +93,7 @@ const IdentitySettingsForm = ({ formValues, permGroups }: Props) => {
                 name={field.name}
                 value={field.state.value}
                 defaultValue={"built-in"}
-                onValueChange={(value) => field.handleChange(value)}>
+                onValueChange={(value) => field.handleChange(value as IdentityManagementMode)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select Mode" />
                 </SelectTrigger>
@@ -233,7 +234,7 @@ const IdentitySettingsForm = ({ formValues, permGroups }: Props) => {
                         <Switch
                           id={field.name}
                           checked={field.state.value}
-                          onChange={(e) => field.handleChange(e.target.value)}
+                          onCheckedChange={(checked) => field.handleChange(checked)}
                         />
                       </>
                     )}

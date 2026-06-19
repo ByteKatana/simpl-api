@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { apiBuilderController } from "../../../../controllers/api-builder.controller"
-import { apiKeyController } from "../../../../controllers/api-key.controller"
+import { apiBuilderController } from "@/controllers/api-builder.controller"
+import { apiKeyController } from "@/controllers/api-key.controller"
 import { withRateLimit } from "@/lib/api/rate-limits"
 import { hasPermissionApi } from "@/lib/actions/auth/has-permission-api"
 

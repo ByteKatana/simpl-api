@@ -5,7 +5,7 @@ import { ArrowBigRightDash, Pencil, RefreshCcw, Trash2, TriangleAlert } from "lu
 import { Field, FieldContent, FieldDescription, FieldLabel, FieldTitle } from "@/components/ui/field"
 import { EyeOpenIcon } from "@radix-ui/react-icons"
 import { Switch } from "@/components/ui/switch"
-import { ReactFormExtendedApi, useStore } from "@tanstack/react-form"
+import { useStore } from "@tanstack/react-form"
 import { FormMode } from "@/interfaces"
 import { PermissionGroup } from "@/interfaces/permission_group"
 import { useState, useMemo, useEffect, useRef } from "react"
@@ -14,7 +14,7 @@ import { EntryType } from "@/interfaces/entry_type"
 import { slugifyName } from "@/lib/slugify"
 
 type Props = {
-  form: ReactFormExtendedApi<any, any, any, any, any, any, any, any, any, any, any, any>
+  form: any
   mode: FormMode
   namespaces: EntryType[]
   permGroups?: PermissionGroup[]
@@ -31,13 +31,12 @@ const PrivilegesSettings = ({ form, mode, namespaces, permGroups }: Props) => {
     namespace: namespaces && namespaces.length > 0 ? namespaces[0].namespace : ""
   })
 
-
   const prevSlugRef = useRef<string>(initialSlug)
 
   //Watch changes of Permission group name and update selected values
-  const permGroupName = useStore(form.store, (state) => slugifyName(state.values.name))
+  const permGroupName = useStore(form.store, (state: any) => slugifyName(state.values.name))
 
-  const nsEnabled = useStore(form.store, (state) => {
+  const nsEnabled = useStore(form.store, (state: any) => {
     const pg = selected.permission_group_ns
     if (!pg) return false
     const entryTypesRead = getNestedValue(state.values, `privileges.${pg}.system.entry_types.list`)
@@ -171,12 +170,12 @@ const PrivilegesSettings = ({ form, mode, namespaces, permGroups }: Props) => {
 
           {/* List */}
           <form.Field name={`${sysFieldPrefix}.list`}>
-            {(field) => (
+            {(field: any) => (
               <FieldLabel className="col-span-3" htmlFor={`${sysFieldPrefix}.read`}>
                 <Field orientation="horizontal">
                   <FieldContent>
                     <FieldTitle className="flex gap-1 items-center">
-                      <EyeOpenIcon size={14} />
+                      <EyeOpenIcon width={14} height={14} />
                       <span>List</span>
                     </FieldTitle>
                     <FieldDescription>
@@ -203,12 +202,12 @@ const PrivilegesSettings = ({ form, mode, namespaces, permGroups }: Props) => {
 
           {/* Read */}
           <form.Field name={`${sysFieldPrefix}.read`}>
-            {(field) => (
+            {(field: any) => (
               <FieldLabel className="col-span-3" htmlFor={`${sysFieldPrefix}.read`}>
                 <Field orientation="horizontal">
                   <FieldContent>
                     <FieldTitle className="flex gap-1 items-center">
-                      <EyeOpenIcon size={14} />
+                      <EyeOpenIcon width={14} height={14} />
                       <span>
                         {sysFieldPrefix === "system.entry-types" || sysFieldPrefix === "system.entries"
                           ? "Read All"
@@ -238,9 +237,9 @@ const PrivilegesSettings = ({ form, mode, namespaces, permGroups }: Props) => {
 
           {/* Create */}
           <form.Field name={`${sysFieldPrefix}.read`}>
-            {(readField) => (
+            {(readField: any) => (
               <form.Field name={`${sysFieldPrefix}.create`}>
-                {(field) => (
+                {(field: any) => (
                   <FieldLabel className="col-span-3" htmlFor={`${sysFieldPrefix}.create`}>
                     <Field orientation="horizontal">
                       <FieldContent>
@@ -266,9 +265,9 @@ const PrivilegesSettings = ({ form, mode, namespaces, permGroups }: Props) => {
 
           {/* Update */}
           <form.Field name={`${sysFieldPrefix}.read`}>
-            {(readField) => (
+            {(readField: any) => (
               <form.Field name={`${sysFieldPrefix}.update`}>
-                {(field) => (
+                {(field: any) => (
                   <FieldLabel className="col-span-3" htmlFor={`${sysFieldPrefix}.update`}>
                     <Field orientation="horizontal">
                       <FieldContent>
@@ -298,9 +297,9 @@ const PrivilegesSettings = ({ form, mode, namespaces, permGroups }: Props) => {
 
           {/* Delete */}
           <form.Field name={`${sysFieldPrefix}.read`}>
-            {(readField) => (
+            {(readField: any) => (
               <form.Field name={`${sysFieldPrefix}.delete`}>
-                {(field) => (
+                {(field: any) => (
                   <FieldLabel className="col-span-3" htmlFor={`${sysFieldPrefix}.delete`}>
                     <Field orientation="horizontal">
                       <FieldContent>
@@ -403,12 +402,12 @@ const PrivilegesSettings = ({ form, mode, namespaces, permGroups }: Props) => {
 
           {/* Read */}
           <form.Field name={`${nsFieldPrefix}.read`}>
-            {(field) => (
+            {(field: any) => (
               <FieldLabel className="col-span-3" htmlFor={`${nsFieldPrefix}.read`}>
                 <Field orientation="horizontal">
                   <FieldContent>
                     <FieldTitle className="flex gap-1 items-center">
-                      <EyeOpenIcon size={14} />
+                      <EyeOpenIcon width={14} height={14} />
                       <span>Read</span>
                     </FieldTitle>
                     <FieldDescription>
@@ -437,9 +436,9 @@ const PrivilegesSettings = ({ form, mode, namespaces, permGroups }: Props) => {
 
           {/* Read Entry */}
           <form.Field name={`${nsFieldPrefix}.read`}>
-            {(readField) => (
+            {(readField: any) => (
               <form.Field name={`${nsFieldPrefix}.read-entry`}>
-                {(field) => (
+                {(field: any) => (
                   <FieldLabel className="col-span-3" htmlFor={`${nsFieldPrefix}.read-entry`}>
                     <Field orientation="horizontal">
                       <FieldContent>
@@ -472,9 +471,9 @@ const PrivilegesSettings = ({ form, mode, namespaces, permGroups }: Props) => {
 
           {/* Create */}
           <form.Field name={`${nsFieldPrefix}.read`}>
-            {(readField) => (
+            {(readField: any) => (
               <form.Field name={`${nsFieldPrefix}.create`}>
-                {(field) => (
+                {(field: any) => (
                   <FieldLabel className="col-span-3" htmlFor={`${nsFieldPrefix}.create`}>
                     <Field orientation="horizontal">
                       <FieldContent>
@@ -500,9 +499,9 @@ const PrivilegesSettings = ({ form, mode, namespaces, permGroups }: Props) => {
 
           {/* Update */}
           <form.Field name={`${nsFieldPrefix}.read`}>
-            {(readField) => (
+            {(readField: any) => (
               <form.Field name={`${nsFieldPrefix}.update`}>
-                {(field) => (
+                {(field: any) => (
                   <FieldLabel className="col-span-3" htmlFor={`${nsFieldPrefix}.update`}>
                     <Field orientation="horizontal">
                       <FieldContent>
@@ -528,9 +527,9 @@ const PrivilegesSettings = ({ form, mode, namespaces, permGroups }: Props) => {
 
           {/* Update Entry */}
           <form.Field name={`${nsFieldPrefix}.read-entry`}>
-            {(readField) => (
+            {(readField: any) => (
               <form.Field name={`${nsFieldPrefix}.update-entry`}>
-                {(field) => (
+                {(field: any) => (
                   <FieldLabel className="col-span-3" htmlFor={`${nsFieldPrefix}.update-entry`}>
                     <Field orientation="horizontal">
                       <FieldContent>
@@ -556,9 +555,9 @@ const PrivilegesSettings = ({ form, mode, namespaces, permGroups }: Props) => {
 
           {/* Delete */}
           <form.Field name={`${nsFieldPrefix}.read-entry`}>
-            {(readField) => (
+            {(readField: any) => (
               <form.Field name={`${nsFieldPrefix}.delete-entry`}>
-                {(field) => (
+                {(field: any) => (
                   <FieldLabel className="col-span-3" htmlFor={`${nsFieldPrefix}.delete-entry`}>
                     <Field orientation="horizontal">
                       <FieldContent>
@@ -584,9 +583,9 @@ const PrivilegesSettings = ({ form, mode, namespaces, permGroups }: Props) => {
 
           {/* Delete All */}
           <form.Field name={`${nsFieldPrefix}.read`}>
-            {(readField) => (
+            {(readField: any) => (
               <form.Field name={`${nsFieldPrefix}.delete`}>
-                {(field) => (
+                {(field: any) => (
                   <FieldLabel className="col-span-3" htmlFor={`${nsFieldPrefix}.delete`}>
                     <Field orientation="horizontal">
                       <FieldContent>

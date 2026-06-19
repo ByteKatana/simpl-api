@@ -11,7 +11,7 @@ export default async function getEntryTypes(): Promise<ActionResponse<EntryType[
     const perm_group = await getPermissionGroup()
 
     if (!perm_group) {
-      return handleError(new Error("Unauthorized to fetch entry types"))
+      return handleError(new Error("Unauthorized to fetch entry types"), "server")
     }
 
     const response = await fetch(`${process.env.BASE_URL}/api/v1/entry-types?apikey=${process.env.API_KEY}`, {
@@ -20,7 +20,7 @@ export default async function getEntryTypes(): Promise<ActionResponse<EntryType[
     const entryTypes = await response.json()
     if (response.status !== 200) {
       const unhandledError = new Error("Failed to fetch entry types")
-      return handleError(unhandledError)
+      return handleError(unhandledError, "server")
     }
     return { success: true, status: 200, data: entryTypes } as SuccessResponse<EntryType[]>
   } catch (error) {

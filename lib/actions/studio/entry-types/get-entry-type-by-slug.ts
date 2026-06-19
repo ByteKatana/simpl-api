@@ -1,17 +1,17 @@
 "use server"
 
 import handleError from "@/lib/handlers/error"
-import { ErrorResponse, SuccessResponse } from "@/interfaces"
+import { ActionResponse, ErrorResponse, SuccessResponse } from "@/interfaces"
 import { EntryType } from "@/interfaces/entry_type"
 import { getPermissionGroup } from "@/lib/auth/get-session"
 
-export default async function getEntryTypeBySlug(slug: string) {
+export default async function getEntryTypeBySlug(slug: string): Promise<ActionResponse<EntryType>> {
   try {
     // Check permission first.
     const perm_group = await getPermissionGroup()
 
     if (!perm_group) {
-      return handleError(new Error("Unauthorized to fetch entry type by slug"))
+      return handleError(new Error("Unauthorized to fetch entry type by slug"), "server")
     }
 
     const response = await fetch(
@@ -27,7 +27,7 @@ export default async function getEntryTypeBySlug(slug: string) {
 
     if (response.status !== 200) {
       const unhandledError = new Error("Failed to fetch entry type by slug")
-      return handleError(unhandledError)
+      return handleError(unhandledError, "server")
     }
     return { success: true, status: 200, data: entryType } as SuccessResponse<EntryType>
   } catch (error) {

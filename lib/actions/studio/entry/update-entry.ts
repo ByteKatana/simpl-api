@@ -1,23 +1,27 @@
 "use server"
 
 import handleError from "@/lib/handlers/error"
-import { ErrorResponse, SuccessResponse } from "@/interfaces"
+import { ActionResponse, ErrorResponse, SuccessResponse } from "@/interfaces"
 import { Entry } from "@/interfaces/entry"
-import { EntryCreateFormSchema } from "@/lib/schemas/client/form-schemas"
 import { z } from "zod"
 import { getPermissionGroup } from "@/lib/auth/get-session"
+import { EntryCreateSchema } from "@/lib/schemas/server/server-schemas"
 
-export default async function updateEntry(formValues: z.infer<typeof EntryCreateFormSchema>, id: string) {
+export default async function updateEntry(
+  formValues: Partial<z.infer<typeof EntryCreateSchema>>,
+  id: string
+): Promise<ActionResponse<Entry>> {
   try {
     // Check permission first.
     const perm_group = await getPermissionGroup()
 
     if (!perm_group) {
-      return handleError(new Error("Unauthorized to update entry"))
+      return handleError(new Error("Unauthorized to update entry"), "server")
     }
 
     const { _id: _, ...restOfFormValues } = formValues
-    const newSlug = formValues.name.split(" ").join("-").toLowerCase()
+
+    const newSlug = formValues.name!.split(" ").join("-").toLowerCase()
     const response = await fetch(
       `${process.env.BASE_URL}/api/v1/entry/update/${id}?apikey=${process.env.API_KEY}&secretkey=${process.env.SECRET_KEY}`,
       {
@@ -39,7 +43,7 @@ export default async function updateEntry(formValues: z.infer<typeof EntryCreate
 
     if (!response.ok) {
       const unhandledError = new Error(data?.message || "Failed to update entry")
-      return handleError(unhandledError)
+      return handleError(unhandledError, "server")
     }
 
     return { success: true, status: response.status, data } as SuccessResponse<Entry>

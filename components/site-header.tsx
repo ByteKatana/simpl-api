@@ -19,7 +19,7 @@ export function SiteHeader() {
   const pathname = usePathname()
 
   // Split pathname into segments and filter out empty strings
-  const segments = pathname.split("/").filter(Boolean)
+  const segments = pathname!.split("/").filter(Boolean)
 
   // Helper to format segment names (e.g., "entry-types" -> "Entry Types")
   const formatSegment = (segment: string) => {
