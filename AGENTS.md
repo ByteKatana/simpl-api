@@ -6,9 +6,11 @@ This file provides guidance to AI agents when working with code in the `simpl:ap
 
 ## Project Overview
 
-Simpl:API is a headless CMS that offers flexible content modeling, allowing you to create custom structured data types
-and content within those types to gather data from your applications and services, as well as to process, visualize, and
-display it in your applications and services. It uses TypeScript/Next.js for both the frontend and backend. More
+Simpl:API is a versatile headless CMS built for flexibility—from personal projects to enterprise-scale automation. Model
+any content structure with custom Entry Types through a modern Simpl:API Studio or programmable REST API. Secure your
+workflows with granular Role-Based Access Control for both users and API keys, per-API-key rate limiting, seamless OAuth
+2.0 authentication across 10+ providers, and comprehensive audit logs alongside request analytics. It uses
+TypeScript/Next.js for both the frontend and backend. More
 technical details
 can be found in the [CODE OVERVIEW](CODE-OVERVIEW.md).
 

@@ -1,7 +1,9 @@
 # Security Policy
 
-simpl:api is an open source headless CMS with flexible content modeling. We take security seriously and aim to
-maintain a secure environment for all users.
+Simpl:API is a versatile headless CMS built for flexibility—from personal projects to enterprise-scale automation. Model
+any content structure with custom Entry Types through a modern Simpl:API Studio or programmable REST API. Secure your
+workflows with granular Role-Based Access Control for both users and API keys, per-API-key rate limiting, seamless OAuth
+2.0 authentication across 10+ providers, and comprehensive audit logs alongside request analytics.
 
 ## Description
 
