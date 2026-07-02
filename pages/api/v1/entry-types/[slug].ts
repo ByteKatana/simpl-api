@@ -1,18 +1,27 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import { apiBuilderController } from "@/controllers/api-builder.controller"
 import { apiKeyController } from "@/controllers/api-key.controller"
-import { isValidApiKey } from "@/lib/api/utils"
+import { isSystemApiKey, isValidApiKey } from "@/lib/api/utils"
 import { getByLimit } from "@/lib/get-by-limit"
 import { withRateLimit } from "@/lib/api/rate-limits"
+import { hasPermissionApi } from "@/lib/actions/auth/has-permission-api"
+import { ApiKey } from "@/interfaces"
 
 async function handler(_req: NextApiRequest, res: NextApiResponse) {
   const {
     query: { slug, apikey }
   } = _req
+  const isSystemKey = isSystemApiKey(apikey)
   const apiKey = new apiKeyController({ key: apikey as string })
-  const apiKeyData = await apiKey.findKey()
+  const apiKeyData = isSystemKey ? null : await apiKey.findKey()
   const _slug = slug as string
-  if (isValidApiKey(apiKeyData, apikey)) {
+  if (isSystemKey || isValidApiKey(apiKeyData, apikey)) {
+    const keyForPerm: Pick<ApiKey, "key"> = { key: apikey as string }
+    const isAllowed = await hasPermissionApi(keyForPerm, "system.entry_types.read")
+    if (!isAllowed) {
+      return res.status(401).json({ message: "You're not authorized!" })
+    }
+
     const apiBuilder = new apiBuilderController("single-param", "entry_types", "namespace", slug)
 
     //Limit without namesapce

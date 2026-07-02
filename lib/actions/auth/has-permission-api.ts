@@ -4,7 +4,7 @@ import getPermissionGroups from "@/lib/actions/studio/permission-groups/get-perm
 import { getApiKeyInfo } from "@/lib/actions/studio/settings/get-api-key-info"
 import { ApiKey, DbPrivilege } from "@/interfaces"
 import { PermissionGroup } from "@/interfaces/permission_group"
-import { z, ZodString } from "zod"
+import { isSystemApiKey } from "@/lib/api/utils"
 
 /**
  * Server action to check if the api key has a specific permission.
@@ -14,8 +14,8 @@ import { z, ZodString } from "zod"
  * @returns Promise<boolean> - True if api key has the permission
  */
 export async function hasPermissionApi(apiKey: Pick<ApiKey, "key">, requiredPermission: string): Promise<boolean> {
-  const sysApiKey = process.env.API_KEY as z.infer<typeof ZodString>
-  if (apiKey.key === sysApiKey) return true // Allow acces to System API Key
+  const isSystemKey = isSystemApiKey(apiKey.key)
+  if (isSystemKey) return true // Allow access to System API Key
 
   const responseApiKeyInfo = await getApiKeyInfo(apiKey.key)
   const apiKeyInfo = responseApiKeyInfo.data
@@ -25,7 +25,6 @@ export async function hasPermissionApi(apiKey: Pick<ApiKey, "key">, requiredPerm
   }
 
   const apiGroupName = apiKeyInfo.permission_group
-  console.log("apiGroupName", apiGroupName)
   try {
     const groups = await getPermissionGroups(true)
     const group = groups.data?.find((g: PermissionGroup) => g.slug === apiGroupName)

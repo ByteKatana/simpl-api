@@ -4,6 +4,7 @@ import { z } from "zod"
 import { SetupFormSchema } from "@/lib/schemas/client/form-schemas"
 import { PermissionGroup } from "@/interfaces/permission_group"
 import { EntryType } from "@/interfaces/entry_type"
+export type { Entry } from "@/interfaces/entry"
 
 enum FindLike {
   StartsWith,

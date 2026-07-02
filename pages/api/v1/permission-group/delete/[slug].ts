@@ -1,7 +1,7 @@
 //Core
 import { NextApiRequest, NextApiResponse } from "next"
 
-import { isValidApiKey } from "@/lib/api/utils"
+import { isSystemApiKey, isValidApiKey } from "@/lib/api/utils"
 //Controller
 import { PermissionGroupController } from "@/controllers/permission-group.controller"
 import { apiKeyController } from "@/controllers/api-key.controller"
@@ -9,13 +9,23 @@ import { apiKeyController } from "@/controllers/api-key.controller"
 //Interface
 import { PermissionGroup } from "@/interfaces/permission_group"
 import { withRateLimit } from "@/lib/api/rate-limits"
+import { hasPermissionApi } from "@/lib/actions/auth/has-permission-api"
+import { ApiKey } from "@/interfaces"
+
 //===============================================
 
 async function handler(_req: NextApiRequest, res: NextApiResponse) {
   const { slug, apikey, secretkey, mockclient } = _req.query
+  const isSystemKey = isSystemApiKey(apikey)
   const apiKey = new apiKeyController({ key: apikey as string })
-  const apiKeyData = await apiKey.findKey()
-  if (isValidApiKey(apiKeyData, apikey) && process.env.SECRET_KEY === secretkey) {
+  const apiKeyData = isSystemKey ? null : await apiKey.findKey()
+  if ((isSystemKey || isValidApiKey(apiKeyData, apikey)) && process.env.SECRET_KEY === secretkey) {
+    const keyForPerm: Pick<ApiKey, "key"> = { key: apikey as string }
+    const isAllowed = await hasPermissionApi(keyForPerm, "system.permission_groups.delete")
+    if (!isAllowed) {
+      return res.status(401).json({ message: "You're not authorized!" })
+    }
+
     if (_req.method === "DELETE") {
       const dummyObj: PermissionGroup = {
         name: "",
