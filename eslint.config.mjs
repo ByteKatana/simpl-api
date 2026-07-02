@@ -36,7 +36,7 @@ export default [
       "react/react-in-jsx-scope": "off",
       "@typescript-eslint/no-unused-vars": "off",
       "react/no-children-prop": [
-        true,
+        "error",
         {
           allowFunctions: true
         }
