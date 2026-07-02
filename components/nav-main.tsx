@@ -1,6 +1,6 @@
 "use client"
 
-import { Box, Home, LucideFileText, Settings, ShieldUser, Signpost, Users, Webhook } from "lucide-react"
+import { Box, Home, LucideFileText, Settings, ShieldUser, Users } from "lucide-react"
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -15,8 +15,6 @@ const items = [
   { title: "Entries", url: "/studio/entries", icon: LucideFileText },
   { title: "Permission Groups", url: "/studio/permission-groups", icon: ShieldUser },
   { title: "Users", url: "/studio/users", icon: Users },
-  { title: "Routes", url: "#", icon: Signpost },
-  { title: "Webhooks", url: "#", icon: Webhook },
   {
     title: "Settings",
     url: "/studio/settings",

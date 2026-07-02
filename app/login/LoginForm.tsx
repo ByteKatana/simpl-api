@@ -1,7 +1,6 @@
 "use client"
 
 import { signIn } from "next-auth/react"
-/*import { signIn as signInWithPasskey } from "next-auth/webauthn"*/
 import { useRouter } from "next/navigation"
 import { useState, FormEvent, useMemo } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -18,11 +17,9 @@ import {
   SiNetlify,
   SiGoogle,
   SiApple,
-  SiSlack,
   SiZoom,
   SiNotion,
   SiTodoist,
-  SiLinkedin,
   SiClickup,
   SiHuggingface,
   SiMaildotru
@@ -178,25 +175,6 @@ export default function LoginForm({ authMethods }: Props) {
             )}
           </Button>
         </form>
-        {/*{authMethods.built_in["passkeys"] && (
-          <>
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
-              </div>
-            </div>
-            <div className="flex flex-col gap-2">
-              <button
-                onClick={() => signInWithPasskey("passkey")}
-                className="px-4 py-2 bg-slate-600 text-white rounded shadow">
-                Sign in with Passkey / Yubikey
-              </button>
-            </div>
-          </>
-        )}*/}
         {enabledThirdPartyProviders.length > 0 && (
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
