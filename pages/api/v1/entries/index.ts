@@ -15,7 +15,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
   const apiKeyData = isSystemKey ? null : await apiKey.findKey()
   if (isSystemKey || isValidApiKey(apiKeyData, apikey)) {
     const keyForPerm: Pick<ApiKey, "key"> = { key: apikey as string }
-    const isAllowed = await hasPermissionApi(keyForPerm, "system.entries.list")
+    const isAllowed = await hasPermissionApi(keyForPerm, "system.entries.read")
     if (!isAllowed) {
       return res.status(401).json({ message: "You're not authorized!" })
     }
