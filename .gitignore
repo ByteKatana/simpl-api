@@ -10,6 +10,7 @@
 
 # next.js
 /.next/
+/.swc/
 /out/
 next.config.js
 
@@ -40,12 +41,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 
-#codacy
+# codacy
 .codacy
 
 # ai
 .ai
 
-
-
+# prisma
 /prisma-client
