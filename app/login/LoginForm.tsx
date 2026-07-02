@@ -26,6 +26,7 @@ import {
 } from "react-icons/si"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { IconType } from "react-icons"
+import { BiLogoLinkedinSquare, BiLogoSlack } from "react-icons/bi"
 
 /**
  * Login Form Component (Client Component)
@@ -54,11 +55,11 @@ export default function LoginForm({ authMethods }: Props) {
     { id: "netlify", name: "Netlify", icon: SiNetlify },
     { id: "google", name: "Google", icon: SiGoogle },
     { id: "apple", name: "Apple", icon: SiApple },
-    { id: "slack", name: "Slack", icon: SiSlack },
+    { id: "slack", name: "Slack", icon: BiLogoSlack },
     { id: "zoom", name: "Zoom", icon: SiZoom },
     { id: "notion", name: "Notion", icon: SiNotion },
     { id: "todoist", name: "Todoist", icon: SiTodoist },
-    { id: "linkedin", name: "LinkedIn", icon: SiLinkedin },
+    { id: "linkedin", name: "LinkedIn", icon: BiLogoLinkedinSquare },
     { id: "clickup", name: "ClickUp", icon: SiClickup },
     { id: "huggingface", name: "Hugging Face", icon: SiHuggingface },
     { id: "yandex", name: "Yandex", icon: SiGoogle },
