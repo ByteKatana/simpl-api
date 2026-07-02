@@ -38,10 +38,6 @@ export class apiKeyController {
       }
     } catch (e) {
       console.error(e)
-    } finally {
-      /*if (client?.close && typeof client.close === "function") {
-        await client.close()
-      }*/
     }
   }
 
@@ -76,10 +72,6 @@ export class apiKeyController {
       }
     } catch (e) {
       console.error(e)
-    } finally {
-      /*if (client?.close && typeof client.close === "function") {
-        await client.close()
-      }*/
     }
   }
 
@@ -113,10 +105,6 @@ export class apiKeyController {
       }
     } catch (e) {
       console.error("An error occurred while deleting the API key:", e) //TODO: better error logging & displaying
-    } finally {
-      /*if (client?.close && typeof client.close === "function") {
-        await client.close()
-      }*/
     }
   }
 }

@@ -44,10 +44,6 @@ export class EntryController {
       } catch (e) {
         console.log(e)
         return { status: "failed", message: "Failed to create the entry." }
-      } finally {
-        /*if (client?.close && typeof client.close === "function") {
-          await client.close()
-        }*/
       }
     } else {
       return [{ message: "Database connection is NOT established" }]
@@ -72,10 +68,6 @@ export class EntryController {
         updateResult = await dbCollection.updateOne({ _id: new ObjectId(id) }, { $set: this.entry }, { upsert: false })
       } catch (e) {
         console.log(e)
-      } finally {
-        /*if (client?.close && typeof client.close === "function") {
-          await client.close()
-        }*/
       }
       if (updateResult && updateResult.modifiedCount === 1) {
         return { status: "success", message: "Entry has been updated." }
@@ -107,10 +99,6 @@ export class EntryController {
         deleteResult = await dbCollection.deleteOne({ _id: new ObjectId(id) })
       } catch (e) {
         console.log(e)
-      } finally {
-        /*if (client?.close && typeof client.close === "function") {
-          await client.close()
-        }*/
       }
       if (deleteResult && deleteResult.deletedCount === 1) {
         return { status: "success", message: "Entry has been deleted." }

@@ -46,10 +46,6 @@ export class UserController {
       } catch (e) {
         console.log(e)
         return { status: "failed", message: "Failed to create the user." }
-      } finally {
-        /*if (client?.close && typeof client.close === "function") {
-          await client.close()
-        }*/
       }
     } else {
       return [{ message: "Database connection is NOT established" }]
@@ -87,11 +83,8 @@ export class UserController {
         )
       } catch (e) {
         console.log(e)
-      } finally {
-        /*if (client?.close && typeof client.close === "function") {
-          await client.close()
-        }*/
       }
+
       if (updateResult && updateResult["matchedCount"] === 1 && updateResult["modifiedCount"] === 1) {
         return { status: "success", message: "User has been updated." }
       } else if (updateResult && updateResult["matchedCount"] === 1 && updateResult["modifiedCount"] === 0) {
@@ -122,11 +115,8 @@ export class UserController {
         deleteResult = await dbCollection.deleteOne({ _id: new ObjectId(id) })
       } catch (e) {
         console.log(e)
-      } finally {
-        /*if (client?.close && typeof client.close === "function") {
-          await client.close()
-        }*/
       }
+
       if (deleteResult && deleteResult.deletedCount === 1) {
         return { status: "success", message: "User has been deleted." }
       } else {

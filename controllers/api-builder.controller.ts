@@ -104,7 +104,6 @@ export class apiBuilderController {
         dataCollection = [{ message: "Error: Unexpected route type!" }]
       }
 
-      // if(param.length > 1)
       if (isConnected) {
         return dataCollection
       } else {
@@ -113,10 +112,6 @@ export class apiBuilderController {
     } catch (e) {
       console.error(e)
       return [{ message: "Database operation failed." }]
-    } finally {
-      /*if (client?.close && typeof client.close === "function") {
-        await client.close()
-      }*/
     }
   }
 }
