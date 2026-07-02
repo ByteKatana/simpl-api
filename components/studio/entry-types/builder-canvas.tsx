@@ -219,7 +219,6 @@ export const BuilderCanvas = ({
 
     if (combine && source.droppableId !== "COMPONENTS") {
       // combine two existing fields within a row
-      //@ts-ignore
       setRows((prev) =>
         prev.map((row) => {
           if (row.instanceId !== source.droppableId) return row

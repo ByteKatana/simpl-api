@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { AvatarProvider } from "../avatar-provider"
+import { toast } from "sonner"
 
 const DICEBEAR_STYLES = [
   "adventurer",
@@ -102,7 +103,9 @@ export function AvatarSelector({
           const bgset = url.searchParams.get("bgset") || "none"
           setParams({ set, bgset })
         }
-      } catch (e) {}
+      } catch (e) {
+        toast.error("Invalid avatar provider or provider URL")
+      }
     }
   }, [selectedProvider])
 

@@ -53,7 +53,7 @@ const ApiSettingsForm = ({
     },
     onSubmit: async ({ value }) => {
       try {
-        let response = await updateApiSettings(value, id?.toString() || "")
+        const response = await updateApiSettings(value, id?.toString() || "")
         if (response.success) {
           toast.success("Successful!", {
             description: `API Settings has been updated successfully!`,
@@ -409,7 +409,6 @@ const ApiSettingsForm = ({
               ))}
           </div>
         </fieldset>
-        {/* @ts-ignore */}
         <FormSubmitResetBtn form={form} />
       </form>
     </div>

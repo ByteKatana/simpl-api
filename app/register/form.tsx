@@ -47,7 +47,7 @@ export default function RegisterForm({ profileImgProvider }: Props) {
     },
     onSubmit: async ({ value }) => {
       try {
-        let response = await createUser(value as User, true)
+        const response = await createUser(value as User, true)
         const isEmailVerificationEnabled: boolean = await getSettingsValue("identity_settings", "email_verification")
 
         if (response.success) {

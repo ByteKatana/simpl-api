@@ -25,7 +25,7 @@ const GeneralSettingsForm = ({ formValues }: { formValues: GeneralSettings }) =>
     },
     onSubmit: async ({ value }) => {
       try {
-        let response = await updateGeneralSettings(value, id?.toString() || "")
+        const response = await updateGeneralSettings(value, id?.toString() || "")
         if (response.success) {
           toast.success("Successful!", {
             description: `General Settings has been updated successfully!`,
@@ -135,7 +135,6 @@ const GeneralSettingsForm = ({ formValues }: { formValues: GeneralSettings }) =>
             )}
           </form.Field>
         </Field>
-        {/* @ts-ignore */}
         <FormSubmitResetBtn form={form} />
       </form>
     </div>

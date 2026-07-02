@@ -13,15 +13,14 @@ import {
   SiGitlab,
   SiGoogle,
   SiHuggingface,
-  SiLinkedin,
   SiMaildotru,
   SiNetlify,
   SiNotion,
-  SiSlack,
   SiVercel,
   SiYandexcloud,
   SiZoom
 } from "react-icons/si"
+import { BiLogoLinkedinSquare, BiLogoSlack } from "react-icons/bi"
 import FormSubmitResetBtn from "@/components/studio/form-submit-reset-btn"
 import { PermissionGroup } from "@/interfaces/permission_group"
 import { IdentityManagementMode } from "@/interfaces"
@@ -49,7 +48,7 @@ const IdentitySettingsForm = ({ formValues, permGroups }: Props) => {
     },
     onSubmit: async ({ value }) => {
       try {
-        let response = await updateIdentitySettings(value, id?.toString() || "")
+        const response = await updateIdentitySettings(value, id?.toString() || "")
         if (response.success) {
           toast.success("Successful!", {
             description: `Identity Settings has been updated successfully!`,
@@ -406,7 +405,7 @@ const IdentitySettingsForm = ({ formValues, permGroups }: Props) => {
                       <>
                         <FieldContent>
                           <FieldTitle className="flex gap-1 items-center">
-                            <SiSlack size={14} />
+                            <BiLogoSlack size={14} />
                             <span>Slack</span>
                           </FieldTitle>
                           <FieldDescription>Allow users to authenticate with their Slack accounts.</FieldDescription>
@@ -472,7 +471,7 @@ const IdentitySettingsForm = ({ formValues, permGroups }: Props) => {
                       <>
                         <FieldContent>
                           <FieldTitle className="flex gap-1 items-center">
-                            <SiLinkedin color="#0A66C2" size={14} />
+                            <BiLogoLinkedinSquare color="#0A66C2" size={14} />
                             <span>Linkedin</span>
                           </FieldTitle>
                           <FieldDescription>Allow users to authenticate with their Linkedin accounts.</FieldDescription>
@@ -681,7 +680,6 @@ const IdentitySettingsForm = ({ formValues, permGroups }: Props) => {
             </span>
           </Field>
         </div>
-        {/* @ts-ignore */}
         <FormSubmitResetBtn form={form} />
       </form>
     </div>

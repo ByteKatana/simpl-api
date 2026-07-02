@@ -21,7 +21,7 @@ const AppearanceSettingsForm = ({ formValues }: { formValues: z.infer<typeof App
     },
     onSubmit: async ({ value }: any) => {
       try {
-        let response = await updateAppearanceSettings(value, id?.toString() || "")
+        const response = await updateAppearanceSettings(value, id?.toString() || "")
         if (response.success) {
           toast.success("Successful!", {
             description: `Apperance Settings has been updated successfully!`,
@@ -75,7 +75,6 @@ const AppearanceSettingsForm = ({ formValues }: { formValues: z.infer<typeof App
             )}
           </form.Field>
         </Field>
-        {/* @ts-ignore */}
         <FormSubmitResetBtn form={form} />
       </form>
     </div>

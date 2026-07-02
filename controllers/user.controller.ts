@@ -67,7 +67,7 @@ export class UserController {
     if (client && isConnected) {
       let updateResult: UpdateResult | undefined
       try {
-        let setObj = {
+        const setObj = {
           ...this.user
         }
         if (this.user.password !== "" && this.user.password !== undefined && this.user.password !== null) {

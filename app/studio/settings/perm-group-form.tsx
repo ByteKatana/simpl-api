@@ -29,7 +29,7 @@ const PermissionGroupSettingsForm = ({ permGroups, namespaces }: Props) => {
     validators: {},
     onSubmit: async ({ value }) => {
       try {
-        let response = await updatePermissionGroups(value)
+        const response = await updatePermissionGroups(value)
         if (response.success) {
           toast.success("Successful!", {
             description: `Permission Groups Settings has been updated successfully!`,

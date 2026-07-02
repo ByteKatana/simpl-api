@@ -60,7 +60,7 @@ const UserForm = ({ mode, profileImgProvider, permGroups, formPayload }: Props) 
   const form = useForm({
     defaultValues: defaultPayload,
     validators: {
-      onMount: isEdit ? UserUpdateFormSchema : UserFormSchema,
+      onMount: UserUpdateFormSchema,
       onChangeAsyncDebounceMs: 2500,
       onChangeAsync: isEdit ? UserUpdateFormSchema : UserFormSchema
     },
