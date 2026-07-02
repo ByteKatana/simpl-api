@@ -2,6 +2,10 @@ import Redis, { RedisOptions } from "ioredis"
 
 const REDIS_URL = process.env.REDIS_URL || "redis://localhost:6379"
 
+/**
+ * Generates Redis options including retry strategy and TLS configuration.
+ * @returns {RedisOptions} The configuration options for the Redis client.
+ */
 const getRedisOptions = (): RedisOptions => {
   const options: RedisOptions = {
     // Exponential backoff retry strategy
@@ -30,6 +34,11 @@ const getRedisOptions = (): RedisOptions => {
   return options
 }
 
+/**
+ * Creates and configures a new Redis client instance.
+ * Includes connection monitoring and custom Lua commands.
+ * @returns {Redis} A configured ioredis instance.
+ */
 const redisClientSingleton = () => {
   const client = new Redis(REDIS_URL, getRedisOptions())
 
