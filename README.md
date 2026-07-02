@@ -99,6 +99,7 @@ Basic installation instructions are provided below. For more details check the [
    ```bash
    npm run start
    ```
+4. Open [http://localhost:3000/setup](http://localhost:3000/setup) with your browser to complete the setup process.
 
 ## 🙋🏻‍♂️ Support
 
