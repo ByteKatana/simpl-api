@@ -105,14 +105,19 @@ declare module "ioredis" {
 }
 
 declare global {
-  // eslint-disable-next-line no-var
-  var redis: undefined | ReturnType<typeof redisClientSingleton>
+  interface Window {
+    redis: ReturnType<typeof redisClientSingleton> | undefined
+  }
 }
 
-const redis = globalThis.redis ?? redisClientSingleton()
+const globalWithRedis = globalThis as typeof globalThis & {
+  redis: ReturnType<typeof redisClientSingleton> | undefined
+}
+
+const redis = globalWithRedis.redis ?? redisClientSingleton()
 
 export default redis
 
 if (process.env.NODE_ENV !== "production") {
-  globalThis.redis = redis
+  globalWithRedis.redis = redis
 }
