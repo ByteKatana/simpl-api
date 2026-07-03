@@ -1,22 +1,22 @@
-import { connectDB } from "../lib/mongodb"
+import { connectDB } from "@/lib/mongodb"
 import { ObjectId, MongoClient, Collection, UpdateResult, DeleteResult, InsertOneResult } from "mongodb"
 import bcrypt from "bcryptjs"
 
 //Interface
-import { User } from "../interfaces"
+import { User } from "@/interfaces/user"
 
 export class UserController {
   user: User
   mockClient: boolean
 
-  constructor(userData: User, mockClient?: boolean) {
+  constructor(userData: User, mockClient: boolean = false) {
     this.user = userData
     this.mockClient = mockClient
   }
 
   async create() {
-    let client: MongoClient
-    let dbCollection: Collection
+    let client: MongoClient | undefined
+    let dbCollection: Collection<any>
     let isConnected = false
 
     try {
@@ -26,7 +26,7 @@ export class UserController {
       console.log(e)
     }
 
-    if (isConnected) {
+    if (client && isConnected) {
       let insertResult: InsertOneResult
       try {
         const plainPw = this.user.password
@@ -46,10 +46,6 @@ export class UserController {
       } catch (e) {
         console.log(e)
         return { status: "failed", message: "Failed to create the user." }
-      } finally {
-        if (client?.close && typeof client.close === "function") {
-          await client.close()
-        }
       }
     } else {
       return [{ message: "Database connection is NOT established" }]
@@ -57,8 +53,8 @@ export class UserController {
   }
 
   async update(id: string) {
-    let client: MongoClient
-    let dbCollection: Collection
+    let client: MongoClient | undefined
+    let dbCollection: Collection<any>
     let isConnected = false
 
     try {
@@ -68,36 +64,30 @@ export class UserController {
       console.log(e)
     }
 
-    if (isConnected) {
-      let updateResult: UpdateResult
+    if (client && isConnected) {
+      let updateResult: UpdateResult | undefined
       try {
-        let lastPw = this.user.password
-        if (this.user.pwchanged) {
-          lastPw = bcrypt.hashSync(lastPw, 8)
+        const setObj = {
+          ...this.user
+        }
+        if (this.user.password !== "" && this.user.password !== undefined && this.user.password !== null) {
+          setObj.password = this.user.password
         }
         dbCollection = client.db(process.env.DB_NAME).collection("users")
         updateResult = await dbCollection.updateOne(
           { _id: new ObjectId(id) },
           {
-            $set: {
-              username: this.user.username,
-              email: this.user.email,
-              password: lastPw,
-              permission_group: this.user.permission_group
-            }
+            $set: setObj
           },
           { upsert: false }
         )
       } catch (e) {
         console.log(e)
-      } finally {
-        if (client?.close && typeof client.close === "function") {
-          await client.close()
-        }
       }
-      if (updateResult["matchedCount"] === 1 && updateResult["modifiedCount"] === 1) {
+
+      if (updateResult && updateResult["matchedCount"] === 1 && updateResult["modifiedCount"] === 1) {
         return { status: "success", message: "User has been updated." }
-      } else if (updateResult["matchedCount"] === 1 && updateResult["modifiedCount"] === 0) {
+      } else if (updateResult && updateResult["matchedCount"] === 1 && updateResult["modifiedCount"] === 0) {
         return { status: "failed", message: "You didn't make any change." }
       } else {
         return { status: "failed", message: "Failed to update the user." }
@@ -108,8 +98,8 @@ export class UserController {
   }
 
   async delete(id: string) {
-    let client: MongoClient
-    let dbCollection: Collection
+    let client: MongoClient | undefined
+    let dbCollection: Collection<any>
     let isConnected: boolean = false
 
     try {
@@ -118,19 +108,16 @@ export class UserController {
     } catch (e) {
       console.log(e)
     }
-    if (isConnected) {
-      let deleteResult: DeleteResult
+    if (client && isConnected) {
+      let deleteResult: DeleteResult | undefined
       try {
         dbCollection = client.db(process.env.DB_NAME).collection("users")
         deleteResult = await dbCollection.deleteOne({ _id: new ObjectId(id) })
       } catch (e) {
         console.log(e)
-      } finally {
-        if (client?.close && typeof client.close === "function") {
-          await client.close()
-        }
       }
-      if (deleteResult.deletedCount === 1) {
+
+      if (deleteResult && deleteResult.deletedCount === 1) {
         return { status: "success", message: "User has been deleted." }
       } else {
         return { status: "failed", message: "Failed to delete the user." }

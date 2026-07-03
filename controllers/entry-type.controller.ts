@@ -1,9 +1,9 @@
 //Database
-import { connectDB } from "../lib/mongodb"
+import { connectDB } from "@/lib/mongodb"
 import { Collection, InsertOneResult, MongoClient, ObjectId, UpdateResult } from "mongodb"
 
 //Interface
-import { EntryType } from "../interfaces"
+import { EntryType } from "@/interfaces/entry_type"
 
 //===============================================
 
@@ -17,8 +17,8 @@ export class EntryTypeController {
   }
 
   async create() {
-    let client: MongoClient
-    let dbCollection: Collection
+    let client: MongoClient | undefined
+    let dbCollection: Collection<any>
     let isConnected = false
 
     try {
@@ -28,9 +28,9 @@ export class EntryTypeController {
       console.log(e)
     }
 
-    if (isConnected) {
-      let insertResult: InsertOneResult
-      let addPrivileges: UpdateResult
+    if (client && isConnected) {
+      let insertResult: InsertOneResult | undefined
+      let addPrivileges: UpdateResult | undefined
       try {
         dbCollection = client.db(process.env.DB_NAME).collection("entry_types")
         insertResult = await dbCollection.insertOne(this.entryType)
@@ -68,10 +68,6 @@ export class EntryTypeController {
       } catch (e) {
         console.log(e)
         return { status: "failed", message: "Failed to create the entry type." }
-      } finally {
-        if (client?.close && typeof client.close === "function") {
-          await client.close()
-        }
       }
     } else {
       return [{ message: "Database connection is NOT established" }]
@@ -79,8 +75,8 @@ export class EntryTypeController {
   }
 
   async update(id: string) {
-    let client: MongoClient
-    let dbCollection: Collection
+    let client: MongoClient | undefined
+    let dbCollection: Collection<any>
     let isConnected = false
 
     try {
@@ -89,8 +85,8 @@ export class EntryTypeController {
     } catch (e) {
       console.log(e)
     }
-    if (isConnected) {
-      let updateResult: UpdateResult
+    if (client && isConnected) {
+      let updateResult: UpdateResult | undefined
       let addPrivileges: UpdateResult | undefined
       try {
         dbCollection = client.db(process.env.DB_NAME).collection("entry_types")
@@ -128,20 +124,22 @@ export class EntryTypeController {
         }
       } catch (e) {
         console.log(e)
-      } finally {
-        if (client?.close && typeof client.close === "function") {
-          await client.close()
-        }
       }
 
       // Check if namespace changed and privileges were updated
       const namespaceChanged = addPrivileges !== undefined
 
-      if (namespaceChanged && updateResult.modifiedCount === 1 && addPrivileges.modifiedCount === 1) {
+      if (
+        updateResult &&
+        addPrivileges &&
+        namespaceChanged &&
+        updateResult.modifiedCount === 1 &&
+        addPrivileges.modifiedCount === 1
+      ) {
         return { status: "success", message: "Entry Type has been updated." }
-      } else if (!namespaceChanged && updateResult.modifiedCount === 1) {
+      } else if (updateResult && !namespaceChanged && updateResult.modifiedCount === 1) {
         return { status: "success", message: "Entry Type has been updated." }
-      } else if (updateResult.matchedCount === 1 && updateResult.modifiedCount === 0) {
+      } else if (updateResult && updateResult.matchedCount === 1 && updateResult.modifiedCount === 0) {
         return { status: "failed", message: "You didn't make any change." }
       } else {
         return { status: "failed", message: "Failed to update the entry type." }
@@ -152,8 +150,8 @@ export class EntryTypeController {
   }
 
   async delete(id: string) {
-    let client: MongoClient
-    let dbCollection: Collection
+    let client: MongoClient | undefined
+    let dbCollection: Collection<any>
     let isConnected = false
 
     try {
@@ -162,19 +160,15 @@ export class EntryTypeController {
     } catch (e) {
       console.log(e)
     }
-    if (isConnected) {
+    if (client && isConnected) {
       let deleteResult
       try {
         dbCollection = client.db(process.env.DB_NAME).collection("entry_types")
-        deleteResult = await dbCollection.deleteOne({ _id: new ObjectId(id) })
+        deleteResult = await dbCollection.deleteOne({ namespace: id })
       } catch (e) {
         console.log(e)
-      } finally {
-        if (client?.close && typeof client.close === "function") {
-          await client.close()
-        }
       }
-      if (deleteResult.deletedCount === 1) {
+      if (deleteResult && deleteResult.deletedCount === 1) {
         return { status: "success", message: "Entry Type has been deleted." }
       } else {
         return { status: "failed", message: "Failed to delete the entry type." }

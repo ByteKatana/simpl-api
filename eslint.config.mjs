@@ -5,10 +5,38 @@ import pluginReact from "eslint-plugin-react"
 import prettier from "eslint-plugin-prettier"
 import testingLibrary from "eslint-plugin-testing-library"
 import jestDom from "eslint-plugin-jest-dom"
-import pluginCypress from "eslint-plugin-cypress/flat"
+import pluginCypress from "eslint-plugin-cypress"
 
 /** @type {import("eslint").Linter.Config[]} */
 export default [
+  {
+    ignores: [
+      "**/node_modules/**",
+      ".pnp.*",
+      "coverage/**",
+      ".next/**",
+      ".swc/**",
+      "out/**",
+      "next.config.js",
+      "build/**",
+      ".DS_Store",
+      "*.pem",
+      "api-routes/**",
+      ".idea/**",
+      "npm-debug.log*",
+      "yarn-debug.log*",
+      "yarn-error.log*",
+      ".env*",
+      ".vercel/**",
+      "*.tsbuildinfo",
+      "__mocks__/**",
+      ".codacy/**",
+      ".ai/**",
+      "prisma-client/**",
+      "postcss.config.js",
+      "next-example.config.js"
+    ]
+  },
   { files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"] },
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,
@@ -34,7 +62,14 @@ export default [
     rules: {
       "react/jsx-uses-react": "off",
       "react/react-in-jsx-scope": "off",
-      "@typescript-eslint/no-unused-vars": "off"
+      "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "react/no-children-prop": [
+        "off",
+        {
+          allowFunctions: true
+        }
+      ]
     }
   }
 ]

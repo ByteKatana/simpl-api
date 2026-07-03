@@ -1,17 +1,27 @@
 import { NextApiResponse, NextApiRequest } from "next"
-import { apiBuilderController } from "../../../../controllers/api-builder.controller"
-import { apiKeyController } from "../../../../controllers/api-key.controller"
+import { apiBuilderController } from "@/controllers/api-builder.controller"
+import { apiKeyController } from "@/controllers/api-key.controller"
+import { withRateLimit } from "@/lib/api/rate-limits"
+import { isSystemApiKey, isValidApiKey } from "@/lib/api/utils"
+import { ApiKey } from "@/interfaces"
+import checkPermissionApi from "@/lib/check-permission-api"
 
-export default async function handler(_req: NextApiRequest, res: NextApiResponse) {
+async function handler(_req: NextApiRequest, res: NextApiResponse) {
   const {
     query: { slug, apikey }
   } = _req
+  const isSystemKey = isSystemApiKey(apikey)
   const apiKey = new apiKeyController({ key: apikey as string })
-  const apiKeyData = await apiKey.findKey()
-  if (apiKeyData[0] !== undefined && apiKeyData[0].key === apikey) {
-    const apiBuilder = new apiBuilderController("single-param", "entries", "slug", slug)
+  const apiKeyData = isSystemKey ? null : await apiKey.findKey()
+  if (isSystemKey || isValidApiKey(apiKeyData, apikey)) {
+    const keyForPerm: Pick<ApiKey, "key"> = { key: apikey as string }
+    const isAllowed = await checkPermissionApi(keyForPerm, ["system.entries.read", `${slug}.read-entry`])
+    if (!isAllowed) return res.status(401).json({ message: "You're not authorized!" })
+
+    const apiBuilder = new apiBuilderController("single-param", "entries", "slug", slug as string)
 
     res.status(200).json(await apiBuilder.fetchData("Equals"))
   }
-  res.status(200).json({ message: "You're not authorized!" })
+  res.status(401).json({ message: "You're not authorized!" })
 }
+export default withRateLimit(handler)

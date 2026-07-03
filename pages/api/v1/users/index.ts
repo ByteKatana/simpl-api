@@ -1,21 +1,37 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { apiBuilderController } from "../../../../controllers/api-builder.controller"
-import { apiKeyController } from "../../../../controllers/api-key.controller"
+import { apiBuilderController } from "@/controllers/api-builder.controller"
+import { apiKeyController } from "@/controllers/api-key.controller"
+import { isSystemApiKey, isValidApiKey } from "@/lib/api/utils"
+import { withRateLimit } from "@/lib/api/rate-limits"
+import checkPermissionApi from "@/lib/check-permission-api"
 
 //===============================================
 
-export default async function handler(_req: NextApiRequest, res: NextApiResponse) {
+async function handler(_req: NextApiRequest, res: NextApiResponse) {
   const { apikey } = _req.query
+  const isSystemKey = isSystemApiKey(apikey)
   const apiKey = new apiKeyController({ key: apikey as string })
-  const apiKeyData = await apiKey.findKey()
-  if (apiKeyData[0] !== undefined && apiKeyData[0].key === apikey) {
+  const apiKeyData = isSystemKey ? null : await apiKey.findKey()
+  if (isSystemKey || isValidApiKey(apiKeyData, apikey)) {
+    //Check permission
+    const keyForPerm: any = isSystemKey ? { key: apikey as string } : apiKeyData![0]
+    const isAllowed = await checkPermissionApi(keyForPerm, ["system.users.read"])
+    if (!isAllowed) {
+      return res.status(401).json({ message: "You're not authorized!" })
+    }
+
+    //Prepare data
     const user = new apiBuilderController("index", "users")
-    const userData: any[] = await user.fetchData()
-    userData.forEach((user) => {
-      const { password, ...rest } = user
-      return rest
-    })
-    return res.status(200).json(userData)
+    const fetchData = await user.fetchData()
+    const userData = Array.isArray(fetchData) ? fetchData : []
+    const usersWithoutPassword = userData
+      .filter((user: any) => user.permission_group !== "root")
+      .map((user: any) => {
+        const { password, ...rest } = user
+        return rest
+      })
+    return res.status(200).json(usersWithoutPassword)
   }
-  return res.status(200).json({ message: "You're not authorized!" })
+  return res.status(401).json({ message: "You're not authorized!" })
 }
+export default withRateLimit(handler)

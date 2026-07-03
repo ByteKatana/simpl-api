@@ -9,6 +9,8 @@ declare module "next-auth" {
     user: {
       username: string
       permission_group: string
+      profile_img: string
+      status: string
     } & DefaultSession["user"]
   }
 
@@ -17,8 +19,10 @@ declare module "next-auth" {
    * or the second parameter of the `session` callback, when using a database.
    */
   interface User {
-    username: string
-    permission_group: string
+    username?: string
+    permission_group?: string
+    profile_img?: string
+    status?: string
   }
 }
 
@@ -30,5 +34,7 @@ declare module "next-auth/jwt" {
     id: string
     username: string
     permission_group: string
+    profile_img: string
+    status: string
   }
 }

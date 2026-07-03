@@ -1,23 +1,22 @@
-import { connectDB } from "../lib/mongodb"
-import { Collection, DeleteResult, Filter, InsertOneResult, MongoClient, ObjectId } from "mongodb"
+import { connectDB } from "@/lib/mongodb"
+import { Collection, DeleteResult, InsertOneResult, MongoClient, ObjectId } from "mongodb"
 
 //Interface
-import { ApiKey } from "../interfaces"
+import { ApiKey } from "@/interfaces"
 
 //===============================================
 
 export class apiKeyController {
-  apiKey: ApiKey
+  apiKey: Partial<ApiKey>
 
-  constructor(apiKey: ApiKey) {
+  constructor(apiKey: Partial<ApiKey>) {
     this.apiKey = apiKey
   }
 
-  async findKey() {
-    let dbCollection: Collection
+  async findKey(): Promise<ApiKey[] | { message: string }[] | undefined> {
+    let dbCollection: Collection<ApiKey>
     let isConnected = false
-    let client: MongoClient
-
+    let client: MongoClient | undefined
     try {
       try {
         client = await connectDB()
@@ -25,11 +24,11 @@ export class apiKeyController {
       } catch (e) {
         console.log(e)
       }
-      if (isConnected) {
-        let findResult: Filter<object>
+      if (client && isConnected) {
+        let findResult: ApiKey[] | undefined
         try {
-          dbCollection = client.db(process.env.DB_NAME).collection("api_keys") as Collection
-          findResult = await dbCollection.find({ key: this.apiKey.key }).toArray()
+          dbCollection = client.db(process.env.DB_NAME).collection("api_keys") as Collection<ApiKey>
+          findResult = (await dbCollection.find({ key: this.apiKey.key }).toArray()) as ApiKey[]
         } catch (e) {
           console.log(e)
         }
@@ -39,17 +38,13 @@ export class apiKeyController {
       }
     } catch (e) {
       console.error(e)
-    } finally {
-      if (client?.close && typeof client.close === "function") {
-        await client.close()
-      }
     }
   }
 
   async create() {
-    let dbCollection: Collection
+    let dbCollection: Collection<any>
     let isConnected = false
-    let client: MongoClient
+    let client: MongoClient | undefined
 
     try {
       try {
@@ -58,8 +53,8 @@ export class apiKeyController {
       } catch (e) {
         console.log(e)
       }
-      if (isConnected) {
-        let insertResult: InsertOneResult
+      if (client && isConnected) {
+        let insertResult: InsertOneResult | undefined
         try {
           dbCollection = client.db(process.env.DB_NAME).collection("api_keys")
           insertResult = await dbCollection.insertOne(this.apiKey)
@@ -67,7 +62,7 @@ export class apiKeyController {
           console.log(e)
         }
 
-        if (insertResult.insertedId) {
+        if (insertResult && insertResult.insertedId) {
           return { status: "success", message: "API Key has been generated.", keyId: insertResult.insertedId }
         } else {
           return { status: "failed", message: "Failed to create the api key." }
@@ -77,16 +72,12 @@ export class apiKeyController {
       }
     } catch (e) {
       console.error(e)
-    } finally {
-      if (client?.close && typeof client.close === "function") {
-        await client.close()
-      }
     }
   }
 
   async delete(id: string) {
-    let client: MongoClient
-    let dbCollection: Collection
+    let client: MongoClient | undefined
+    let dbCollection: Collection<any>
     let isConnected = false
 
     try {
@@ -96,15 +87,15 @@ export class apiKeyController {
       } catch (e) {
         console.log(e)
       }
-      if (isConnected) {
-        let deleteResult: DeleteResult
+      if (client && isConnected) {
+        let deleteResult: DeleteResult | undefined
         try {
           dbCollection = client.db(process.env.DB_NAME).collection("api_keys")
           deleteResult = await dbCollection.deleteOne({ _id: new ObjectId(id) })
         } catch (e) {
-          console.log("deleteResult:", deleteResult, "Error:", e) //TODO: better error logging & displaying
+          console.error("Failed to delete API key:", e) //TODO: better error logging & displaying
         }
-        if (deleteResult.deletedCount === 1) {
+        if (deleteResult && deleteResult.deletedCount === 1) {
           return { status: "success", message: "API Key has been removed." }
         } else {
           return { status: "failed", message: "Failed to delete the api key." }
@@ -113,11 +104,7 @@ export class apiKeyController {
         return [{ message: "Database connection is NOT established" }]
       }
     } catch (e) {
-      console.log(e) //TODO: better error logging & displaying
-    } finally {
-      if (client?.close && typeof client.close === "function") {
-        await client.close()
-      }
+      console.error("An error occurred while deleting the API key:", e) //TODO: better error logging & displaying
     }
   }
 }

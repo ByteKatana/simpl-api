@@ -1,16 +1,28 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { apiBuilderController } from "../../../../controllers/api-builder.controller"
-import { apiKeyController } from "../../../../controllers/api-key.controller"
+import { apiBuilderController } from "@/controllers/api-builder.controller"
+import { apiKeyController } from "@/controllers/api-key.controller"
+import { isSystemApiKey, isValidApiKey } from "@/lib/api/utils"
+import { withRateLimit } from "@/lib/api/rate-limits"
+import { ApiKey } from "@/interfaces"
+import checkPermissionApi from "@/lib/check-permission-api"
 
 //===============================================
 
-export default async function handler(_req: NextApiRequest, res: NextApiResponse) {
+async function handler(_req: NextApiRequest, res: NextApiResponse) {
   const { apikey } = _req.query
+  const isSystemKey = isSystemApiKey(apikey)
   const apiKey = new apiKeyController({ key: apikey as string })
-  const apiKeyData = await apiKey.findKey()
-  if (apiKeyData[0] !== undefined && apiKeyData[0].key === apikey) {
+  const apiKeyData = isSystemKey ? null : await apiKey.findKey()
+  if (isSystemKey || isValidApiKey(apiKeyData, apikey)) {
+    const keyForPerm: Pick<ApiKey, "key"> = { key: apikey as string }
+    const isAllowed = await checkPermissionApi(keyForPerm, ["system.entries.read"])
+    if (!isAllowed) {
+      return res.status(401).json({ message: "You're not authorized!" })
+    }
+
     const apiBuilder = new apiBuilderController("index", "entries", "namespace")
     return res.status(200).json(await apiBuilder.fetchData("Equals"))
   }
-  return res.status(200).json({ message: "You're not authorized!" })
+  return res.status(401).json({ message: "You're not authorized!" })
 }
+export default withRateLimit(handler)

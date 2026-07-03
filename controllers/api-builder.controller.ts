@@ -16,9 +16,9 @@ export class apiBuilderController {
   }
 
   async fetchData(findType?: FindType) {
-    let dataCollection: object[]
+    let dataCollection: object[] | undefined
     let isConnected = false
-    let client: MongoClient
+    let client: MongoClient | undefined
 
     try {
       client = await connectDB()
@@ -65,32 +65,32 @@ export class apiBuilderController {
           dataCollection = await client
             .db(process.env.DB_NAME)
             .collection(this.collectionName)
-            .find({ [this.findWhere]: new ObjectId(this.routeData as string) })
+            .find({ [this.findWhere as string]: new ObjectId(this.routeData as string) })
             .toArray()
         } else {
           if (findType === undefined || findType === "Equals") {
             dataCollection = await client
               .db(process.env.DB_NAME)
               .collection(this.collectionName)
-              .find({ [this.findWhere]: `${this.routeData}` })
+              .find({ [this.findWhere as string]: `${this.routeData}` })
               .toArray()
           } else if (findType === "StartsWith") {
             dataCollection = await client
               .db(process.env.DB_NAME)
               .collection(this.collectionName)
-              .find({ [this.findWhere]: { $regex: `^${String(this.routeData)}` } })
+              .find({ [this.findWhere as string]: { $regex: `^${String(this.routeData)}` } })
               .toArray()
           } else if (findType === "EndsWith") {
             dataCollection = await client
               .db(process.env.DB_NAME)
               .collection(this.collectionName)
-              .find({ [this.findWhere]: { $regex: `${String(this.routeData)}$` } })
+              .find({ [this.findWhere as string]: { $regex: `${String(this.routeData)}$` } })
               .toArray()
           } else if (findType === "Contains") {
             dataCollection = await client
               .db(process.env.DB_NAME)
               .collection(this.collectionName)
-              .find({ [this.findWhere]: { $regex: `${String(this.routeData)}$` } })
+              .find({ [this.findWhere as string]: { $regex: `${String(this.routeData)}$` } })
               .toArray()
           }
         }
@@ -98,13 +98,12 @@ export class apiBuilderController {
         dataCollection = await client
           .db("api_db")
           .collection(this.collectionName)
-          .find({ _id: `${this.routeData}` })
+          .find({ _id: new ObjectId(this.routeData as string) })
           .toArray()
       } else {
         dataCollection = [{ message: "Error: Unexpected route type!" }]
       }
 
-      // if(param.length > 1)
       if (isConnected) {
         return dataCollection
       } else {
@@ -113,10 +112,6 @@ export class apiBuilderController {
     } catch (e) {
       console.error(e)
       return [{ message: "Database operation failed." }]
-    } finally {
-      if (client?.close && typeof client.close === "function") {
-        await client.close()
-      }
     }
   }
 }
