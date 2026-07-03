@@ -5,13 +5,11 @@ First off, thanks for taking the time to contribute! ❤️
 When contributing to this repository, please first discuss the change you wish to make via issue,
 email, or any other method with the owners of this repository before making a change.
 
-Please note we have a code of conduct, please follow it in all your interactions with the project.
-
 All types of contributions are encouraged and valued. See the Table of Contents for different ways to help and details
 about how this project handles them. Please make sure to read the relevant section before making your contribution. It
 will make it a lot easier for us maintainers and smooth out the experience for all involved.
 
-> **Other ways to support the project**
+> [!TIP] **Other ways to support the project**
 >
 > If you like the project but just don't have time to contribute, that's fine. There are other easy ways to support the
 > project and show your appreciation, which we would also be very happy about:
@@ -20,9 +18,16 @@ will make it a lot easier for us maintainers and smooth out the experience for a
 > - Refer this project in your project's readme
 > - Mention the project at local meetups and tell your friends/colleagues
 
+## Contributor License Agreement (CLA)
+
+> [!NOTE]
+>
+> In order to accept your pull request, we need you to [sign](https://cla-assistant.io/ByteKatana/simpl-api)
+> the [Contributor License Agreement](CLA.md). You only need to do this once to work on this project.
+
 ## Table of Contents
 
-- [Code of Conduct](#code-of-conduct)
+- [Contributor License Agreement (CLA)](#contributor-license-agreement-cla)
 - [I Have a Question](#i-have-a-question)
 - [I Want To Contribute](#i-want-to-contribute)
     - [Reporting Bugs](#reporting-bugs)
@@ -40,11 +45,6 @@ will make it a lot easier for us maintainers and smooth out the experience for a
 - [Join The Project Team](#join-the-project-team)
 - [Contributor License Agreement](#contributor-license-agreement)
 - [License](#license)
-
-## Code of Conduct
-
-This project and everyone participating in it is governed by the [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By
-participating, you are expected to uphold this code. Please report unacceptable behavior to <>.
 
 ## I Have a Question
 
@@ -241,11 +241,6 @@ We are always looking for help in areas like:
 
 If you are interested in becoming a regular contributor or help out more actively, please reach out by opening an issue
 or contacting the project owner directly. We appreciate your interest and look forward to working with you!
-
-## Contributor License Agreement (CLA)
-
-In order to accept your pull request, we need you to submit a [CLA](CLA.md). You only need to do this once to work on
-this project.
 
 ## License
 
