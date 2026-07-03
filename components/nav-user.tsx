@@ -11,16 +11,10 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu"
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar"
-import {
-  ChevronsUpDownIcon,
-  /*SparklesIcon,*/
-  BadgeCheckIcon,
-  CreditCardIcon,
-  BellIcon,
-  LogOutIcon
-} from "lucide-react"
+import { ChevronsUpDownIcon, BadgeCheckIcon, LogOutIcon } from "lucide-react"
 import { signOut } from "next-auth/react"
 import { Session } from "next-auth"
+import Link from "next/link"
 
 export function NavUser({ session }: { session: Session }) {
   const { isMobile } = useSidebar()
@@ -71,16 +65,10 @@ export function NavUser({ session }: { session: Session }) {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <BadgeCheckIcon />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCardIcon />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <BellIcon />
-                Notifications
+                <Link href="/studio/profile">
+                  <BadgeCheckIcon />
+                  Account Settings
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
