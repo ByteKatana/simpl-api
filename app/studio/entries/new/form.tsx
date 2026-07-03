@@ -100,16 +100,13 @@ const EntryCreateForm = ({ fetchedEntryType }: Props) => {
     data: buildDataSchema(fetchedEntryType)
   })
 
-  const initialData = (fetchedEntryType.fieldsets as any[]).reduce(
-    (acc, row) => {
-      acc[row.slug] = {}
-      row.fields.forEach((f: any) => {
-        acc[row.slug][f.name] = f.type === "Checkbox" ? false : ""
-      })
-      return acc
-    },
-    {} as Record<string, string | string[] | object | object[]>
-  )
+  const initialData = (fetchedEntryType.fieldsets as any[]).reduce((acc, row) => {
+    acc[row.slug] = {}
+    row.fields.forEach((f: any) => {
+      acc[row.slug][f.name] = f.type === "Checkbox" ? false : ""
+    })
+    return acc
+  }, {})
 
   const form = useAppForm({
     defaultValues: {

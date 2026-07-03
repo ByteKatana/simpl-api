@@ -8,7 +8,7 @@
 import { NextResponse } from "next/server"
 import { auth as proxy } from "./auth"
 
-export default proxy(async (req) => {
+export default proxy((req) => {
   const { pathname } = req.nextUrl
   const session = req.auth
 
