@@ -65,7 +65,7 @@ const columns: ColumnDef<Entry>[] = [
     header: "Namespace",
     cell: ({ row }) => {
       const namespace = row.original.namespace
-      return <div className="flex items-center gap-2">{namespace.split("-").join(" ")}</div>
+      return <div className="flex items-center gap-2">{namespace ? namespace.split("-").join(" ") : "Unknown"}</div>
     }
   },
   { accessorKey: "status", header: "Status" },
@@ -104,12 +104,13 @@ export default function EntryDataTable({ data }: { data: Entry[] }) {
     return data
       .filter(
         (entry: Entry, index: number) =>
+          entry.namespace && // Ensure namespace exists
           data.findIndex((entry2: Entry) => entry2.namespace === entry.namespace) === index
       )
       .map((entry: Entry) => {
         return {
-          label: entry.namespace.split("-").join(" "),
-          value: entry.namespace
+          label: entry.namespace ? entry.namespace.split("-").join(" ") : "Unknown",
+          value: entry.namespace || ""
         }
       })
   }

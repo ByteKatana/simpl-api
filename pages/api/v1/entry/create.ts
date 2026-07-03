@@ -6,8 +6,8 @@ import { isSystemApiKey, isValidApiKey } from "@/lib/api/utils"
 import { EntryController } from "@/controllers/entry.controller"
 import { apiKeyController } from "@/controllers/api-key.controller"
 import { withRateLimit } from "@/lib/api/rate-limits"
-import { hasPermissionApi } from "@/lib/actions/auth/has-permission-api"
 import { ApiKey } from "@/interfaces"
+import checkPermissionApi from "@/lib/check-permission-api"
 
 //===============================================
 
@@ -18,10 +18,9 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
   const apiKeyData = isSystemKey ? null : await apiKey.findKey()
   if ((isSystemKey || isValidApiKey(apiKeyData, apikey)) && process.env.SECRET_KEY === secretkey) {
     const keyForPerm: Pick<ApiKey, "key"> = { key: apikey as string }
-    const isAllowed = await hasPermissionApi(keyForPerm, "system.entries.create")
-    if (!isAllowed) {
-      return res.status(401).json({ message: "You're not authorized!" })
-    }
+    const _slug = _req.body.namespace as string
+    const isAllowed = await checkPermissionApi(keyForPerm, ["system.entries.create", `${_slug}.create`])
+    if (!isAllowed) return res.status(401).json({ message: "You're not authorized!" })
 
     if (_req.method === "POST") {
       const EntryData = new EntryController(_req.body, mockclient === "true")

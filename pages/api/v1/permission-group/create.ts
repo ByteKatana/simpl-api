@@ -6,8 +6,8 @@ import { isSystemApiKey, isValidApiKey } from "@/lib/api/utils"
 import { PermissionGroupController } from "@/controllers/permission-group.controller"
 import { apiKeyController } from "@/controllers/api-key.controller"
 import { withRateLimit } from "@/lib/api/rate-limits"
-import { hasPermissionApi } from "@/lib/actions/auth/has-permission-api"
 import { ApiKey } from "@/interfaces"
+import checkPermissionApi from "@/lib/check-permission-api"
 
 //===============================================
 
@@ -17,11 +17,10 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
   const apiKey = new apiKeyController({ key: apikey as string })
   const apiKeyData = isSystemKey ? null : await apiKey.findKey()
   if ((isSystemKey || isValidApiKey(apiKeyData, apikey)) && process.env.SECRET_KEY === secretkey) {
+    //Check Permission
     const keyForPerm: Pick<ApiKey, "key"> = { key: apikey as string }
-    const isAllowed = await hasPermissionApi(keyForPerm, "system.permission_groups.create")
-    if (!isAllowed) {
-      return res.status(401).json({ message: "You're not authorized!" })
-    }
+    const isAllowed = await checkPermissionApi(keyForPerm, ["system.permission_group.create"])
+    if (!isAllowed) return res.status(401).json({ message: "You're not authorized!" })
 
     if (_req.method === "POST") {
       const PermissionGroupData = new PermissionGroupController(_req.body, mockclient === "true")

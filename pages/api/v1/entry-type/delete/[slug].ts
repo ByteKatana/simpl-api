@@ -1,16 +1,17 @@
 //Core
 import { NextApiRequest, NextApiResponse } from "next"
-
 import { isSystemApiKey, isValidApiKey } from "@/lib/api/utils"
+import checkPermissionApi from "@/lib/check-permission-api"
+import { withRateLimit } from "@/lib/api/rate-limits"
+
 //Controller
 import { EntryTypeController } from "@/controllers/entry-type.controller"
 import { apiKeyController } from "@/controllers/api-key.controller"
 
 //Interface
 import { EntryType } from "@/interfaces/entry_type"
-import { withRateLimit } from "@/lib/api/rate-limits"
 import { PublishStatus, ApiKey } from "@/interfaces"
-import { hasPermissionApi } from "@/lib/actions/auth/has-permission-api"
+
 //===============================================
 
 async function handler(_req: NextApiRequest, res: NextApiResponse) {
@@ -20,7 +21,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
   const apiKeyData = isSystemKey ? null : await apiKey.findKey()
   if ((isSystemKey || isValidApiKey(apiKeyData, apikey)) && process.env.SECRET_KEY === secretkey) {
     const keyForPerm: Pick<ApiKey, "key"> = { key: apikey as string }
-    const isAllowed = await hasPermissionApi(keyForPerm, "system.entry_types.delete")
+    const isAllowed = await checkPermissionApi(keyForPerm, ["system.entry_types.delete", `${slug}.delete`])
     if (!isAllowed) {
       return res.status(401).json({ message: "You're not authorized!" })
     }

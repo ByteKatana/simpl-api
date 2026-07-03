@@ -2,7 +2,6 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import { withRateLimit } from "@/lib/api/rate-limits"
 import { isSystemApiKey, isValidApiKey } from "@/lib/api/utils"
-import { hasPermissionApi } from "@/lib/actions/auth/has-permission-api"
 import { ApiKey } from "@/interfaces"
 
 //Controller
@@ -11,6 +10,7 @@ import { apiKeyController } from "@/controllers/api-key.controller"
 
 //Interface
 import { Entry } from "@/interfaces/entry"
+import checkPermissionApi from "@/lib/check-permission-api"
 //===============================================
 
 async function handler(_req: NextApiRequest, res: NextApiResponse) {
@@ -20,10 +20,8 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
   const apiKeyData = isSystemKey ? null : await apiKey.findKey()
   if ((isSystemKey || isValidApiKey(apiKeyData, apikey)) && process.env.SECRET_KEY === secretkey) {
     const keyForPerm: Pick<ApiKey, "key"> = { key: apikey as string }
-    const isAllowed = await hasPermissionApi(keyForPerm, "system.entries.delete")
-    if (!isAllowed) {
-      return res.status(401).json({ message: "You're not authorized!" })
-    }
+    const isAllowed = checkPermissionApi(keyForPerm, ["system.entries.delete", `${slug}.delete-entry`])
+    if (!isAllowed) return res.status(401).json({ message: "You're not authorized!" })
 
     if (_req.method === "DELETE") {
       const dummyObj = {

@@ -4,8 +4,8 @@ import { apiKeyController } from "@/controllers/api-key.controller"
 import { isSystemApiKey, isValidApiKey } from "@/lib/api/utils"
 import { getByLimit } from "@/lib/get-by-limit"
 import { withRateLimit } from "@/lib/api/rate-limits"
-import { hasPermissionApi } from "@/lib/actions/auth/has-permission-api"
 import { ApiKey } from "@/interfaces"
+import checkPermissionApi from "@/lib/check-permission-api"
 
 //===============================================
 
@@ -20,9 +20,8 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
   const _slug = slug as string
 
   if (isSystemKey || isValidApiKey(apiKeyData, apikey)) {
-
     const keyForPerm: Pick<ApiKey, "key"> = { key: apikey as string }
-    const isAllowed = await hasPermissionApi(keyForPerm, "system.users.read")
+    const isAllowed = await checkPermissionApi(keyForPerm, ["system.users.read"])
     if (!isAllowed) {
       return res.status(401).json({ message: "You're not authorized!" })
     }

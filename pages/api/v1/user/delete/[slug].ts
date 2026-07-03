@@ -10,8 +10,8 @@ import { apiKeyController } from "@/controllers/api-key.controller"
 import { User } from "@/interfaces/user"
 import { withRateLimit } from "@/lib/api/rate-limits"
 import { UserStatus } from "@/interfaces"
-import { hasPermissionApi } from "@/lib/actions/auth/has-permission-api"
 import { ApiKey } from "@/interfaces"
+import checkPermissionApi from "@/lib/check-permission-api"
 
 //===============================================
 
@@ -22,7 +22,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
   const apiKeyData = isSystemKey ? null : await apiKey.findKey()
   if ((isSystemKey || isValidApiKey(apiKeyData, apikey)) && process.env.SECRET_KEY === secretkey) {
     const keyForPerm: Pick<ApiKey, "key"> = { key: apikey as string }
-    const isAllowed = await hasPermissionApi(keyForPerm, "system.users.delete")
+    const isAllowed = await checkPermissionApi(keyForPerm, ["system.users.delete"])
     if (!isAllowed) {
       return res.status(401).json({ message: "You're not authorized!" })
     }

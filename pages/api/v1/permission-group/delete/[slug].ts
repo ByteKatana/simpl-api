@@ -9,8 +9,8 @@ import { apiKeyController } from "@/controllers/api-key.controller"
 //Interface
 import { PermissionGroup } from "@/interfaces/permission_group"
 import { withRateLimit } from "@/lib/api/rate-limits"
-import { hasPermissionApi } from "@/lib/actions/auth/has-permission-api"
 import { ApiKey } from "@/interfaces"
+import checkPermissionApi from "@/lib/check-permission-api"
 
 //===============================================
 
@@ -21,7 +21,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
   const apiKeyData = isSystemKey ? null : await apiKey.findKey()
   if ((isSystemKey || isValidApiKey(apiKeyData, apikey)) && process.env.SECRET_KEY === secretkey) {
     const keyForPerm: Pick<ApiKey, "key"> = { key: apikey as string }
-    const isAllowed = await hasPermissionApi(keyForPerm, "system.permission_groups.delete")
+    const isAllowed = await checkPermissionApi(keyForPerm, ["system.permission_group.delete"])
     if (!isAllowed) {
       return res.status(401).json({ message: "You're not authorized!" })
     }

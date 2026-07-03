@@ -6,7 +6,7 @@ import { EntryType } from "@/interfaces/entry_type"
 import { revalidatePath } from "next/cache"
 import { getPermissionGroup } from "@/lib/auth/get-session"
 
-export default async function deleteEntryTypeAction(id: string): Promise<ActionResponse<EntryType>> {
+export default async function deleteEntryTypeAction(namespace: string): Promise<ActionResponse<EntryType>> {
   try {
     // Check permission first.
     const perm_group = await getPermissionGroup()
@@ -16,7 +16,7 @@ export default async function deleteEntryTypeAction(id: string): Promise<ActionR
     }
 
     const response = await fetch(
-      `${process.env.BASE_URL}/api/v1/entry-type/delete/${id}?apikey=${process.env.API_KEY}&secretkey=${process.env.SECRET_KEY}`,
+      `${process.env.BASE_URL}/api/v1/entry-type/delete/${namespace}?apikey=${process.env.API_KEY}&secretkey=${process.env.SECRET_KEY}`,
       {
         method: "DELETE",
         cache: "no-store"

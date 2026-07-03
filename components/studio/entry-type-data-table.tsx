@@ -56,7 +56,7 @@ const deleteEntryType = async (row: Row<EntryType>) => {
       return toast.error("You don't have permission to delete this entry type", { position: "top-center" })
     if (!row.original._id)
       return toast.error("Failed to delete Entry Type. No Entry Type Id", { position: "top-center" })
-    const deleteResult = await deleteEntryTypeAction(row.original._id.toString())
+    const deleteResult = await deleteEntryTypeAction(row.original.namespace)
     if (deleteResult.success) {
       toast.success("Item deleted successfully", { position: "top-center" })
     }

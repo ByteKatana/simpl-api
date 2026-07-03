@@ -164,7 +164,7 @@ export class EntryTypeController {
       let deleteResult
       try {
         dbCollection = client.db(process.env.DB_NAME).collection("entry_types")
-        deleteResult = await dbCollection.deleteOne({ _id: new ObjectId(id) })
+        deleteResult = await dbCollection.deleteOne({ namespace: id })
       } catch (e) {
         console.log(e)
       }

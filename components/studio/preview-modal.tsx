@@ -17,6 +17,7 @@ import { ChevronDown, Eye, Info } from "lucide-react"
 import { Entry } from "@/interfaces/entry"
 import { EntryType } from "@/interfaces/entry_type"
 import { cn } from "@/lib/utils"
+import { PermissionGuard } from "@/components/studio/permission-groups/permission-guard"
 
 interface PreviewModalProps {
   open: boolean
@@ -42,7 +43,15 @@ export function PreviewModal({ open, onOpenChange, data, type }: PreviewModalPro
         </DialogHeader>
 
         <ScrollArea className="flex-1 mt-4 pr-4">
-          {type === "entry" ? <EntryPreview data={data} /> : <EntryTypePreview data={data} />}
+          {type === "entry" ? (
+            <PermissionGuard showMsg={true} reqPermission={["system.entries.read", `${data.namespace}.read-entry`]}>
+              <EntryPreview data={data} />
+            </PermissionGuard>
+          ) : (
+            <PermissionGuard showMsg={true} reqPermission={["system.entry_types.read", `${data.namespace}.read`]}>
+              <EntryTypePreview data={data} />
+            </PermissionGuard>
+          )}
         </ScrollArea>
 
         <DialogFooter className="mt-4">
