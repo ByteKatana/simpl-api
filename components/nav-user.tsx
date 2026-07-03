@@ -56,12 +56,6 @@ export function NavUser({ session }: { session: Session }) {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {/*            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <SparklesIcon />
-                Upgrade to Pro
-              </DropdownMenuItem>
-            </DropdownMenuGroup>*/}
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
