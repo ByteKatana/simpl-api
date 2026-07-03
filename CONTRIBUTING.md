@@ -43,7 +43,6 @@ will make it a lot easier for us maintainers and smooth out the experience for a
     - [Pull Request Process](#pull-request-process)
         - [Branch Naming Convention](#branch-naming-convention)
 - [Join The Project Team](#join-the-project-team)
-- [Contributor License Agreement](#contributor-license-agreement)
 - [License](#license)
 
 ## I Have a Question
