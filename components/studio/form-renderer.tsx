@@ -142,9 +142,7 @@ export const FormRenderer = ({ rows, context }: Props) => {
             case "Radio Group":
               return (
                 <>
-                  <RadioGroup
-                    value={(f.state.value as string) ?? ""}
-                    onValueChange={(val) => f.handleChange(val as any)}>
+                  <RadioGroup value={f.state.value as string} onValueChange={(val) => f.handleChange(val as any)}>
                     {field.options?.map((option: string) => {
                       const id = `${field.instanceId}-${option}`
                       return (

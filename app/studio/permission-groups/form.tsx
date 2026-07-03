@@ -102,7 +102,7 @@ const PermissionGroupForm = ({ namespaces, mode, permGroups, formPayload }: Prop
       onChange: PermissionGroupFormSchema,
       onSubmit: PermissionGroupFormSchema
     },
-    onSubmit: async ({ value }) => {
+    onSubmit: ({ value }) => {
       const slug = slugifyName(value.name)
       const privileges = value.privileges?.[slug]
 
@@ -123,8 +123,6 @@ const PermissionGroupForm = ({ namespaces, mode, permGroups, formPayload }: Prop
       handleConfirmedSubmit(value)
     }
   })
-
-  //TODO: Edit mode logic will be here
 
   return (
     <>

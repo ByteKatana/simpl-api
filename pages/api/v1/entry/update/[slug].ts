@@ -13,12 +13,13 @@ import checkPermissionApi from "@/lib/check-permission-api"
 
 async function handler(_req: NextApiRequest, res: NextApiResponse) {
   const { slug, apikey, secretkey, mockclient } = _req.query
+  const _slug = slug as string
   const isSystemKey = isSystemApiKey(apikey)
   const apiKey = new apiKeyController({ key: apikey as string })
   const apiKeyData = isSystemKey ? null : await apiKey.findKey()
   if ((isSystemKey || isValidApiKey(apiKeyData, apikey)) && process.env.SECRET_KEY === secretkey) {
     const keyForPerm: Pick<ApiKey, "key"> = { key: apikey as string }
-    const isAllowed = await checkPermissionApi(keyForPerm, ["system.entries.update", `${slug}.update-entry`])
+    const isAllowed = await checkPermissionApi(keyForPerm, ["system.entries.update", `${_slug}.update-entry`])
     if (!isAllowed) return res.status(401).json({ message: "You're not authorized!" })
 
     if (_req.method === "PUT") {
