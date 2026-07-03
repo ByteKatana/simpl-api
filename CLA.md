@@ -14,10 +14,14 @@ By submitting a contribution to this project, you represent that:
 3. You grant the project maintainers a perpetual, irrevocable, worldwide, non-exclusive, royalty-free, and sublicensable
    license to use, reproduce, modify, distribute, and display your contribution as part of the project.
 
-#### Your Responsibility
+#### Your Representations
 
-You agree to indemnify and hold harmless the project maintainers from any claim, liability, or damage arising out of
-your contribution.
+You represent that each contribution is your original work and that you have the right to submit it under the AGPLv3. To
+the best of your knowledge, your contribution does not infringe the intellectual property rights of any third party.
+
+Your contribution is provided "as is", without warranties of any kind, to the extent permitted by applicable law. If you
+are submitting work created as part of your employment, you represent that you have received any necessary permission
+from your employer to make the contribution under these terms.
 
 #### Acceptance
 
