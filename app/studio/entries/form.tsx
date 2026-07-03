@@ -111,24 +111,21 @@ const EntryForm = ({ entryTypes, mode, formPayload }: Props) => {
   // Combine all fieldsets from all entry types
   const allFieldsets = entryTypes.flatMap((t) => t.fieldsets as any[])
 
-  const initialData = allFieldsets.reduce(
-    (acc, row) => {
-      if (!acc[row.instanceId]) acc[row.instanceId] = {}
+  const initialData = allFieldsets.reduce((acc, row) => {
+    if (!acc[row.instanceId]) acc[row.instanceId] = {}
 
-      if (mode === FormMode.EDIT && formPayload?.data?.[row.instanceId]) {
-        row.fields.forEach((f: any) => {
-          acc[row.instanceId][f.name] = formPayload.data[row.instanceId][f.name] ?? (f.type === "Checkbox" ? false : "")
-        })
-      } else {
-        row.fields.forEach((f: any) => {
-          acc[row.instanceId][f.name] = f.type === "Checkbox" ? false : ""
-        })
-      }
+    if (mode === FormMode.EDIT && formPayload?.data?.[row.instanceId]) {
+      row.fields.forEach((f: any) => {
+        acc[row.instanceId][f.name] = formPayload.data[row.instanceId][f.name] ?? (f.type === "Checkbox" ? false : "")
+      })
+    } else {
+      row.fields.forEach((f: any) => {
+        acc[row.instanceId][f.name] = f.type === "Checkbox" ? false : ""
+      })
+    }
 
-      return acc
-    },
-    {} as Record<string, string | string[] | object | object[]>
-  )
+    return acc
+  }, {})
 
   // set default payload for default form values
   let defaultPayload: EntryFormValues & { data: typeof initialData }
