@@ -15,6 +15,7 @@ import { EntryFormValues } from "@/interfaces/entry"
 import StatusRadioGroup from "@/components/studio/status-radio-group"
 import z from "zod"
 import FieldErrorText from "@/components/studio/field-error-text"
+import { buildPatternRegExp } from "@/lib/build-pattern-regexp"
 
 type Props = {
   fetchedEntryType: EntryType
@@ -75,7 +76,13 @@ const EntryCreateForm = ({ fetchedEntryType }: Props) => {
               str = str.max(f.validation.maxLength, {
                 message: `${f.label || f.name}  can be at most ${f.validation.maxLength} characters`
               })
-            if (f.validation.pattern) str = str.regex(new RegExp(f.validation.pattern))
+            if (f.validation.pattern) {
+              const patternRegExp = buildPatternRegExp(f.validation.pattern)
+              if (patternRegExp)
+                str = str.regex(patternRegExp, {
+                  message: `${f.label || f.name} format is invalid`
+                })
+            }
             s = str
           }
         }
