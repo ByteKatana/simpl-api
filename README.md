@@ -1,7 +1,7 @@
-<h1 style="text-align: center;">Simpl:API</h1>
-<div  style="text-align: center;" >
-
-![License Badge](https://img.shields.io/github/license/bytekatana/simpl-api) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/a61bb176b6c34b35bc96892e004e1469)](https://app.codacy.com/gh/ByteKatana/simpl-api/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade) ![GitHub package.json version](https://img.shields.io/github/package-json/v/:user/:repo)
+<h1 align="center">Simpl:API</h1> 
+<div align="center">
+  
+![License Badge](https://img.shields.io/github/license/bytekatana/simpl-api) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/a61bb176b6c34b35bc96892e004e1469)](https://app.codacy.com/gh/ByteKatana/simpl-api/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade) ![GitHub package.json version](https://img.shields.io/github/package-json/v/bytekatana/simpl-api)
 
 Versatile headless CMS from personal portfolio to enterprise automation
 
