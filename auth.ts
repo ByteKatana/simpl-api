@@ -285,7 +285,7 @@ export const config = {
       if (user.status === UserStatus.Disabled) return false //User banned
       return true
     },
-    async jwt({ token, user /*account, trigger*/ }) {
+    jwt({ token, user /*account, trigger*/ }) {
       // During initial sign-in, the 'user' object is available
       if (user) {
         token.id = user.id
@@ -296,7 +296,7 @@ export const config = {
       }
       return token
     },
-    async session({ session, token }) {
+    session({ session, token }) {
       if (token && session.user) {
         session.id = token.id as string
         session.user.username = token.username as string
