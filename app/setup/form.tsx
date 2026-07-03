@@ -24,7 +24,7 @@ export default function SetupForm({
       onMount: SetupFormSchema,
       onChange: SetupFormSchema
     },
-    onSubmit: async ({ value }) => {
+    onSubmit: ({ value }) => {
       onInitiate(value)
     }
   })
