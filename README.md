@@ -90,15 +90,20 @@ Basic installation instructions are provided below. For more details check the [
    git clone https://github.com/your-username/simpl-api.git
    cd simpl-api
    ```
-2. Run the build script
+2. Create your .env file from `.env.example` and populate your `.env` file.
+3. Run the build script:
    ```bash
    npm run build
    ```
-3. Start the application
+4. Create initial required db collections:
+    ```bash
+      npx prisma db push 
+    ```
+5. Start the application
    ```bash
    npm run start
    ```
-4. Open [http://localhost:3000/setup](http://localhost:3000/setup) with your browser to complete the setup process.
+6.Open [http://localhost:3000/setup](http://localhost:3000/setup) with your browser to complete the setup process.
 
 ## 🙋🏻‍♂️ Support
 
