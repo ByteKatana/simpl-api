@@ -16,7 +16,7 @@ development environment and the conventions we follow.
 > **Quick Start**
 > 
 > To easily get started development, you can use dev containers configuration provided in the `.devcontainers` directory.
-> It will automatically install all the dependencies, configure databases, setup email testing server (via mailpit) and the environment variables for you in a docker container.
+> It will automatically install all the dependencies, configure databases, setup email testing server (via mailpit) and the database environment variables for you in a docker container.
 > To learn more about devcontainers, visit [https://containers.dev/](https://containers.dev/).
 
 1. **Clone the repository:**
