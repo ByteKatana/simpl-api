@@ -31,7 +31,8 @@ export default async function updatePermissionGroup(
         body: JSON.stringify({
           name: formValues.name,
           privileges,
-          slug: formValues.name.split(" ").join("-").toLowerCase()
+          slug: formValues.name.split(" ").join("-").toLowerCase(),
+          updated_at: new Date().toISOString()
         }),
         cache: "no-store"
       }

@@ -21,6 +21,7 @@ export default async function createPermissionGroup(
 
     const privileges = permGroupFormToDb(formValues)
     // Make API request using fetch
+    const created_at = new Date().toISOString()
     const response = await fetch(
       `${process.env.BASE_URL}/api/v1/permission-group/create?apikey=${process.env.API_KEY}&secretkey=${process.env.SECRET_KEY}`,
       {
@@ -31,7 +32,9 @@ export default async function createPermissionGroup(
         body: JSON.stringify({
           name: formValues.name,
           privileges,
-          slug: formValues.name.split(" ").join("-").toLowerCase()
+          slug: formValues.name.split(" ").join("-").toLowerCase(),
+          created_at,
+          updated_at: created_at
         }),
         cache: "no-store"
       }

@@ -30,7 +30,9 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
       const dummyObj: PermissionGroup = {
         name: "",
         slug: "",
-        privileges: [{}]
+        privileges: [],
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       }
       const PermissionGroupData = new PermissionGroupController(dummyObj, mockclient === "true")
       const result = await PermissionGroupData.delete(slug as string)
