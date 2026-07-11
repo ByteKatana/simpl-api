@@ -72,8 +72,8 @@ export const EntryTypeSchema = EntryTypeFormSchema.extend({
     .optional(),
   slug: z.string().min(1, { message: "Slug is required" }).max(255, { message: "Slug cannot exceed 255 characters" }),
   createdBy: z.string(),
-  created_at: z.date(),
-  updated_at: z.date().optional()
+  created_at: z.iso.date().default(() => new Date().toISOString()),
+  updated_at: z.iso.date().optional()
 })
 
 /*
@@ -90,9 +90,9 @@ export const EntryCreateSchema = EntryCreateFormSchema.extend({
   namespace: z.string().min(1),
   slug: z.string().min(1, { message: "Slug is required" }),
   data: z.object(),
-  created_at: z.date().default(() => new Date()),
+  created_at: z.iso.date().default(() => new Date().toISOString()),
   created_by: z.string().optional(),
-  updated_at: z.date().default(() => new Date()),
+  updated_at: z.iso.date().default(() => new Date().toISOString()),
   updated_by: z.string().optional()
 })
 
@@ -103,8 +103,10 @@ export const PermissionGroupSchema = PermissionGroupFormSchema.extend({
     z.string().refine((val) => ObjectId.isValid(val), { message: "Invalid ObjectId" })
   ]),
   slug: z.string().min(1, "Slug is required"),
-  updated_at: z.date().default(() => new Date())
-}).transform((formData: any) => ({
+  privileges: z.array(z.record(z.string(), z.object({ permissions: z.array(z.string()) }))),
+  created_at: z.iso.date().default(() => new Date().toISOString()),
+  updated_at: z.iso.date().default(() => new Date().toISOString())
+}).transform((formData) => ({
   ...formData,
   _id: formData._id.toString()
 }))
@@ -177,5 +179,5 @@ export const ApiKeySchema = ApiKeyFormSchema.extend({
     .union([z.instanceof(ObjectId), z.string().refine((val) => ObjectId.isValid(val), { message: "Invalid ObjectId" })])
     .optional(),
   key: z.string(),
-  created_at: z.date().default(() => new Date())
+  created_at: z.iso.date().default(() => new Date().toISOString())
 })
