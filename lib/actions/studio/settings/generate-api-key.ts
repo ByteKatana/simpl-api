@@ -26,7 +26,7 @@ export default async function generateApiKey(
     const newKey = {
       key,
       ...validated,
-      created_at: new Date()
+      created_at: new Date().toISOString()
     }
 
     const result = await db.collection("api_keys").insertOne(newKey)

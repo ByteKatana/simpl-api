@@ -2,7 +2,7 @@
 
 import { exec } from "child_process"
 import { promisify } from "util"
-import { SetupActionResponse, SetupFormValues, UserStatus } from "@/interfaces"
+import { DbPrivilege, SetupActionResponse, SetupFormValues, UserStatus } from "@/interfaces"
 import { uid } from "uid"
 import { apiKeyController } from "@/controllers/api-key.controller"
 import { UserController } from "@/controllers/user.controller"
@@ -49,7 +49,7 @@ export async function runSetupAction(values: SetupFormValues): Promise<SetupActi
     }
 
     // Creating Permission Groups
-    const privileges = [
+    const privileges: DbPrivilege[] = [
       { "system.entry_types": { permissions: ["list", "read", "update", "delete", "create"] } },
       { "system.entries": { permissions: ["list", "read", "update", "delete", "create"] } },
       { "system.users": { permissions: ["list", "read", "update", "delete", "create"] } },
@@ -57,9 +57,37 @@ export async function runSetupAction(values: SetupFormValues): Promise<SetupActi
       { "system.settings": { permissions: ["list", "read", "update", "delete", "create"] } }
     ]
 
-    const rootGroup = new PermissionGroupController({ name: "root", slug: "root", privileges }, false)
-    const adminGroup = new PermissionGroupController({ name: "admin", slug: "admin", privileges }, false)
-    const viewerGroup = new PermissionGroupController({ name: "Viewer", slug: "viewer", privileges: [] }, false)
+    const created_at = new Date().toISOString()
+    const rootGroup = new PermissionGroupController(
+      {
+        name: "root",
+        slug: "root",
+        privileges,
+        created_at,
+        updated_at: created_at
+      },
+      false
+    )
+    const adminGroup = new PermissionGroupController(
+      {
+        name: "admin",
+        slug: "admin",
+        privileges,
+        created_at,
+        updated_at: created_at
+      },
+      false
+    )
+    const viewerGroup = new PermissionGroupController(
+      {
+        name: "Viewer",
+        slug: "viewer",
+        privileges: [],
+        created_at,
+        updated_at: created_at
+      },
+      false
+    )
 
     const rootResult = await rootGroup.create()
     const adminResult = await adminGroup.create()
@@ -87,7 +115,7 @@ export async function runSetupAction(values: SetupFormValues): Promise<SetupActi
         req_per_window: 1000,
         time_interval: 1000
       },
-      created_at: new Date()
+      created_at: new Date().toISOString()
     })
     const keyResult = await apiKeyData.create()
 
