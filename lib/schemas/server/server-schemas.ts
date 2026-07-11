@@ -17,7 +17,7 @@ export const UserCreateSchema = UserFormSchema.extend({
   _id: z
     .union([z.instanceof(ObjectId), z.string().refine((val) => ObjectId.isValid(val), { message: "Invalid ObjectId" })])
     .optional(),
-  created_at: z.date().default(() => new Date()),
+  created_at: z.iso.date().default(() => new Date().toISOString()),
   created_by: z
     .string()
     .min(3, { message: "Username must be at least 3 characters." })
@@ -25,7 +25,7 @@ export const UserCreateSchema = UserFormSchema.extend({
     .regex(/^[a-zA-Z0-9_-]+$/, {
       message: "User cannot be created with invalid username."
     }),
-  updated_at: z.date().default(() => new Date()),
+  updated_at: z.iso.date().default(() => new Date().toISOString()),
   updated_by: z
     .string()
     .min(3, { message: "Username must be at least 3 characters." })

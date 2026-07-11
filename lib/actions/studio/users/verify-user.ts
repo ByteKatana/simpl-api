@@ -27,7 +27,8 @@ export default async function verifyUser(email: string, registerMode = false): P
         },
         body: JSON.stringify({
           email_verified: true,
-          status: UserStatus.Active
+          status: UserStatus.Active,
+          updated_at: new Date().toISOString()
         }),
         cache: "no-store"
       }

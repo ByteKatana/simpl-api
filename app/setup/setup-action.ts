@@ -36,9 +36,9 @@ export async function runSetupAction(values: SetupFormValues): Promise<SetupActi
         permission_group: "root",
         profile_img: "",
         status: UserStatus.Active,
-        created_at: new Date(),
+        created_at: new Date().toISOString(),
         created_by: "SETUP",
-        updated_at: new Date(),
+        updated_at: new Date().toISOString(),
         updated_by: "SETUP"
       },
       false
@@ -76,7 +76,7 @@ export async function runSetupAction(values: SetupFormValues): Promise<SetupActi
       return handleError(new Error("Permission groups creation failed"), "server")
     }
 
-    // 3. Generate API Key Directly
+    // Generate API Key Directly
     const generatedKey = uid(32)
     const apiKeyData = new apiKeyController({
       key: generatedKey,
@@ -95,7 +95,7 @@ export async function runSetupAction(values: SetupFormValues): Promise<SetupActi
       return handleError(new Error("Failed to generate API key"), "server")
     }
 
-    // 5. Run Prisma commands
+    // Run Prisma commands
     await execAsync("npx prisma db push")
     await execAsync("npx prisma db seed")
 

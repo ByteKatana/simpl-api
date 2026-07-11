@@ -36,7 +36,7 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         status: UserStatus.Active,
         permission_group: "",
         password: "",
-        created_at: new Date(),
+        created_at: new Date().toISOString(),
         created_by: ""
       } as User
       const UserData = new UserController(dummyObj, mockclient === "true")

@@ -56,7 +56,8 @@ export default async function updateUser(
             permission_group: formValues.permission_group,
             status: formValues.status,
             profile_img: formValues.profile_img,
-            oauth_id: formValues.oauth_id
+            oauth_id: formValues.oauth_id,
+            updated_at: new Date().toISOString()
           }),
           cache: "no-store"
         }

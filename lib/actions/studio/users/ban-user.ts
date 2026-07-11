@@ -26,7 +26,8 @@ export default async function banUser(email: string, registerMode = false): Prom
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          status: UserStatus.Disabled
+          status: UserStatus.Disabled,
+          updated_at: new Date().toISOString()
         }),
         cache: "no-store"
       }
