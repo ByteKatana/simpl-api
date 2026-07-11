@@ -32,7 +32,8 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         namespace: "",
         slug: "",
         createdBy: "",
-        created_at: new Date(),
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
         fieldsets: [],
         status: PublishStatus.Draft
       } as EntryType
