@@ -1,9 +1,9 @@
 "use server"
 
 import { auth } from "@/auth"
-import getPermissionGroups from "@/lib/actions/studio/permission-groups/get-permission-groups"
 import { DbPrivilege } from "@/interfaces"
 import { PermissionGroup } from "@/interfaces/permission_group"
+import { connectDB } from "@/lib/mongodb"
 
 /**
  * Server action to check if the current user has a specific permission.
@@ -19,11 +19,16 @@ export async function hasPermission(requiredPermission: string): Promise<boolean
   }
 
   const userGroupName = session.user.permission_group
+  console.log("userGroupName", userGroupName)
 
   try {
-    const groups = await getPermissionGroups()
-    const group = groups.data?.find((g: PermissionGroup) => g.slug === userGroupName)
+    const client = await connectDB()
+    const db = client.db(process.env.DB_NAME)
 
+    // 2. Query the permission_groups collection
+    // We filter out the 'root' group to match the logic previously handled by the API route
+    const groups = await db.collection("permission_groups").find({}).toArray()
+    const group = groups?.find((g: PermissionGroup) => g.slug === userGroupName)
     if (!group || !group.privileges) {
       return false
     }
