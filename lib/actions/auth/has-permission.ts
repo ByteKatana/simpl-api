@@ -25,8 +25,6 @@ export async function hasPermission(requiredPermission: string): Promise<boolean
     const client = await connectDB()
     const db = client.db(process.env.DB_NAME)
 
-    // 2. Query the permission_groups collection
-    // We filter out the 'root' group to match the logic previously handled by the API route
     const groups = await db.collection("permission_groups").find({}).toArray()
     const group = groups?.find((g: PermissionGroup) => g.slug === userGroupName)
     if (!group || !group.privileges) {
