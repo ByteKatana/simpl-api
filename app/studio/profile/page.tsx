@@ -1,28 +1,16 @@
 import { Toaster } from "@/components/ui/sonner"
 import { notFound } from "next/navigation"
-import getUserBySlug from "@/lib/actions/studio/users/get-user-by-slug"
+import getProfile from "@/lib/actions/studio/users/get-profile"
 import { getSettingsValue } from "@/lib/actions/studio/settings/get-settings-value"
-import { auth } from "@/auth"
 import ProfileForm from "@/app/studio/profile/form"
 
 const UserProfilePage = async () => {
-  const session = await auth()
-  const slug = session?.id
-
-  if (!slug) {
-    notFound()
-  }
-
-  const usersResponse = await getUserBySlug("_id", slug)
+  const usersResponse = await getProfile()
   if (!usersResponse.success || !usersResponse.data) {
     notFound()
   }
 
   const fetchedUser = usersResponse.data
-
-  if (!fetchedUser) {
-    notFound()
-  }
 
   const profileImgProvider = await getSettingsValue("identity_settings", "profile_img_provider")
 
