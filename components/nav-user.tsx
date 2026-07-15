@@ -59,7 +59,7 @@ export function NavUser({ session }: { session: Session }) {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <Link href="/studio/profile">
+                <Link className={"flex gap-x-1"} href="/studio/profile">
                   <BadgeCheckIcon />
                   Account Settings
                 </Link>
