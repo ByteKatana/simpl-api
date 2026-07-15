@@ -9,7 +9,7 @@ Versatile headless CMS from personal portfolio to enterprise automation
 </div>
 
 
-https://github.com/user-attachments/assets/1e665377-318c-4e89-9d0b-f9d83667cb1f
+<img width="1801" height="1063" alt="simpl-api studio thumbnail" src="https://github.com/user-attachments/assets/2cdd4f6b-8e48-4d08-bd3f-5c1c586e5142" />
 
 
 <hr>
@@ -77,6 +77,15 @@ workflows with granular Role-Based Access Control for both users and API keys, p
 
 ...and many more. These are just few examples of the many use cases Simpl:API can help you solve.
 
+
+
+## 🎬 Video
+
+[![Simpl-API Studio Intro](https://github.com/user-attachments/assets/2cdd4f6b-8e48-4d08-bd3f-5c1c586e5142)](https://github.com/user-attachments/assets/e5e870c9-be21-4bb2-b5bd-6ec00a8dc0f5
+)
+
+
+
 ## 📦 Installation & Usage
 
 Basic installation instructions are provided below. For more details check the [documentation]()
@@ -139,6 +148,7 @@ the [GitHub repository](https://github.com/ByteKatana/simpl-api/issues).
 
 - **Email:** [nodemailer](https://nodemailer.com/about/)
 - **Testing:** [node-mocks-http](https://github.com/eugef/node-mocks-http)
+
 
 ## 🗺️ Roadmap
 
