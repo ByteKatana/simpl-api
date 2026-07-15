@@ -96,6 +96,10 @@ model User {
   status           String
   username         String
   email_verified   Boolean
+  created_at       String?
+  created_by       String?
+  updated_at       String?
+  updated_by       String?
 
   @@map("users")
 }
