@@ -2,13 +2,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import Analytics from "@/components/studio/analytics"
 import Overview from "@/components/studio/overview"
 import Logs from "@/components/studio/logs"
+import RefreshCountdown from "@/components/studio/refresh-countdown"
 
 export default function StudioPage() {
   return (
     <div className="flex flex-col justify-around space-y-4">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">{/* More content here later */}</div>
       <Tabs orientation="horizontal" defaultValue="overview" className="space-y-4">
-        <div className="w-full overflow-x-auto pb-2">
+        <div className="flex w-full justify-between overflow-x-auto pb-2">
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
@@ -17,6 +18,7 @@ export default function StudioPage() {
               Notifications
             </TabsTrigger>
           </TabsList>
+          <RefreshCountdown />
         </div>
         <TabsContent value="overview" className="space-y-4">
           <Overview />
