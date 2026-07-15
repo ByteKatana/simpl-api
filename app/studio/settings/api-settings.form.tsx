@@ -295,9 +295,6 @@ const ApiSettingsForm = ({
                                 {group.name}
                               </SelectItem>
                             ))}
-                            <SelectItem key={"viewer"} value={"viewer"}>
-                              Viewer
-                            </SelectItem>
                           </SelectContent>
                         </Select>
                       </Field>
