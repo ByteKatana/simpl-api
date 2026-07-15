@@ -6,9 +6,10 @@ const FieldErrorText = ({ field }: Props) => {
   if (!errors || errors.length === 0) return null
   const msg = Array.from(
     new Set(errors.map((e: any) => (typeof e === "string" ? e : e?.message)).filter(Boolean))
-  ).join(", ")
+  )
+
   if (!msg) return null
-  return <span className="text-xs text-red-500 mt-1">{msg}</span>
+  return <ul className="text-xs text-red-500 mx-1">{msg.map(item => (<li key={item} className={"my-[0.5]"} >{item}</li>))}</ul>
 }
 
 export default FieldErrorText
