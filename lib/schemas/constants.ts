@@ -7,7 +7,7 @@ export const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "ima
 export const MAX_PROFILE_IMG_WIDTH = 500
 export const MAX_PROFILE_IMG_HEIGHT = 500
 
-export const TEMP_PERM_GROUPS = ["admin", "editor", "viewer"] // It will be replaced with the actual permission groups from the database(prisma)
+
 
 // Enum for CRUD actions
 export const CrudActionSchema = z.enum(CrudAction)
