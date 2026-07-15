@@ -36,7 +36,6 @@ const ProfileForm = ({ profileImgProvider, formPayload }: Props) => {
       status: formPayload.status
     },
     validators: {
-      onMount: UserUpdateFormSchema as any,
       onChangeAsyncDebounceMs: 2500,
       onChangeAsync: UserUpdateFormSchema as any
     },

@@ -43,7 +43,8 @@ export default function RegisterForm({ profileImgProvider }: Props) {
       status: UserStatus.Active
     },
     validators: {
-      onChange: UserFormSchema
+      onChangeAsyncDebounceMs: 500,
+      onChangeAsync: UserFormSchema
     },
     onSubmit: async ({ value }) => {
       try {

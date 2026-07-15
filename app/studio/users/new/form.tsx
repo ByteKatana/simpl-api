@@ -27,8 +27,7 @@ const UserCreateForm = () => {
       status: UserStatus.Active
     } as z.infer<typeof UserFormSchema>,
     validators: {
-      onMount: UserFormSchema,
-      onChangeAsyncDebounceMs: 2500,
+      onChangeAsyncDebounceMs: 500,
       onChangeAsync: UserFormSchema
     },
     onSubmit: async ({ value }) => {
