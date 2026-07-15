@@ -8,6 +8,10 @@ Versatile headless CMS from personal portfolio to enterprise automation
 📖 **Documentation**: <br> New documentation coming soon. <br> <small>(with new Simpl:API Studio update)</small>
 </div>
 
+
+https://github.com/user-attachments/assets/1e665377-318c-4e89-9d0b-f9d83667cb1f
+
+
 <hr>
 
 ## ⚡ Overview
