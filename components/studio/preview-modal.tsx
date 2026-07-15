@@ -33,7 +33,7 @@ export function PreviewModal({ open, onOpenChange, data, type }: PreviewModalPro
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[90vh] flex flex-col">
+      <DialogContent className="max-w-3xl max-h-[90vh] flex flex-col overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Eye className="h-5 w-5 text-muted-foreground" />
@@ -91,7 +91,7 @@ function EntryPreview({ data }: { data: Entry }) {
                 {Object.entries(fields).map(([fieldName, value]: [string, any]) => (
                   <div key={fieldName} className="space-y-1">
                     <Label className="capitalize">{fieldName.replace(/_/g, " ")}</Label>
-                    <div className="p-2 rounded border bg-background text-sm min-h-[36px]">
+                    <div className="p-2 rounded border bg-background text-sm min-h-9">
                       {typeof value === "boolean" ? (value ? "Yes" : "No") : String(value || "—")}
                     </div>
                   </div>
