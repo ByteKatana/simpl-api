@@ -3,9 +3,9 @@ import { UserStatus, PublishStatus, DbDriver, IdentityManagementMode, Appearance
 import {
   SUPPORTED_AVATAR_DOMAINS,
   AVATAR_PATH_PATTERNS,
-  TEMP_PERM_GROUPS,
-  SUPPORTED_AVATAR_PROVIDERS
+  SUPPORTED_AVATAR_PROVIDERS,
 } from "@/lib/schemas/constants"
+import getPermissionGroups from "@/lib/actions/studio/permission-groups/get-permission-groups"
 
 // EntryType Form Schemas
 export const EntryTypeFieldFormSchema = z.object({
@@ -37,9 +37,10 @@ export const EntryTypeFieldFormSchema = z.object({
 
 export const EntryTypeFieldsetFormSchema = z.object({
   instanceId: z.string(),
-  name: z.string(),
+  name: z.string().trim(),
   slug: z
     .string()
+    .trim()
     .min(1, { message: "Slug is required" })
     .regex(/^[a-z0-9_]+$/, { message: "Slug can only contain lowercase letters, numbers, underscores" }),
   fields: z.array(EntryTypeFieldFormSchema).min(1, { message: "At least one field is required in a row" })
@@ -119,6 +120,7 @@ export const ThirdPartyAvatarUrlSchema = z
     }
   )
 
+
 export const UserFormSchema = z.object({
   fullname: z
     .string()
@@ -139,7 +141,28 @@ export const UserFormSchema = z.object({
     .min(1, { message: "Email is required" }),
   profile_img: z.union([/*UserProfileImgFileSchema,*/ ThirdPartyAvatarUrlSchema]).or(z.literal("")),
   status: z.enum(UserStatus, { message: "Please select a valid status" }),
-  permission_group: z.enum(TEMP_PERM_GROUPS, { message: "Please select a valid permission group" }), // Replace it when you get the actual permission groups from the database(prisma)
+  permission_group: z
+    .string()
+    .min(1, { message: "Permission Group is required" })
+    .superRefine(async (val, ctx) => {
+      if (val === "root") return
+
+      const res = await getPermissionGroups(true)
+      if (!res.success || !res.data) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Failed to validate permission group"
+        })
+        return
+      }
+      const slugs = res.data.map((group) => group.slug)
+      if (!slugs.includes(val)) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Invalid Permission Group"
+        })
+      }
+    }),
   password: z
     .string()
     .min(8, { message: "Password must be at least 8 characters." })
