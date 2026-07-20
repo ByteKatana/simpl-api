@@ -1,6 +1,6 @@
 //Database
-import { connectDB } from "@/lib/mongodb"
-import { Collection, DeleteResult, InsertOneResult, MongoClient, ObjectId, UpdateResult } from "mongodb"
+import { prisma } from "@/lib/prisma"
+import { Entry as PrismaEntry, Prisma } from "@/prisma-client/client"
 
 //Interface
 import { Entry } from "@/interfaces/entry"
@@ -14,26 +14,39 @@ export class EntryController {
   }
 
   async create() {
-    let client: MongoClient | undefined
-    let dbCollection: Collection<any>
+    const client = prisma
     let isConnected = false
 
     try {
-      client = await connectDB(this.mockClient)
       isConnected = true
     } catch (e) {
       console.log(e)
     }
     if (client && isConnected) {
-      let insertResult: InsertOneResult
+      let insertResult: PrismaEntry | undefined
       try {
-        dbCollection = client.db(process.env.DB_NAME).collection("entries")
-        insertResult = await dbCollection.insertOne(this.entry)
-        if (insertResult.insertedId) {
+        const dataToInsert: Prisma.EntryCreateInput = {
+          data: this.entry.data as any,
+          name: this.entry.name,
+          namespace: this.entry.namespace,
+          slug: this.entry.slug,
+          status: this.entry.status,
+          updated_at: this.entry.updated_at ? new Date(this.entry.updated_at).toISOString() : new Date().toISOString()
+        }
+
+        if (this.entry._id) {
+          dataToInsert.id = this.entry._id.toString()
+        }
+
+        insertResult = await prisma.entry.create({
+          data: dataToInsert
+        })
+
+        if (insertResult && insertResult.id) {
           if (this.mockClient) {
             return {
               result: { status: "success", message: "Entry has been created." },
-              entryId: insertResult.insertedId
+              entryId: insertResult.id
             }
           }
 
@@ -51,27 +64,48 @@ export class EntryController {
   }
 
   async update(id: string) {
-    let client: MongoClient | undefined
-    let dbCollection: Collection<any>
+    const client = prisma
     let isConnected = false
 
     try {
-      client = await connectDB(this.mockClient)
       isConnected = true
     } catch (e) {
       console.log(e)
     }
     if (client && isConnected) {
-      let updateResult: UpdateResult | undefined
+      let updateResult: PrismaEntry | undefined
+      let isDifferent = false
       try {
-        dbCollection = client.db(process.env.DB_NAME).collection("entries")
-        updateResult = await dbCollection.updateOne({ _id: new ObjectId(id) }, { $set: this.entry }, { upsert: false })
+        const prevState = await prisma.entry.findUnique({
+          where: { id: id }
+        })
+
+        if (prevState) {
+          isDifferent =
+            prevState.name !== this.entry.name ||
+            prevState.namespace !== this.entry.namespace ||
+            prevState.slug !== this.entry.slug ||
+            prevState.status !== this.entry.status ||
+            JSON.stringify(prevState.data) !== JSON.stringify(this.entry.data)
+        }
+
+        updateResult = await prisma.entry.update({
+          where: { id: id },
+          data: {
+            data: this.entry.data as any,
+            name: this.entry.name,
+            namespace: this.entry.namespace,
+            slug: this.entry.slug,
+            status: this.entry.status,
+            updated_at: this.entry.updated_at ? new Date(this.entry.updated_at).toISOString() : new Date().toISOString()
+          }
+        })
       } catch (e) {
         console.log(e)
       }
-      if (updateResult && updateResult.modifiedCount === 1) {
+      if (updateResult && isDifferent) {
         return { status: "success", message: "Entry has been updated." }
-      } else if (updateResult && updateResult.matchedCount === 1 && updateResult.modifiedCount === 0) {
+      } else if (updateResult && !isDifferent) {
         return { status: "failed", message: "You didn't make any change." }
       } else {
         return { status: "failed", message: "Failed to update the entry." }
@@ -82,25 +116,24 @@ export class EntryController {
   }
 
   async delete(id: string) {
-    let client: MongoClient | undefined
-    let dbCollection: Collection<any>
-    let isConnected: boolean = false
+    const client = prisma
+    let isConnected = false
 
     try {
-      client = await connectDB(this.mockClient)
       isConnected = true
     } catch (e) {
       console.log(e)
     }
     if (client && isConnected) {
-      let deleteResult: DeleteResult | undefined
+      let deleteResult: Prisma.BatchPayload | undefined
       try {
-        dbCollection = client.db(process.env.DB_NAME).collection("entries")
-        deleteResult = await dbCollection.deleteOne({ _id: new ObjectId(id) })
+        deleteResult = await prisma.entry.deleteMany({
+          where: { id: id }
+        })
       } catch (e) {
         console.log(e)
       }
-      if (deleteResult && deleteResult.deletedCount === 1) {
+      if (deleteResult && deleteResult.count === 1) {
         return { status: "success", message: "Entry has been deleted." }
       } else {
         return { status: "failed", message: "Failed to delete the entry." }
