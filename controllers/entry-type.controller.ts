@@ -1,6 +1,6 @@
 //Database
-import { connectDB } from "@/lib/mongodb"
-import { Collection, InsertOneResult, MongoClient, ObjectId, UpdateResult } from "mongodb"
+import { prisma } from "@/lib/prisma"
+import { EntryType as PrismaEntryType, PermissionGroup, Prisma } from "@/prisma-client/client"
 
 //Interface
 import { EntryType } from "@/interfaces/entry_type"
@@ -17,49 +17,60 @@ export class EntryTypeController {
   }
 
   async create() {
-    let client: MongoClient | undefined
-    let dbCollection: Collection<any>
+    const client = prisma
     let isConnected = false
 
     try {
-      client = await connectDB(this.mockClient)
       isConnected = true
     } catch (e) {
       console.log(e)
     }
 
     if (client && isConnected) {
-      let insertResult: InsertOneResult | undefined
-      let addPrivileges: UpdateResult | undefined
+      let insertResult: PrismaEntryType | undefined
+      let addPrivileges: PermissionGroup | undefined
       try {
-        dbCollection = client.db(process.env.DB_NAME).collection("entry_types")
-        insertResult = await dbCollection.insertOne(this.entryType)
+        insertResult = await prisma.entryType.create({
+          data: {
+            createdBy: this.entryType.createdBy,
+            created_at: this.entryType.created_at ? new Date(this.entryType.created_at).toISOString() : undefined,
+            fieldsets: this.entryType.fieldsets as any,
+            name: this.entryType.name,
+            namespace: this.entryType.namespace,
+            slug: this.entryType.slug,
+            status: this.entryType.status,
+            updated_at: this.entryType.updated_at ? new Date(this.entryType.updated_at).toISOString() : undefined
+          }
+        })
 
         //add CRUD privileges to the user's permission group for this entry type
-        dbCollection = client.db(process.env.DB_NAME).collection("permission_groups")
-        const permGroupData = await dbCollection.findOne({ slug: this.entryType.createdBy })
+        const permGroupData = await prisma.permissionGroup.findFirst({
+          where: { slug: this.entryType.createdBy }
+        })
 
         if (permGroupData && permGroupData.privileges) {
-          permGroupData.privileges.push({
+          const privileges = permGroupData.privileges as any[]
+          privileges.push({
             [this.entryType.namespace.split(" ").join("-").toLowerCase()]: {
               permissions: ["read", "update", "delete", "create"]
             }
           })
-          addPrivileges = await dbCollection.updateOne(
-            { _id: new ObjectId(permGroupData._id) },
-            { $set: permGroupData },
-            { upsert: false }
-          )
+          addPrivileges = await prisma.permissionGroup.update({
+            where: { id: permGroupData.id },
+            data: {
+              privileges: privileges
+            }
+          })
         }
-        if (insertResult.insertedId && addPrivileges && addPrivileges.modifiedCount === 1) {
+        if (insertResult && insertResult.id && addPrivileges) {
           if (this.mockClient) {
             return {
               result: { status: "success", message: "Entry Type has been created." },
-              entryTypeId: insertResult.insertedId
+              entryTypeId: insertResult.id
             }
           }
           return { status: "success", message: "Entry Type has been created." }
-        } else if (insertResult.insertedId && !addPrivileges) {
+        } else if (insertResult && insertResult.id && !addPrivileges) {
           // Entry type created but permission group not found or updated
           return { status: "failed", message: "Entry type created but failed to update permission group." }
         } else {
@@ -75,50 +86,69 @@ export class EntryTypeController {
   }
 
   async update(id: string) {
-    let client: MongoClient | undefined
-    let dbCollection: Collection<any>
+    const client = prisma
     let isConnected = false
 
     try {
-      client = await connectDB(this.mockClient)
       isConnected = true
     } catch (e) {
       console.log(e)
     }
     if (client && isConnected) {
-      let updateResult: UpdateResult | undefined
-      let addPrivileges: UpdateResult | undefined
+      let updateResult: PrismaEntryType | undefined
+      let addPrivileges: PermissionGroup | undefined
+      let isDifferent = false
       try {
-        dbCollection = client.db(process.env.DB_NAME).collection("entry_types")
-        const prevState = await dbCollection.findOne({ _id: new ObjectId(id) })
+        const prevState = await prisma.entryType.findUnique({
+          where: { id: id }
+        })
 
-        updateResult = await dbCollection.updateOne(
-          { _id: new ObjectId(id) },
-          { $set: this.entryType },
-          { upsert: false }
-        )
+        isDifferent =
+          prevState !== null &&
+          (prevState.name !== this.entryType.name ||
+            prevState.namespace !== this.entryType.namespace ||
+            prevState.slug !== this.entryType.slug ||
+            prevState.status !== this.entryType.status ||
+            JSON.stringify(prevState.fieldsets) !== JSON.stringify(this.entryType.fieldsets))
+
+        updateResult = await prisma.entryType.update({
+          where: { id: id },
+          data: {
+            createdBy: this.entryType.createdBy,
+            created_at: this.entryType.created_at ? new Date(this.entryType.created_at).toISOString() : undefined,
+            fieldsets: this.entryType.fieldsets as any,
+            name: this.entryType.name,
+            namespace: this.entryType.namespace,
+            slug: this.entryType.slug,
+            status: this.entryType.status,
+            updated_at: this.entryType.updated_at
+              ? new Date(this.entryType.updated_at).toISOString()
+              : new Date().toISOString()
+          }
+        })
 
         if (prevState && prevState.namespace !== this.entryType.namespace) {
-          //add CRUD privileges to the user's permission group for this entry type
-          dbCollection = client.db(process.env.DB_NAME).collection("permission_groups")
-
           // Use createdBy from prevState if not provided in update payload
           const permGroupSlug = this.entryType.createdBy || prevState.createdBy
 
           if (permGroupSlug) {
-            const permGroupData = await dbCollection.findOne({ slug: permGroupSlug })
+            const permGroupData = await prisma.permissionGroup.findFirst({
+              where: { slug: permGroupSlug }
+            })
 
             if (permGroupData && permGroupData.privileges) {
-              permGroupData.privileges.push({
+              const privileges = permGroupData.privileges as any[]
+              privileges.push({
                 [this.entryType.namespace.split(" ").join("-").toLowerCase()]: {
                   permissions: ["read", "update", "delete", "create"]
                 }
               })
-              addPrivileges = await dbCollection.updateOne(
-                { _id: new ObjectId(permGroupData._id) },
-                { $set: permGroupData },
-                { upsert: false }
-              )
+              addPrivileges = await prisma.permissionGroup.update({
+                where: { id: permGroupData.id },
+                data: {
+                  privileges: privileges
+                }
+              })
             }
           }
         }
@@ -129,17 +159,11 @@ export class EntryTypeController {
       // Check if namespace changed and privileges were updated
       const namespaceChanged = addPrivileges !== undefined
 
-      if (
-        updateResult &&
-        addPrivileges &&
-        namespaceChanged &&
-        updateResult.modifiedCount === 1 &&
-        addPrivileges.modifiedCount === 1
-      ) {
+      if (updateResult && addPrivileges && namespaceChanged && isDifferent) {
         return { status: "success", message: "Entry Type has been updated." }
-      } else if (updateResult && !namespaceChanged && updateResult.modifiedCount === 1) {
+      } else if (updateResult && !namespaceChanged && isDifferent) {
         return { status: "success", message: "Entry Type has been updated." }
-      } else if (updateResult && updateResult.matchedCount === 1 && updateResult.modifiedCount === 0) {
+      } else if (updateResult && !isDifferent) {
         return { status: "failed", message: "You didn't make any change." }
       } else {
         return { status: "failed", message: "Failed to update the entry type." }
@@ -150,25 +174,24 @@ export class EntryTypeController {
   }
 
   async delete(id: string) {
-    let client: MongoClient | undefined
-    let dbCollection: Collection<any>
+    const client = prisma
     let isConnected = false
 
     try {
-      client = await connectDB(this.mockClient)
       isConnected = true
     } catch (e) {
       console.log(e)
     }
     if (client && isConnected) {
-      let deleteResult
+      let deleteResult: Prisma.BatchPayload | undefined
       try {
-        dbCollection = client.db(process.env.DB_NAME).collection("entry_types")
-        deleteResult = await dbCollection.deleteOne({ namespace: id })
+        deleteResult = await prisma.entryType.deleteMany({
+          where: { namespace: id }
+        })
       } catch (e) {
         console.log(e)
       }
-      if (deleteResult && deleteResult.deletedCount === 1) {
+      if (deleteResult && deleteResult.count >= 1) {
         return { status: "success", message: "Entry Type has been deleted." }
       } else {
         return { status: "failed", message: "Failed to delete the entry type." }
