@@ -58,7 +58,6 @@ model Entry {
   updated_at String
 
   @@map("entries")
-  @@ignore
 }
 
 model EntryType {
