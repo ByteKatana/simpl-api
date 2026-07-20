@@ -1,64 +1,34 @@
 import "@testing-library/jest-dom"
-import { Entry } from "../../interfaces"
-import { EntryController } from "../../controllers/entry.controller"
-import { DeleteResult, InsertOneResult, ObjectId, UpdateResult } from "mongodb"
-import { connectDB } from "../../lib/mongodb"
+import { Entry, PublishStatus } from "@/interfaces"
+import { EntryController } from "@/controllers/entry.controller"
+import { prisma } from "@/lib/prisma"
+import { ObjectId } from "mongodb"
 
-// Mock the mongodb module
-jest.mock("../../lib/mongodb", () => ({
-  connectDB: jest.fn()
+// Mock the prisma module
+jest.mock("@/lib/prisma", () => ({
+  prisma: {
+    entry: {
+      create: jest.fn(),
+      findUnique: jest.fn(),
+      update: jest.fn(),
+      deleteMany: jest.fn()
+    }
+  }
 }))
 
 describe("Check if the entry controller handles actions properly", () => {
   let entryController: EntryController
   let entryData: Entry
   let entryId: string
-  
-  // Mock MongoDB client, collection and operations
-  const mockInsertOne = jest.fn()
-  const mockUpdateOne = jest.fn()
-  const mockDeleteOne = jest.fn()
-  const mockCollection = jest.fn(() => ({
-    insertOne: mockInsertOne,
-    updateOne: mockUpdateOne,
-    deleteOne: mockDeleteOne
-  }))
-  const mockDb = jest.fn(() => ({
-    collection: mockCollection
-  }))
-  const mockClient = {
-    db: mockDb,
-    close: jest.fn()
-  }
 
-  beforeAll(() => {
-    // Setup mock return values for MongoDB operations
-    const mockObjectId = new ObjectId()
-    entryId = mockObjectId.toString()
+  // Get typed mock references to avoid inline type assertions and leading semicolons
+  const mockPrismaEntryCreate = prisma.entry.create as jest.Mock
+  const mockPrismaEntryFindUnique = prisma.entry.findUnique as jest.Mock
+  const mockPrismaEntryUpdate = prisma.entry.update as jest.Mock
+  const mockPrismaEntryDeleteMany = prisma.entry.deleteMany as jest.Mock
 
-    // Setup connectDB mock
-    ;(connectDB as jest.Mock).mockResolvedValue(mockClient)
-
-    // Setup insertOne mock
-    mockInsertOne.mockResolvedValue({
-      acknowledged: true,
-      insertedId: mockObjectId
-    } as InsertOneResult)
-
-    // Setup updateOne mock
-    mockUpdateOne.mockResolvedValue({
-      acknowledged: true,
-      matchedCount: 1,
-      modifiedCount: 1,
-      upsertedCount: 0,
-      upsertedId: null
-    } as UpdateResult)
-
-    // Setup deleteOne mock
-    mockDeleteOne.mockResolvedValue({
-      acknowledged: true,
-      deletedCount: 1
-    } as DeleteResult)
+  beforeEach(() => {
+    entryId = new ObjectId().toString()
   })
 
   afterEach(() => {
@@ -71,86 +41,160 @@ describe("Check if the entry controller handles actions properly", () => {
 
   it("Check if entry created properly", async () => {
     entryData = {
+      _id: entryId,
       name: "mock entry",
       namespace: "mock-type",
-      slug: "mock-entry"
+      slug: "mock-entry",
+      status: PublishStatus.Draft,
+      data: {},
+      created_at: new Date(),
+      updated_at: new Date()
     }
-    
-    entryController = new EntryController(entryData, true)
-    const createEntry = await entryController.create()
 
-    // Assert connectDB was called
-    expect(connectDB).toHaveBeenCalledWith(true)
-    
-    // Assert db and collection methods were called
-    expect(mockDb).toHaveBeenCalledWith(process.env.DB_NAME)
-    expect(mockCollection).toHaveBeenCalledWith("entries")
-    
-    // Assert insertOne was called with the right data
-    expect(mockInsertOne).toHaveBeenCalledWith(entryData)
-    
-    // Assert the returned result
+    mockPrismaEntryCreate.mockResolvedValue({
+      id: entryId,
+      ...entryData,
+      created_at: entryData.created_at?.toISOString(),
+      updated_at: entryData.updated_at?.toISOString()
+    })
+
+    entryController = new EntryController(entryData, true)
+    const createEntry = (await entryController.create()) as {
+      result: { status: string; message: string }
+      entryId: string
+    }
+
+    expect(mockPrismaEntryCreate).toHaveBeenCalledWith({
+      data: {
+        id: entryId,
+        data: entryData.data,
+        name: entryData.name,
+        namespace: entryData.namespace,
+        slug: entryData.slug,
+        status: entryData.status,
+        updated_at: entryData.updated_at ? new Date(entryData.updated_at).toISOString() : expect.any(String)
+      }
+    })
+
     expect(createEntry.result).toEqual({ status: "success", message: "Entry has been created." })
-    
-    // Assert client.close was called
-    expect(mockClient.close).toHaveBeenCalled()
+    expect(createEntry.entryId).toBe(entryId)
   })
 
   it("Check if entry updated properly", async () => {
     entryData = {
+      _id: entryId,
       name: "mock entry1",
       namespace: "mock-type",
-      slug: "mock-entry1"
+      slug: "mock-entry1",
+      status: PublishStatus.Draft,
+      data: {},
+      created_at: new Date(),
+      updated_at: new Date()
     }
-    
+
+    mockPrismaEntryFindUnique.mockResolvedValue({
+      id: entryId,
+      name: "mock entry",
+      namespace: "mock-type",
+      slug: "mock-entry",
+      status: PublishStatus.Draft,
+      data: {},
+      created_at: entryData.created_at?.toISOString(),
+      updated_at: entryData.updated_at?.toISOString()
+    })
+
+    mockPrismaEntryUpdate.mockResolvedValue({
+      id: entryId,
+      ...entryData,
+      created_at: entryData.created_at?.toISOString(),
+      updated_at: entryData.updated_at?.toISOString()
+    })
+
     entryController = new EntryController(entryData, true)
     const updateEntry = await entryController.update(entryId)
 
-    // Assert connectDB was called
-    expect(connectDB).toHaveBeenCalledWith(true)
-    
-    // Assert db and collection methods were called
-    expect(mockDb).toHaveBeenCalledWith(process.env.DB_NAME)
-    expect(mockCollection).toHaveBeenCalledWith("entries")
-    
-    // Assert updateOne was called with the right data
-    expect(mockUpdateOne).toHaveBeenCalledWith(
-      { _id: expect.any(ObjectId) },
-      { $set: entryData },
-      { upsert: false }
-    )
-    
-    // Assert the returned result
+    expect(mockPrismaEntryFindUnique).toHaveBeenCalledWith({
+      where: { id: entryId }
+    })
+
+    expect(mockPrismaEntryUpdate).toHaveBeenCalledWith({
+      where: { id: entryId },
+      data: {
+        data: entryData.data,
+        name: entryData.name,
+        namespace: entryData.namespace,
+        slug: entryData.slug,
+        status: entryData.status,
+        updated_at: entryData.updated_at ? new Date(entryData.updated_at).toISOString() : expect.any(String)
+      }
+    })
+
     expect(updateEntry).toEqual({ status: "success", message: "Entry has been updated." })
-    
-    // Assert client.close was called
-    expect(mockClient.close).toHaveBeenCalled()
+  })
+
+  it("Check if entry update detects no-changes and returns appropriately", async () => {
+    entryData = {
+      _id: entryId,
+      name: "mock entry",
+      namespace: "mock-type",
+      slug: "mock-entry",
+      status: PublishStatus.Draft,
+      data: {},
+      created_at: new Date(),
+      updated_at: new Date()
+    }
+
+    mockPrismaEntryFindUnique.mockResolvedValue({
+      id: entryId,
+      name: "mock entry",
+      namespace: "mock-type",
+      slug: "mock-entry",
+      status: PublishStatus.Draft,
+      data: {},
+      created_at: entryData.created_at?.toISOString(),
+      updated_at: entryData.updated_at?.toISOString()
+    })
+
+    mockPrismaEntryUpdate.mockResolvedValue({
+      id: entryId,
+      ...entryData,
+      created_at: entryData.created_at?.toISOString(),
+      updated_at: entryData.updated_at?.toISOString()
+    })
+
+    entryController = new EntryController(entryData, true)
+    const updateEntry = await entryController.update(entryId)
+
+    expect(mockPrismaEntryFindUnique).toHaveBeenCalledWith({
+      where: { id: entryId }
+    })
+
+    expect(updateEntry).toEqual({ status: "failed", message: "You didn't make any change." })
   })
 
   it("Check if entry deleted properly", async () => {
     entryData = {
+      _id: entryId,
       name: "mock entry1",
       namespace: "mock-type",
-      slug: "mock-entry1"
+      slug: "mock-entry1",
+      status: PublishStatus.Draft,
+      data: {},
+      created_at: new Date(),
+      updated_at: new Date()
     }
-    
+
+    mockPrismaEntryDeleteMany.mockResolvedValue({
+      count: 1
+    })
+
     entryController = new EntryController(entryData, true)
     const deleteEntry = await entryController.delete(entryId)
 
-    // Assert connectDB was called
-    expect(connectDB).toHaveBeenCalledWith(true)
-    
-    // Assert db and collection methods were called
-    expect(mockDb).toHaveBeenCalledWith(process.env.DB_NAME)
-    expect(mockCollection).toHaveBeenCalledWith("entries")
-    
-    // Assert deleteOne was called with the right data
-    expect(mockDeleteOne).toHaveBeenCalledWith({ _id: expect.any(ObjectId) })
-    
-    // Assert the returned result
+    expect(mockPrismaEntryDeleteMany).toHaveBeenCalledWith({
+      where: { id: entryId }
+    })
+
     expect(deleteEntry).toEqual({ status: "success", message: "Entry has been deleted." })
-    
-    // Assert client.close was called
-    expect(mockClient.close).toHaveBeenCalled()
   })
 })
