@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 import "@testing-library/jest-dom"
-import { EntryType, PublishStatus } from "../../interfaces"
-import { EntryTypeController } from "../../controllers/entry-type.controller"
-import { prisma } from "../../lib/prisma"
+import { EntryType, PublishStatus } from "@/interfaces"
+import { EntryTypeController } from "@/controllers/entry-type.controller"
+import { prisma } from "@/lib/prisma"
+import { ObjectId } from "mongodb"
 
 // Mock the prisma module
 jest.mock("@/lib/prisma", () => require("@/__mocks__/lib/prisma.mock"))
@@ -9,7 +11,7 @@ jest.mock("@/lib/prisma", () => require("@/__mocks__/lib/prisma.mock"))
 describe("Check if the entry type controller handles actions properly", () => {
   let entryTypeController: EntryTypeController
   let entryTypeData: EntryType
-  const entryTypeId = "60d5ec3b53c7c4b7ec3b53c7"
+  let entryTypeId: string
 
   // Get typed mock references to avoid inline type assertions
   const mockPrismaEntryTypeCreate = prisma.entryType.create as jest.Mock
@@ -18,6 +20,10 @@ describe("Check if the entry type controller handles actions properly", () => {
   const mockPrismaEntryTypeDeleteMany = prisma.entryType.deleteMany as jest.Mock
   const mockPrismaPermissionGroupFindFirst = prisma.permissionGroup.findFirst as jest.Mock
   const mockPrismaPermissionGroupUpdate = prisma.permissionGroup.update as jest.Mock
+
+  beforeEach(() => {
+    entryTypeId = new ObjectId().toString()
+  })
 
   afterEach(() => {
     jest.clearAllMocks()
