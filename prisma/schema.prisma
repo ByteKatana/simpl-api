@@ -73,7 +73,6 @@ model EntryType {
   updated_at String?
 
   @@map("entry_types")
-  @@ignore
 }
 
 model PermissionGroup {
@@ -83,7 +82,6 @@ model PermissionGroup {
   slug       String
 
   @@map("permission_groups")
-  @@ignore
 }
 
 model User {
