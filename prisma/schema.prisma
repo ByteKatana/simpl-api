@@ -93,6 +93,8 @@ model User {
   status           String
   username         String
   email_verified   Boolean
+  oauth_id         String?
+  oauth_provider   String?
   created_at       String?
   created_by       String?
   updated_at       String?
