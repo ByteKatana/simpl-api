@@ -22,7 +22,7 @@ jest.mock("@/lib/api/utils", () => require("@/__mocks__/lib/api/utils"))
 jest.mock("@/controllers/api-key.controller", () => require("@/__mocks__/controllers/api-key.controller"))
 
 // Mock Prisma client operations to run queries completely in-memory
-jest.mock("@/lib/prisma", () => require("@/__mocks__/lib/prisma.mock"))
+jest.mock("@/lib/prisma")
 
 describe("/api/v1/entry-type/", () => {
   const mockCheckPermissionApi = checkPermissionApi as jest.Mock

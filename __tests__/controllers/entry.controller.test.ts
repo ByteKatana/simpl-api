@@ -5,16 +5,7 @@ import { prisma } from "@/lib/prisma"
 import { ObjectId } from "mongodb"
 
 // Mock the prisma module
-jest.mock("@/lib/prisma", () => ({
-  prisma: {
-    entry: {
-      create: jest.fn(),
-      findUnique: jest.fn(),
-      update: jest.fn(),
-      deleteMany: jest.fn()
-    }
-  }
-}))
+jest.mock("@/lib/prisma")
 
 describe("Check if the entry controller handles actions properly", () => {
   let entryController: EntryController

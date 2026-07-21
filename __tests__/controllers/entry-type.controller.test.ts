@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
 import "@testing-library/jest-dom"
 import { EntryType, PublishStatus } from "@/interfaces"
 import { EntryTypeController } from "@/controllers/entry-type.controller"
@@ -6,7 +5,7 @@ import { prisma } from "@/lib/prisma"
 import { ObjectId } from "mongodb"
 
 // Mock the prisma module
-jest.mock("@/lib/prisma", () => require("@/__mocks__/lib/prisma.mock"))
+jest.mock("@/lib/prisma")
 
 describe("Check if the entry type controller handles actions properly", () => {
   let entryTypeController: EntryTypeController
