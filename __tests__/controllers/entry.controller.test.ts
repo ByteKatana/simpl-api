@@ -12,7 +12,6 @@ describe("Check if the entry controller handles actions properly", () => {
   let entryData: Entry
   let entryId: string
 
-  // Get typed mock references to avoid inline type assertions and leading semicolons
   const mockPrismaEntryCreate = prisma.entry.create as jest.Mock
   const mockPrismaEntryFindUnique = prisma.entry.findUnique as jest.Mock
   const mockPrismaEntryUpdate = prisma.entry.update as jest.Mock

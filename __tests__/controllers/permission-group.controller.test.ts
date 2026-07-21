@@ -11,7 +11,6 @@ describe("Check if the permission group controller handles actions properly", ()
   let permGroupData: PermissionGroup
   let permGroupId: string
 
-  // Get typed mock references to avoid inline type assertions
   const mockPrismaPermissionGroupCreate = prisma.permissionGroup.create as jest.Mock
   const mockPrismaPermissionGroupFindUnique = prisma.permissionGroup.findUnique as jest.Mock
   const mockPrismaPermissionGroupUpdate = prisma.permissionGroup.update as jest.Mock
