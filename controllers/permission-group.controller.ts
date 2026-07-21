@@ -1,9 +1,10 @@
 //Database
-import { connectDB } from "@/lib/mongodb"
-import { ObjectId, MongoClient, Collection, UpdateResult, DeleteResult, InsertOneResult } from "mongodb"
+import { prisma } from "@/lib/prisma"
+import { PermissionGroup as PrismaPermissionGroup } from "@/prisma-client/client"
 
 //Interface
 import { PermissionGroup } from "@/interfaces/permission_group"
+
 //===============================================
 
 export class PermissionGroupController {
@@ -16,28 +17,31 @@ export class PermissionGroupController {
   }
 
   async create() {
-    let client: MongoClient | undefined
-    let dbCollection: Collection
+    const client = prisma
     let isConnected = false
 
     try {
-      client = await connectDB(this.mockClient)
       isConnected = true
     } catch (e) {
       console.log(e)
     }
 
     if (client && isConnected) {
-      let insertResult: InsertOneResult
+      let insertResult: PrismaPermissionGroup | undefined
       try {
-        dbCollection = client.db(process.env.DB_NAME).collection("permission_groups")
-        insertResult = await dbCollection.insertOne(this.permissionGroup)
+        insertResult = await prisma.permissionGroup.create({
+          data: {
+            name: this.permissionGroup.name,
+            slug: this.permissionGroup.slug,
+            privileges: this.permissionGroup.privileges as any
+          }
+        })
 
-        if (insertResult.insertedId) {
+        if (insertResult && insertResult.id) {
           if (this.mockClient) {
             return {
               result: { status: "success", message: "Permission group has been created." },
-              permGroupId: insertResult.insertedId
+              permGroupId: insertResult.id
             }
           }
 
@@ -55,31 +59,43 @@ export class PermissionGroupController {
   }
 
   async update(id: string) {
-    let client: MongoClient | undefined
-    let dbCollection: Collection
+    const client = prisma
     let isConnected = false
 
     try {
-      client = await connectDB(this.mockClient)
       isConnected = true
     } catch (e) {
       console.log(e)
     }
     if (client && isConnected) {
-      let updateResult: UpdateResult | undefined
+      let updateResult: PrismaPermissionGroup | undefined
+      let isDifferent = false
       try {
-        dbCollection = client.db(process.env.DB_NAME).collection("permission_groups")
-        updateResult = await dbCollection.updateOne(
-          { _id: new ObjectId(id) },
-          { $set: this.permissionGroup },
-          { upsert: false }
-        )
+        const prevState = await prisma.permissionGroup.findUnique({
+          where: { id: id }
+        })
+
+        isDifferent =
+          prevState !== null &&
+          (prevState.name !== this.permissionGroup.name ||
+            prevState.slug !== this.permissionGroup.slug ||
+            JSON.stringify(prevState.privileges) !== JSON.stringify(this.permissionGroup.privileges))
+
+        updateResult = await prisma.permissionGroup.update({
+          where: { id: id },
+          data: {
+            name: this.permissionGroup.name,
+            slug: this.permissionGroup.slug,
+            privileges: this.permissionGroup.privileges as any
+          }
+        })
       } catch (e) {
         console.log(e)
       }
-      if (updateResult && updateResult["modifiedCount"] === 1) {
+
+      if (updateResult && isDifferent) {
         return { status: "success", message: "Permission group has been updated." }
-      } else if (updateResult && updateResult["matchedCount"] === 1 && updateResult["modifiedCount"] === 0) {
+      } else if (updateResult && !isDifferent) {
         return { status: "failed", message: "You didn't make any change." }
       } else {
         return { status: "failed", message: "Failed to update the permission group." }
@@ -90,25 +106,24 @@ export class PermissionGroupController {
   }
 
   async delete(id: string) {
-    let client: MongoClient | undefined
-    let dbCollection: Collection
-    let isConnected: boolean = false
+    const client = prisma
+    let isConnected = false
 
     try {
-      client = await connectDB(this.mockClient)
       isConnected = true
     } catch (e) {
       console.log(e)
     }
     if (client && isConnected) {
-      let deleteResult: DeleteResult | undefined
+      let deleteResult: { count: number } | undefined
       try {
-        dbCollection = client.db(process.env.DB_NAME).collection("permission_groups")
-        deleteResult = await dbCollection.deleteOne({ _id: new ObjectId(id) })
+        deleteResult = await prisma.permissionGroup.deleteMany({
+          where: { id: id }
+        })
       } catch (e) {
         console.log(e)
       }
-      if (deleteResult && deleteResult.deletedCount === 1) {
+      if (deleteResult && deleteResult.count >= 1) {
         return { status: "success", message: "Permission group has been deleted." }
       } else {
         return { status: "failed", message: "Failed to delete the permission group." }
