@@ -1,5 +1,6 @@
-import { connectDB } from "@/lib/mongodb"
-import { ObjectId, MongoClient, Collection, UpdateResult, DeleteResult, InsertOneResult } from "mongodb"
+//Database
+import { prisma } from "@/lib/prisma"
+import { User as PrismaUser } from "@/prisma-client/client"
 import bcrypt from "bcryptjs"
 
 //Interface
@@ -15,28 +16,42 @@ export class UserController {
   }
 
   async create() {
-    let client: MongoClient | undefined
-    let dbCollection: Collection<any>
+    const client = prisma
     let isConnected = false
 
     try {
-      client = await connectDB(this.mockClient)
       isConnected = true
     } catch (e) {
       console.log(e)
     }
 
     if (client && isConnected) {
-      let insertResult: InsertOneResult
+      let insertResult: PrismaUser | undefined
       try {
         const plainPw = this.user.password
         const hashPw = bcrypt.hashSync(plainPw, 8)
-        dbCollection = client.db(process.env.DB_NAME).collection("users")
-        insertResult = await dbCollection.insertOne({ ...this.user, password: hashPw })
+        insertResult = await prisma.user.create({
+          data: {
+            email: this.user.email,
+            fullname: this.user.fullname,
+            password: hashPw,
+            permission_group: this.user.permission_group,
+            profile_img: this.user.profile_img || "",
+            status: this.user.status,
+            username: this.user.username,
+            email_verified: this.user.email_verified || false,
+            oauth_id: this.user.oauth_id,
+            oauth_provider: this.user.oauth_provider,
+            created_at: this.user.created_at,
+            created_by: this.user.created_by,
+            updated_at: this.user.updated_at,
+            updated_by: this.user.updated_by
+          }
+        })
 
-        if (insertResult.insertedId) {
+        if (insertResult && insertResult.id) {
           if (this.mockClient) {
-            return { result: { status: "success", message: "User has been created." }, userId: insertResult.insertedId }
+            return { result: { status: "success", message: "User has been created." }, userId: insertResult.id }
           }
 
           return { status: "success", message: "User has been created." }
@@ -53,41 +68,68 @@ export class UserController {
   }
 
   async update(id: string) {
-    let client: MongoClient | undefined
-    let dbCollection: Collection<any>
+    const client = prisma
     let isConnected = false
 
     try {
-      client = await connectDB(this.mockClient)
       isConnected = true
     } catch (e) {
       console.log(e)
     }
 
     if (client && isConnected) {
-      let updateResult: UpdateResult | undefined
+      let updateResult: PrismaUser | undefined
+      let isDifferent = false
       try {
-        const setObj = {
-          ...this.user
+        const prevState = await prisma.user.findUnique({
+          where: { id: id }
+        })
+
+        const hasPasswordChange =
+          this.user.password !== "" &&
+          this.user.password !== undefined &&
+          this.user.password !== null &&
+          prevState?.password !== this.user.password
+
+        isDifferent =
+          prevState !== null &&
+          (prevState.fullname !== this.user.fullname ||
+            prevState.username !== this.user.username ||
+            prevState.email !== this.user.email ||
+            prevState.profile_img !== this.user.profile_img ||
+            prevState.status !== this.user.status ||
+            prevState.permission_group !== this.user.permission_group ||
+            prevState.oauth_id !== this.user.oauth_id ||
+            prevState.oauth_provider !== this.user.oauth_provider ||
+            hasPasswordChange)
+
+        const updateData: any = {
+          fullname: this.user.fullname,
+          username: this.user.username,
+          email: this.user.email,
+          profile_img: this.user.profile_img || "",
+          status: this.user.status,
+          permission_group: this.user.permission_group,
+          oauth_id: this.user.oauth_id,
+          oauth_provider: this.user.oauth_provider,
+          updated_at: new Date().toISOString()
         }
+
         if (this.user.password !== "" && this.user.password !== undefined && this.user.password !== null) {
-          setObj.password = this.user.password
+          updateData.password = this.user.password
         }
-        dbCollection = client.db(process.env.DB_NAME).collection("users")
-        updateResult = await dbCollection.updateOne(
-          { _id: new ObjectId(id) },
-          {
-            $set: setObj
-          },
-          { upsert: false }
-        )
+
+        updateResult = await prisma.user.update({
+          where: { id: id },
+          data: updateData
+        })
       } catch (e) {
         console.log(e)
       }
 
-      if (updateResult && updateResult["matchedCount"] === 1 && updateResult["modifiedCount"] === 1) {
+      if (updateResult && isDifferent) {
         return { status: "success", message: "User has been updated." }
-      } else if (updateResult && updateResult["matchedCount"] === 1 && updateResult["modifiedCount"] === 0) {
+      } else if (updateResult && !isDifferent) {
         return { status: "failed", message: "You didn't make any change." }
       } else {
         return { status: "failed", message: "Failed to update the user." }
@@ -98,26 +140,25 @@ export class UserController {
   }
 
   async delete(id: string) {
-    let client: MongoClient | undefined
-    let dbCollection: Collection<any>
-    let isConnected: boolean = false
+    const client = prisma
+    let isConnected = false
 
     try {
-      client = await connectDB(this.mockClient)
       isConnected = true
     } catch (e) {
       console.log(e)
     }
     if (client && isConnected) {
-      let deleteResult: DeleteResult | undefined
+      let deleteResult: { count: number } | undefined
       try {
-        dbCollection = client.db(process.env.DB_NAME).collection("users")
-        deleteResult = await dbCollection.deleteOne({ _id: new ObjectId(id) })
+        deleteResult = await prisma.user.deleteMany({
+          where: { id: id }
+        })
       } catch (e) {
         console.log(e)
       }
 
-      if (deleteResult && deleteResult.deletedCount === 1) {
+      if (deleteResult && deleteResult.count >= 1) {
         return { status: "success", message: "User has been deleted." }
       } else {
         return { status: "failed", message: "Failed to delete the user." }
