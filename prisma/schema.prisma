@@ -41,24 +41,27 @@ model ApiRequestLog {
 }
 
 model ApiKey {
-  id  String @id @default(auto()) @map("_id") @db.ObjectId
-  key String
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  key              String   @unique
+  description      String
+  permission_group String
+  rate_limits      Json
+  created_at       DateTime @default(now())
 
   @@map("api_keys")
-  @@ignore
 }
 
 model Entry {
-  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
   data       Json
   name       String
   namespace  String
   slug       String
   status     String
+  created_at String?
   updated_at String
 
   @@map("entries")
-  @@ignore
 }
 
 model EntryType {
@@ -73,7 +76,6 @@ model EntryType {
   updated_at String?
 
   @@map("entry_types")
-  @@ignore
 }
 
 model PermissionGroup {
@@ -83,7 +85,6 @@ model PermissionGroup {
   slug       String
 
   @@map("permission_groups")
-  @@ignore
 }
 
 model User {
@@ -96,6 +97,8 @@ model User {
   status           String
   username         String
   email_verified   Boolean
+  oauth_id         String?
+  oauth_provider   String?
   created_at       String?
   created_by       String?
   updated_at       String?

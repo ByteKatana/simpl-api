@@ -8,9 +8,6 @@ import { ActionResponse, EmailVerification } from "@/interfaces"
 import handleError from "@/lib/handlers/error"
 import verifyUser from "@/lib/actions/studio/users/verify-user"
 
-// Mock database for demonstration - in production, use MongoDB/Prisma
-// const verificationCodes = new Map<string, { code: string; expires: number }>();
-
 export async function EmailVerificationAction(email: string): Promise<ActionResponse> {
   try {
     const code = crypto.randomInt(100000, 999999).toString()
@@ -44,35 +41,39 @@ export async function EmailVerificationAction(email: string): Promise<ActionResp
 }
 
 export async function verifyCode(email: string, inputCode: string): Promise<ActionResponse> {
-  const storedCode = await prisma.verificationToken.findUnique({
-    where: { token: inputCode, identifier: email }
-  })
+  try {
+    const storedCode = await prisma.verificationToken.findUnique({
+      where: { token: inputCode, identifier: email }
+    })
 
-  if (!storedCode || storedCode.expires < new Date()) {
-    return {
-      success: false,
-      status: 400,
-      error: { message: "Invalid or expired verification code." }
+    if (!storedCode || storedCode.expires < new Date()) {
+      return {
+        success: false,
+        status: 400,
+        error: { message: "Invalid or expired verification code." }
+      }
     }
-  }
 
-  const responseMarkVerified = await verifyUser(email, true)
+    const responseMarkVerified = await verifyUser(email, true)
 
-  if (!responseMarkVerified.success) {
-    return {
-      success: false,
-      status: 500,
-      error: { message: "Cannot verify user due to an error." }
+    if (!responseMarkVerified.success) {
+      return {
+        success: false,
+        status: 500,
+        error: { message: "Cannot verify user due to an error." }
+      }
     }
+
+    const deleteCode = await prisma.verificationToken.delete({
+      where: { token: inputCode, identifier: email }
+    })
+
+    if (!deleteCode) {
+      return handleError(new Error("Failed to delete verification code"), "server")
+    }
+
+    return { success: true, status: 200, data: "User verified successfully." }
+  } catch (error) {
+    return handleError(error, "server")
   }
-
-  const deleteCode = await prisma.verificationToken.delete({
-    where: { token: inputCode, identifier: email }
-  })
-
-  if (!deleteCode) {
-    return handleError(new Error("Failed to delete verification code"), "server")
-  }
-
-  return { success: true, status: 200, data: "User verified successfully." }
 }

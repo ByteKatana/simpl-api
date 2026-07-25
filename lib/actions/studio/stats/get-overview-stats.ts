@@ -1,8 +1,6 @@
 "use server"
 
 import { prisma } from "@/lib/prisma"
-import { connectDB } from "@/lib/mongodb"
-import { MongoClient } from "mongodb"
 import handleError from "@/lib/handlers/error"
 import { ActionResponse } from "@/interfaces"
 export type OverviewStats = {
@@ -23,15 +21,11 @@ export type OverviewStats = {
 }
 
 export default async function getOverviewStats(): Promise<ActionResponse<OverviewStats>> {
-  let client: MongoClient | null = null
   try {
-    client = await connectDB()
-    const db = client.db(process.env.DB_NAME)
-
     const totalRequests = await prisma.apiRequestLog.count()
-    const totalEntries = await db.collection("entries").countDocuments()
-    const totalEntryTypes = await db.collection("entry_types").countDocuments()
-    const totalActiveUsers = await db.collection("users").countDocuments({ status: "active" })
+    const totalEntries = await prisma.entry.count()
+    const totalEntryTypes = await prisma.entryType.count()
+    const totalActiveUsers = await prisma.user.count({ where: { status: "active" } })
 
     const oneMonthAgo = new Date()
     oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1)
@@ -39,9 +33,13 @@ export default async function getOverviewStats(): Promise<ActionResponse<Overvie
     //entry change monthly
     // 1. Calculate Monthly Entry Change
     // Count entries created in the last month
-    const entriesCreatedLastMonth = await db
-      .collection("entries")
-      .countDocuments({ created_at: { $gte: oneMonthAgo.toISOString() } })
+    const entriesCreatedLastMonth = await prisma.entry.count({
+      where: {
+        created_at: {
+          gte: oneMonthAgo.toISOString()
+        }
+      }
+    })
 
     //request change monthly
     const requestChangeMonthly = await prisma.apiRequestLog.count({
@@ -52,9 +50,14 @@ export default async function getOverviewStats(): Promise<ActionResponse<Overvie
       }
     })
 
-    const activeLastMonth = await db
-      .collection("users")
-      .countDocuments({ status: "active", createdAt: { $gte: oneMonthAgo } })
+    const activeLastMonth = await prisma.user.count({
+      where: {
+        status: "active",
+        created_at: {
+          gte: oneMonthAgo.toISOString()
+        }
+      }
+    })
     const userChangeSinceLastMonth = totalActiveUsers - activeLastMonth
 
     const last24Hrs = new Date()

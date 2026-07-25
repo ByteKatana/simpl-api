@@ -30,8 +30,8 @@ async function handler(_req: NextApiRequest, res: NextApiResponse) {
         slug: "",
         status: "Draft",
         data: {},
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        created_at: new Date(),
+        updated_at: new Date()
       } as Entry
       const EntryData = new EntryController(dummyObj, mockclient === "true")
       const result = await EntryData.delete(slug as string)

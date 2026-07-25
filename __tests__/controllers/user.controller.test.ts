@@ -1,14 +1,13 @@
 import "@testing-library/jest-dom"
-import { UserController } from "../../controllers/user.controller"
-import { User } from "../../interfaces"
-import { Collection, InsertOneResult, MongoClient, ObjectId, UpdateResult, DeleteResult } from "mongodb"
-import { connectDB } from "../../lib/mongodb"
+import { UserController } from "@/controllers/user.controller"
+import { UserStatus } from "@/interfaces"
+import { User } from "@/interfaces/user"
+import { prisma } from "@/lib/prisma"
+import { ObjectId } from "mongodb"
 import bcrypt from "bcryptjs"
 
-// Mock the mongodb module
-jest.mock("../../lib/mongodb", () => ({
-  connectDB: jest.fn()
-}))
+// Mock the prisma module
+jest.mock("@/lib/prisma")
 
 // Mock bcryptjs
 jest.mock("bcryptjs", () => ({
@@ -20,51 +19,13 @@ describe("Check if the user controller handles actions properly", () => {
   let userData: User
   let userId: string
 
-  // Mock MongoDB client, collection and operations
-  const mockInsertOne = jest.fn()
-  const mockUpdateOne = jest.fn()
-  const mockDeleteOne = jest.fn()
-  const mockCollection = jest.fn(() => ({
-    insertOne: mockInsertOne,
-    updateOne: mockUpdateOne,
-    deleteOne: mockDeleteOne
-  }))
-  const mockDb = jest.fn(() => ({
-    collection: mockCollection
-  }))
-  const mockClient = {
-    db: mockDb,
-    close: jest.fn()
-  }
+  const mockPrismaUserCreate = prisma.user.create as jest.Mock
+  const mockPrismaUserFindUnique = prisma.user.findUnique as jest.Mock
+  const mockPrismaUserUpdate = prisma.user.update as jest.Mock
+  const mockPrismaUserDeleteMany = prisma.user.deleteMany as jest.Mock
 
-  beforeAll(() => {
-    // Setup mock return values for MongoDB operations
-    const mockObjectId = new ObjectId()
-    userId = mockObjectId
-
-    // Setup connectDB mock
-    ;(connectDB as jest.Mock).mockResolvedValue(mockClient)
-
-    // Setup insertOne mock
-    mockInsertOne.mockResolvedValue({
-      acknowledged: true,
-      insertedId: mockObjectId
-    } as InsertOneResult)
-
-    // Setup updateOne mock
-    mockUpdateOne.mockResolvedValue({
-      acknowledged: true,
-      matchedCount: 1,
-      modifiedCount: 1,
-      upsertedCount: 0,
-      upsertedId: null
-    } as UpdateResult)
-
-    // Setup deleteOne mock
-    mockDeleteOne.mockResolvedValue({
-      acknowledged: true,
-      deletedCount: 1
-    } as DeleteResult)
+  beforeEach(() => {
+    userId = new ObjectId().toString()
   })
 
   afterEach(() => {
@@ -76,38 +37,62 @@ describe("Check if the user controller handles actions properly", () => {
   })
 
   it("Check if user created properly", async () => {
+    const createDate = new Date().toISOString(),
     userData = {
       username: "mock_user",
       password: "super.strong.password.1111",
       email: "mock_user@localhost.test",
-      permission_group: "member"
+      permission_group: "member",
+      fullname: "Mock User",
+      status: UserStatus.Active,
+      profile_img: "",
+      oauth_id: "oauth123",
+      oauth_provider: "github",
+      created_at: createDate,
+      created_by: "system",
+      updated_at: createDate,
+      updated_by: "system",
+      email_verified: false
     }
 
-    userController = new UserController(userData, true)
-    const createUser = await userController.create()
+    mockPrismaUserCreate.mockResolvedValue({
+      id: userId,
+      ...userData,
+      password: "hashed_password"
+    })
 
-    // Assert connectDB was called
-    expect(connectDB).toHaveBeenCalledWith(true)
+    userController = new UserController(userData, true)
+    const createUser = (await userController.create()) as {
+      result: { status: string; message: string }
+      userId: string
+    }
 
     // Assert bcrypt.hashSync was called with the password
     expect(bcrypt.hashSync).toHaveBeenCalledWith(userData.password, 8)
 
-    // Assert db and collection methods were called
-    expect(mockDb).toHaveBeenCalledWith(process.env.DB_NAME)
-    expect(mockCollection).toHaveBeenCalledWith("users")
-
-    // Assert insertOne was called with the right data
-    expect(mockInsertOne).toHaveBeenCalledWith({
-      ...userData,
-      password: "hashed_password"
+    // Assert prisma.user.create was called with the right data
+    expect(mockPrismaUserCreate).toHaveBeenCalledWith({
+      data: {
+        email: userData.email,
+        fullname: userData.fullname,
+        password: "hashed_password",
+        permission_group: userData.permission_group,
+        profile_img: "",
+        status: userData.status,
+        username: userData.username,
+        email_verified: false,
+        oauth_id: "oauth123",
+        oauth_provider: "github",
+        created_at: createDate,
+        created_by: "system",
+        updated_at: createDate,
+        updated_by: "system"
+      }
     })
 
     // Assert the returned result
     expect(createUser.result).toEqual({ status: "success", message: "User has been created." })
     expect(createUser.userId).toBe(userId)
-
-    // Assert client.close was called
-    expect(mockClient.close).toHaveBeenCalled()
   })
 
   it("Check if user updated properly", async () => {
@@ -115,64 +100,104 @@ describe("Check if the user controller handles actions properly", () => {
       username: "mock_user2",
       password: "super.strong.password.1111",
       email: "mock_user2@localhost.test",
-      permission_group: "member"
+      permission_group: "viewer",
+      fullname: "Mock User 2",
+      status: UserStatus.Active,
+      profile_img: "",
+      created_at: new Date().toISOString(),
+      created_by: "system",
+      updated_at: new Date().toISOString(),
+      updated_by: "system",
+      email_verified: false
     }
+
+    mockPrismaUserFindUnique.mockResolvedValue({
+      id: userId,
+      username: "mock_user",
+      email: "mock_user@localhost.test",
+      permission_group: "viewer",
+      fullname: "Mock User",
+      status: UserStatus.Active,
+      profile_img: "",
+      password: "hashed_password"
+    })
+
+    mockPrismaUserUpdate.mockResolvedValue({
+      id: userId,
+      ...userData
+    })
 
     userController = new UserController(userData, true)
     const updateUser = await userController.update(userId)
 
-    // Assert connectDB was called
-    expect(connectDB).toHaveBeenCalledWith(true)
+    // Assert findUnique was called
+    expect(mockPrismaUserFindUnique).toHaveBeenCalledWith({
+      where: { id: userId }
+    })
 
-    // Assert db and collection methods were called
-    expect(mockDb).toHaveBeenCalledWith(process.env.DB_NAME)
-    expect(mockCollection).toHaveBeenCalledWith("users")
-
-    // Assert updateOne was called with the right data and ID
-    expect(mockUpdateOne).toHaveBeenCalledWith(
-      { _id: expect.any(ObjectId) },
-      {
-        $set: expect.objectContaining({
-          username: userData.username,
-          email: userData.email,
-          permission_group: userData.permission_group
-        })
-      },
-      { upsert: false }
-    )
+    // Assert update was called with the right data and ID
+    expect(mockPrismaUserUpdate).toHaveBeenCalledWith({
+      where: { id: userId },
+      data: expect.objectContaining({
+        username: userData.username,
+        email: userData.email,
+        permission_group: userData.permission_group,
+        fullname: userData.fullname,
+        status: userData.status,
+        profile_img: ""
+      })
+    })
 
     // Assert the returned result
     expect(updateUser).toEqual({ status: "success", message: "User has been updated." })
+  })
 
-    // Assert client.close was called
-    expect(mockClient.close).toHaveBeenCalled()
+  it("Check if user update detects no-changes and returns appropriately", async () => {
+    userData = {
+      username: "mock_user",
+      password: "hashed_password",
+      email: "mock_user@localhost.test",
+      permission_group: "viewer",
+      fullname: "Mock User",
+      status: UserStatus.Active,
+      profile_img: "",
+      created_at: new Date().toISOString(),
+      created_by: "system",
+      updated_at: new Date().toISOString(),
+      updated_by: "system",
+      email_verified: false
+    }
+
+    mockPrismaUserFindUnique.mockResolvedValue({
+      id: userId,
+      ...userData
+    })
+
+    mockPrismaUserUpdate.mockResolvedValue({
+      id: userId,
+      ...userData
+    })
+
+    userController = new UserController(userData, true)
+    const updateUser = await userController.update(userId)
+
+    expect(updateUser).toEqual({ status: "failed", message: "You didn't make any change." })
   })
 
   it("Check if user deleted properly", async () => {
-    userData = {
-      username: "mock_user2",
-      password: "super.strong.password.1111",
-      email: "mock_user2@localhost.test",
-      permission_group: "member"
-    }
+    mockPrismaUserDeleteMany.mockResolvedValue({
+      count: 1
+    })
 
-    userController = new UserController(userData, true)
+    userController = new UserController({} as any, true)
     const deleteUser = await userController.delete(userId)
 
-    // Assert connectDB was called
-    expect(connectDB).toHaveBeenCalledWith(true)
-
-    // Assert db and collection methods were called
-    expect(mockDb).toHaveBeenCalledWith(process.env.DB_NAME)
-    expect(mockCollection).toHaveBeenCalledWith("users")
-
-    // Assert deleteOne was called with the right ID
-    expect(mockDeleteOne).toHaveBeenCalledWith({ _id: expect.any(ObjectId) })
+    // Assert deleteMany was called with the right ID
+    expect(mockPrismaUserDeleteMany).toHaveBeenCalledWith({
+      where: { id: userId }
+    })
 
     // Assert the returned result
     expect(deleteUser).toEqual({ status: "success", message: "User has been deleted." })
-
-    // Assert client.close was called
-    expect(mockClient.close).toHaveBeenCalled()
   })
 })

@@ -1,6 +1,5 @@
-import { connectDB } from "../lib/mongodb"
-import { MongoClient, ObjectId } from "mongodb"
-import { FindType } from "../interfaces"
+import { prisma } from "@/lib/prisma"
+import { FindType } from "@/interfaces"
 
 export class apiBuilderController {
   routeType: string
@@ -16,102 +15,60 @@ export class apiBuilderController {
   }
 
   async fetchData(findType?: FindType) {
-    let dataCollection: object[] | undefined
-    let isConnected = false
-    let client: MongoClient | undefined
+    const modelMap: Record<string, any> = {
+      entries: prisma.entry,
+      entry_types: prisma.entryType,
+      permission_groups: prisma.permissionGroup,
+      users: prisma.user,
+      api_keys: prisma.apiKey
+    }
+
+    const model = modelMap[this.collectionName]
+
+    if (!model) {
+      return [{ message: `Error: Collection ${this.collectionName} not found` }]
+    }
 
     try {
-      client = await connectDB()
-      isConnected = true
+      let where: any = {}
 
-      // If there is more than one parameter in uri then convert into "param[0].param[1].param[i]" format to match with namespace field in the DB
       if (this.routeType === "multi-param" && Array.isArray(this.routeData)) {
-        let namespace = ""
-
-        for (let i = 0; i < this.routeData.length; i++) {
-          if (i === 0) namespace += `${this.routeData[i]}`
-          else namespace += `.${this.routeData[i]}`
-        }
-
-        if (findType === undefined || findType === "Equals") {
-          dataCollection = await client
-            .db(`${process.env.DB_NAME}`)
-            .collection(this.collectionName)
-            .find({ namespace: namespace })
-            .toArray()
-        } else if (findType === "StartsWith") {
-          dataCollection = await client
-            .db(process.env.DB_NAME)
-            .collection(this.collectionName)
-            .find({ namespace: { $regex: `^${String(namespace)}` } })
-            .toArray()
-        } else if (findType === "EndsWith") {
-          dataCollection = await client
-            .db(process.env.DB_NAME)
-            .collection(this.collectionName)
-            .find({ namespace: { $regex: `${String(namespace)}$` } })
-            .toArray()
-        } else if (findType === "Contains") {
-          dataCollection = await client
-            .db(process.env.DB_NAME)
-            .collection(this.collectionName)
-            .find({ namespace: { $regex: `${String(namespace)}$` } })
-            .toArray()
-        }
+        const namespace = this.routeData.join(".")
+        where = this.buildWhereClause("namespace", namespace, findType)
       } else if (this.routeType === "index") {
-        dataCollection = await client.db(process.env.DB_NAME).collection(this.collectionName).find().toArray()
+        where = {}
       } else if (this.routeType === "single-param") {
-        if (this.findWhere === "_id") {
-          dataCollection = await client
-            .db(process.env.DB_NAME)
-            .collection(this.collectionName)
-            .find({ [this.findWhere as string]: new ObjectId(this.routeData as string) })
-            .toArray()
-        } else {
-          if (findType === undefined || findType === "Equals") {
-            dataCollection = await client
-              .db(process.env.DB_NAME)
-              .collection(this.collectionName)
-              .find({ [this.findWhere as string]: `${this.routeData}` })
-              .toArray()
-          } else if (findType === "StartsWith") {
-            dataCollection = await client
-              .db(process.env.DB_NAME)
-              .collection(this.collectionName)
-              .find({ [this.findWhere as string]: { $regex: `^${String(this.routeData)}` } })
-              .toArray()
-          } else if (findType === "EndsWith") {
-            dataCollection = await client
-              .db(process.env.DB_NAME)
-              .collection(this.collectionName)
-              .find({ [this.findWhere as string]: { $regex: `${String(this.routeData)}$` } })
-              .toArray()
-          } else if (findType === "Contains") {
-            dataCollection = await client
-              .db(process.env.DB_NAME)
-              .collection(this.collectionName)
-              .find({ [this.findWhere as string]: { $regex: `${String(this.routeData)}$` } })
-              .toArray()
-          }
-        }
+        const field = this.findWhere === "_id" ? "id" : (this.findWhere as string)
+        where = this.buildWhereClause(field, this.routeData as string, findType)
       } else if (this.routeType === "id") {
-        dataCollection = await client
-          .db("api_db")
-          .collection(this.collectionName)
-          .find({ _id: new ObjectId(this.routeData as string) })
-          .toArray()
+        where = { id: this.routeData as string }
       } else {
-        dataCollection = [{ message: "Error: Unexpected route type!" }]
+        return [{ message: "Error: Unexpected route type!" }]
       }
 
-      if (isConnected) {
-        return dataCollection
-      } else {
-        return [{ message: "Database connection is NOT established" }]
-      }
+      const dataCollection = await model.findMany({ where })
+      return dataCollection
     } catch (e) {
       console.error(e)
       return [{ message: "Database operation failed." }]
+    }
+  }
+
+  private buildWhereClause(field: string, value: string, findType?: FindType) {
+    if (field === "id") {
+      return { id: value }
+    }
+
+    switch (findType) {
+      case "StartsWith":
+        return { [field]: { startsWith: value } }
+      case "EndsWith":
+        return { [field]: { endsWith: value } }
+      case "Contains":
+        return { [field]: { contains: value } }
+      case "Equals":
+      default:
+        return { [field]: value }
     }
   }
 }
