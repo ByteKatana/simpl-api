@@ -41,11 +41,14 @@ model ApiRequestLog {
 }
 
 model ApiKey {
-  id  String @id @default(auto()) @map("_id") @db.ObjectId
-  key String
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  key              String   @unique
+  description      String
+  permission_group String
+  rate_limits      Json
+  created_at       DateTime @default(now())
 
   @@map("api_keys")
-  @@ignore
 }
 
 model Entry {
