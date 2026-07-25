@@ -49,12 +49,13 @@ model ApiKey {
 }
 
 model Entry {
-  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
   data       Json
   name       String
   namespace  String
   slug       String
   status     String
+  created_at String?
   updated_at String
 
   @@map("entries")
