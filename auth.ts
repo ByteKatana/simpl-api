@@ -1,6 +1,6 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
-import { connectDB } from "./lib/mongodb"
+import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
 import type { NextAuthConfig } from "next-auth"
 import { uid } from "uid"
@@ -53,18 +53,19 @@ export const config = {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        const client = await connectDB()
-        const user = await client.db(process.env.DB_NAME).collection("users").findOne({ email: credentials.email })
+        const user = await prisma.user.findFirst({
+          where: { email: credentials?.email as string }
+        })
 
-        if (user && bcrypt.compareSync(credentials.password as string, user.password)) {
+        if (user && bcrypt.compareSync(credentials?.password as string, user.password)) {
           return {
-            id: user._id.toString(),
+            id: user.id,
             email: user.email,
             name: user.fullname,
             username: user.username,
             permission_group: user.permission_group,
             profile_img: user.profile_img,
-            status: user.status,
+            status: user.status as UserStatus,
             email_verified: true
           }
         }
@@ -187,14 +188,15 @@ export const config = {
 
           // 2. Identify the correct user
           // First priority: Match BOTH oauth_id AND oauth_provider (Exact connection match)
-          const client = await connectDB()
-          const usersCollection = client.db(process.env.DB_NAME).collection("users")
-
-          const existingUsersByEmail = await usersCollection.find({ email: user.email }).toArray()
-          const existingUsersByOAuth = await usersCollection.find({ oauth_id: proverId }).toArray()
+          const existingUsersByEmail = await prisma.user.findMany({
+            where: { email: user.email as string }
+          })
+          const existingUsersByOAuth = await prisma.user.findMany({
+            where: { oauth_id: proverId }
+          })
 
           let dbUser = existingUsersByOAuth.find(
-            (u: any) => u.oauth_id === proverId && u.oauth_provider === oauthProvider
+            (u) => u.oauth_id === proverId && u.oauth_provider === oauthProvider
           )
 
           // Second priority: Fallback to matching by email (Account linking scenario)
@@ -202,7 +204,7 @@ export const config = {
             dbUser = existingUsersByEmail[0]
           }
 
-          if (!dbUser) {
+          if (!dbUser && !emailVerified) {
             return false
           }
 
@@ -217,6 +219,7 @@ export const config = {
               status: UserStatus.Active,
               permission_group: defaultPermGroup,
               oauth_provider: oauthProvider,
+              emailVerified: true,
               oauth_id: proverId,
               password: `${account?.provider}-${user.id}-${uid(16)}!A1`
             }
@@ -230,6 +233,8 @@ export const config = {
             user.permission_group = newUser.permission_group
             user.status = newUser.status
           } else {
+            if (!dbUser) return false
+
             // 2. User exists. Check if we need to link the OAuth ID
             // If the user doesn't have an oauth_id yet, or if it was different,
             // we update it ONCE to bind this OAuth account to this email.
@@ -255,13 +260,13 @@ export const config = {
                   fullname: user.name || dbUser.fullname,
                   username: user.username || dbUser.username,
                   profile_img: user.profile_img || dbUser.profile_img,
-                  status: dbUser.status,
+                  status: dbUser.status as UserStatus,
                   email: dbUser.email,
                   permission_group: dbUser.permission_group,
                   password: ""
                 },
                 dbUser as any,
-                dbUser._id.toString(),
+                dbUser.id,
                 true
               )
               if ("error" in updateResponse || !updateResponse.success) {
@@ -271,10 +276,10 @@ export const config = {
             }
 
             // 3. CRITICAL: Map the DB ID to the session 'user' object
-            // This ensures the rest of your app uses the MongoDB _id, not the Google 'sub'
-            user.id = dbUser._id.toString()
-            user.permission_group = dbUser.permission_group
-            user.status = dbUser.status
+            // This ensures the rest of your app uses the database ID, not the Google 'sub'
+            user.id = dbUser!.id
+            user.permission_group = dbUser!.permission_group
+            user.status = dbUser!.status
           }
         } catch (error) {
           console.error("Error during OAuth sign-in check:", error)
