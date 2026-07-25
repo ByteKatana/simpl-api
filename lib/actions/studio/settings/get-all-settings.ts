@@ -1,7 +1,7 @@
 "use server"
 import { getPermissionGroup } from "@/lib/auth/get-session"
 import handleError from "@/lib/handlers/error"
-import { ActionResponse, ErrorResponse, SuccessResponse } from "@/interfaces"
+import { ActionResponse, SuccessResponse } from "@/interfaces"
 import { prisma } from "@/lib/prisma"
 import { SettingsSchema } from "@/interfaces/settings"
 
@@ -23,6 +23,6 @@ export default async function getAllSettings(): Promise<ActionResponse<SettingsS
 
     return { success: true, status: 200, data } as SuccessResponse<SettingsSchema[]>
   } catch (error) {
-    return handleError(error) as ErrorResponse
+    return handleError(error, "server")
   }
 }
