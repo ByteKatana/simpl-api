@@ -1,18 +1,16 @@
 "use server"
 
-import { connectDB } from "@/lib/mongodb"
-import { MongoClient, Collection } from "mongodb"
 import handleError from "@/lib/handlers/error"
 import { ActionResponse, SuccessResponse } from "@/interfaces"
 import { PermissionGroupFormSchema } from "@/lib/schemas/client/form-schemas"
 import { z } from "zod"
 import { permGroupsFormToDb } from "@/lib/form-to-db"
 import { getPermissionGroup } from "@/lib/auth/get-session"
+import { prisma } from "@/lib/prisma"
 
 export default async function updatePermissionGroups(
   formValues: Pick<z.infer<typeof PermissionGroupFormSchema>, "privileges">
 ): Promise<ActionResponse<any>> {
-  let client: MongoClient | null = null
   try {
     // 1. Authorization Check
     const session_perm_group = await getPermissionGroup()
@@ -27,34 +25,25 @@ export default async function updatePermissionGroups(
       return { success: true, status: 200, data: { message: "No changes to update." } }
     }
 
-    // 3. Database connection
-    client = await connectDB()
-    const db = client.db(process.env.DB_NAME)
-    const collection: Collection = db.collection("permission_groups")
+    // 3. Execute Updates via Transaction
+    const updatePromises = slugs.map((slug) =>
+      prisma.permissionGroup.updateMany({
+        where: { slug },
+        data: {
+          privileges: groupsToUpdate[slug] as any
+        }
+      })
+    )
 
-    // 4. Prepare Bulk Operations
-    const bulkOps = slugs.map((slug) => ({
-      updateOne: {
-        filter: { slug: slug },
-        update: {
-          $set: {
-            privileges: groupsToUpdate[slug],
-            updated_at: new Date().toISOString()
-          }
-        },
-        upsert: false
-      }
-    }))
-
-    // 5. Execute Bulk Write
-    const result = await collection.bulkWrite(bulkOps)
+    const results = await prisma.$transaction(updatePromises)
+    const modifiedCount = results.reduce((acc, curr) => acc + curr.count, 0)
 
     return {
       success: true,
       status: 200,
       data: {
-        matchedCount: result.matchedCount,
-        modifiedCount: result.modifiedCount
+        matchedCount: slugs.length,
+        modifiedCount: modifiedCount
       }
     } as SuccessResponse<any>
   } catch (error) {
