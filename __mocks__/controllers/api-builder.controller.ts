@@ -6,7 +6,7 @@ export const apiBuilderController = jest
       collectionName,
       findWhere,
       routeData,
-      fetchData: jest.fn().mockImplementation(async (_findType?: string) => {
+      fetchData: jest.fn().mockImplementation((_findType?: string) => {
         if (collectionName === "users") {
           const mockUsers = [
             { id: "1", username: "mock_user", permission_group: "admin", email: "mock1@test.com" },
