@@ -2,8 +2,7 @@
 
 import { auth } from "@/auth"
 import { DbPrivilege } from "@/interfaces"
-import { PermissionGroup } from "@/interfaces/permission_group"
-import { connectDB } from "@/lib/mongodb"
+import { prisma } from "@/lib/prisma"
 
 /**
  * Server action to check if the current user has a specific permission.
@@ -19,14 +18,12 @@ export async function hasPermission(requiredPermission: string): Promise<boolean
   }
 
   const userGroupName = session.user.permission_group
-  console.log("userGroupName", userGroupName)
 
   try {
-    const client = await connectDB()
-    const db = client.db(process.env.DB_NAME)
+    const group = await prisma.permissionGroup.findFirst({
+      where: { slug: userGroupName }
+    })
 
-    const groups = await db.collection("permission_groups").find({}).toArray()
-    const group = groups?.find((g: PermissionGroup) => g.slug === userGroupName)
     if (!group || !group.privileges) {
       return false
     }
