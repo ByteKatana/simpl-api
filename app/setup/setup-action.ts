@@ -7,22 +7,15 @@ import { uid } from "uid"
 import { apiKeyController } from "@/controllers/api-key.controller"
 import { UserController } from "@/controllers/user.controller"
 import { PermissionGroupController } from "@/controllers/permission-group.controller"
-import { connectDB } from "@/lib/mongodb"
 import handleError from "@/lib/handlers/error"
 
 const execAsync = promisify(exec)
 
 export async function runSetupAction(values: SetupFormValues): Promise<SetupActionResponse> {
   try {
-    const client = await connectDB()
-    const dbConnection = client.db()
-
-    // Creating required collections
-    await dbConnection.createCollection("api_keys")
-    await dbConnection.createCollection("entries")
-    await dbConnection.createCollection("entry_types")
-    await dbConnection.createCollection("permission_groups")
-    await dbConnection.createCollection("users")
+    // Run Prisma commands first to ensure database schema is ready
+    await execAsync("npx prisma db push")
+    await execAsync("npx prisma db seed")
 
     // Creating Admin Account
     const adminEmail = values.ADMIN_EMAIL
@@ -122,10 +115,6 @@ export async function runSetupAction(values: SetupFormValues): Promise<SetupActi
     if (!keyResult || Array.isArray(keyResult) || keyResult.status !== "success") {
       return handleError(new Error("Failed to generate API key"), "server")
     }
-
-    // Run Prisma commands
-    await execAsync("npx prisma db push")
-    await execAsync("npx prisma db seed")
 
     return {
       success: true,
