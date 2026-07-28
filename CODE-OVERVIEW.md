@@ -43,7 +43,7 @@ graph TD
     (hide/disable)`"]
     PermissionGuard -->|has permission| Actions["Server Actions"]
     Actions -->|Bypass Rate Limit| APIv1
-    Actions --> DataLayer["Prsima / MongoClient"]
+    Actions --> DataLayer["Prsima"]
     APIv1 -->|Bypass Checks - Server Actions| Controllers
     RateLimit --> APIv1["API v1 (Pages Router, REST)"]
     APIv1 --> KeyValidation["Key Validation"]
